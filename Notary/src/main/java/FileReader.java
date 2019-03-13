@@ -16,6 +16,9 @@ public class FileReader {
     private static final String GOOD_NAME_TAG = "goodName";
     private static final String ON_SALE_STATE = "onsaleState";
 
+    private ArrayList<ArrayList<Good>> parsedGoods = new ArrayList<>();
+
+
     public FileReader() {
 
     }
@@ -23,7 +26,6 @@ public class FileReader {
     public ArrayList<ArrayList<Good>> goodsListConstructor(String path) {
 
         try {
-            ArrayList<ArrayList<Good>> parsedGoods = new ArrayList<>();
             File input = new File(path);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -54,9 +56,7 @@ public class FileReader {
                     System.out.println(onSaleState);
                     System.out.println("\n");
 
-                    parsedGoods.add(Integer.parseInt(ownerId), );
-
-                    parsedGoods.add(Integer.parseInt(ownerId), new ArrayList<Good>().add(new Good(Integer.parseInt(ownerId), Integer.parseInt(goodId), goodName, false)));
+                    addGoodsToArrayList(new Good(Integer.parseInt(ownerId), Integer.parseInt(goodId), goodName, false));
                 }
             }
 
@@ -66,6 +66,8 @@ public class FileReader {
         return null;
     }
 
-    private
+    private void addGoodsToArrayList(Good goodToAdd) {
+
+    }
 
 }
