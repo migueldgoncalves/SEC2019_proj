@@ -1,6 +1,5 @@
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.rmi.server.*;
 
 public class Server extends UnicastRemoteObject implements iProxy {
 
@@ -9,15 +8,15 @@ public class Server extends UnicastRemoteObject implements iProxy {
     }
 
     public String sell() throws RemoteException{
-        return "";
+        return "The Server Sold the Good";
     }
 
     public String getStateOfGood() throws RemoteException{
-        return "";
+        return "The server returned the state of the good";
     }
 
     public String transferGood() throws RemoteException{
-        return "";
+        return "The server transfered the good";
     }
 
 }
