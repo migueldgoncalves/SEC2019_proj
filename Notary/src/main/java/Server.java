@@ -11,7 +11,8 @@ public class Server extends UnicastRemoteObject implements iProxy {
         return "The Server Sold the Good";
     }
 
-    public String getStateOfGood() throws RemoteException{
+    //return OwnerId and State
+    public String getStateOfGood(String goodId) throws RemoteException {
         return "The server returned the state of the good";
     }
 

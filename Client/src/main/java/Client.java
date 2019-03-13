@@ -28,7 +28,8 @@ public class Client {
                             //Os clientes têm de se registar num porto conhecido de modo a podermos invocar um comando Buy a partir de outro cliente
                             break;
                         case "3":
-                            proxy.getStateOfGood();
+                            //To receive good ID
+                            //proxy.getStateOfGood(input);
                             break;
                         default:
                             System.out.println("The Introduced Input is not a valid number, please try again or type 'exit' to exit program.");
