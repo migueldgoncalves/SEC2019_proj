@@ -1,0 +1,48 @@
+<?xml version = "1.0"?>
+<class>
+    <good id="1">
+        <ownerId>1</ownerId>
+        <goodName>Fiambre</goodName>
+        <onsaleState>false</onsaleState>
+    </good>
+    <good id="2">
+        <ownerId>2</ownerId>
+        <goodName>Queijo</goodName>
+        <onsaleState>false</onsaleState>
+    </good>
+    <good id="3">
+        <ownerId>3</ownerId>
+        <goodName>Carne</goodName>
+        <onsaleState>false</onsaleState>
+    </good>
+    <good id="4">
+        <ownerId>4</ownerId>
+        <goodName>Matilde</goodName>
+        <onsaleState>false</onsaleState>
+    </good>
+    <good id="5">
+        <ownerId>5</ownerId>
+        <goodName>Cafe</goodName>
+        <onsaleState>false</onsaleState>
+    </good>
+    <good id="6">
+        <ownerId>6</ownerId>
+        <goodName>carro</goodName>
+        <onsaleState>false</onsaleState>
+    </good>
+    <good id="7">
+        <ownerId>7</ownerId>
+        <goodName>casa</goodName>
+        <onsaleState>false</onsaleState>
+    </good>
+    <good id="8">
+        <ownerId>8</ownerId>
+        <goodName>Fiambre</goodName>
+        <onsaleState>false</onsaleState>
+    </good>
+    <good id="9">
+        <ownerId>9</ownerId>
+        <goodName>Fiambre</goodName>
+        <onsaleState>false</onsaleState>
+    </good>
+</class>

@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.rmi.ConnectException;
 import java.rmi.Naming;
 
 public class Client {
@@ -11,10 +12,9 @@ public class Client {
             proxy = (iProxy) Naming.lookup("rmi://localhost:8086/Notary");
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            //User Input to be sent to Server
             System.out.println("Please Introduce User ID: ");
             String ID = reader.readLine();
-            //If input is integer and is present in server
+
             if (tryParseInt(ID) && checkUserIdExistence(Integer.parseInt(ID))) {
                 printMenu();
                 String input = reader.readLine();
@@ -35,15 +35,23 @@ public class Client {
                             System.out.println("The Introduced Input is not a valid number, please try again or type 'exit' to exit program.");
                             break;
                     }
+
+                    printMenu();
                     input = reader.readLine();
                 }
+                reader.close();
                 System.exit(1);
             } else {
                 throw new Exception("The Introduced value is not convertable to an Integer type variable or user ID does not exist in the server. Exiting ...");
             }
 
-        } catch (Exception e) {
+        }catch (ConnectException e){
+            System.out.println("Could not connect to server. The server may be offline or unavailable due to network reasons.");
+            System.exit(-1);
+        }
+        catch (Exception e) {
             e.printStackTrace();
+            System.exit(-1);
         }
     }
 
@@ -52,7 +60,7 @@ public class Client {
             Integer.parseInt(value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("The introduced Input could not be converted to an integer. Exiting...");
             return false;
         }
     }
