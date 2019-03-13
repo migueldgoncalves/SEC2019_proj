@@ -1,0 +1,2 @@
+public class FileReaderTester {
+}

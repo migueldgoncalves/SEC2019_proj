@@ -4,6 +4,13 @@ public class Good {
     private String Name;
     private boolean OnSale;
 
+    public Good(int owner, int goodId, String Name, boolean isOnSale) {
+        this.OwnerId = owner;
+        this.GoodId = goodId;
+        this.Name = Name;
+        this.OnSale = isOnSale;
+    }
+
     public int getOwnerId() {
         return OwnerId;
     }

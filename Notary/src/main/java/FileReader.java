@@ -23,6 +23,7 @@ public class FileReader {
     public ArrayList<ArrayList<Good>> goodsListConstructor(String path) {
 
         try {
+            ArrayList<ArrayList<Good>> parsedGoods = new ArrayList<>();
             File input = new File(path);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -40,6 +41,7 @@ public class FileReader {
 
                 if (listNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element nodeElement = (Element) listNode;
+                    String goodId = nodeElement.getAttribute(ID_ATTRIBUTE);
                     System.out.println(nodeElement.getAttribute(ID_ATTRIBUTE));
 
                     String ownerId = nodeElement.getElementsByTagName(OWNER_ID_TAG).item(0).getTextContent();
@@ -52,7 +54,9 @@ public class FileReader {
                     System.out.println(onSaleState);
                     System.out.println("\n");
 
-                    Good good = new Good();
+                    parsedGoods.add(Integer.parseInt(ownerId), );
+
+                    parsedGoods.add(Integer.parseInt(ownerId), new ArrayList<Good>().add(new Good(Integer.parseInt(ownerId), Integer.parseInt(goodId), goodName, false)));
                 }
             }
 
@@ -61,5 +65,7 @@ public class FileReader {
         }
         return null;
     }
+
+    private
 
 }
