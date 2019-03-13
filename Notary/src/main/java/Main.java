@@ -16,6 +16,9 @@ public class Main {
 
             System.out.println("Server is Running on port 8086 with the name of Notary");
 
+            FileReader fileReader = new FileReader();
+            fileReader.goodsListConstructor("Common\\src\\main\\resources\\GoodsFile1.xml");
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             System.out.println("Press Any Key To exit");
             reader.readLine();
