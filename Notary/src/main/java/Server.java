@@ -19,4 +19,8 @@ public class Server extends UnicastRemoteObject implements iProxy {
         return "The server transfered the good";
     }
 
+    public boolean checkUserId(int ID) throws RemoteException {
+        return true;
+    }
+
 }

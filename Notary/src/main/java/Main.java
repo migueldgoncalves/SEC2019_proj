@@ -19,9 +19,10 @@ public class Main {
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             System.out.println("Press Any Key To exit");
             reader.readLine();
-            return;
+            System.exit(1);
         }catch (Exception e){
             e.printStackTrace();
+            System.exit(-1);
         }
     }
 

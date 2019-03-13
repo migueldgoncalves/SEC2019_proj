@@ -1,4 +1,5 @@
-import java.rmi.*;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 public interface iProxy extends Remote {
 
@@ -8,4 +9,5 @@ public interface iProxy extends Remote {
 
     String transferGood() throws RemoteException;
 
+    boolean checkUserId(int ID) throws RemoteException;
 }
