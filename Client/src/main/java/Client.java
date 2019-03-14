@@ -2,10 +2,17 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.rmi.ConnectException;
 import java.rmi.Naming;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
-public class Client {
+public class Client extends UnicastRemoteObject implements iClient {
 
     private static iProxy proxy = null;
+    private static int UserID;
+
+    Client() throws RemoteException {
+        super();
+    }
 
     public static void main(String[] args) {
         try {
@@ -16,6 +23,7 @@ public class Client {
             String ID = reader.readLine();
 
             if (tryParseInt(ID) && checkUserIdExistence(Integer.parseInt(ID))) {
+                UserID = Integer.parseInt(ID);
                 printMenu();
                 String input = reader.readLine();
                 while (tryParseInt(input) && !input.equals("exit")) {
@@ -51,6 +59,45 @@ public class Client {
         catch (Exception e) {
             e.printStackTrace();
             System.exit(-1);
+        }
+    }
+
+    public String Buy(int ownerId, int newOwnerId, int goodId) {
+        try {
+            return proxy.transferGood(ownerId, newOwnerId, goodId);
+        } catch (Exception e) {
+            System.out.println("Something Went Wrong During the Transfer");
+            return "The Good Transfer Has Failed. Please Try Again.";
+        }
+    }
+
+    private String invokeSeller() {
+        int sellerId, goodId;
+        System.out.println("Please Introduce Seller ID:");
+        System.out.print("Seller ID: ");
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            String temp = reader.readLine();
+            while (tryParseInt(temp)) {
+                System.out.println("The introduced ID is not a valid Number, please introduce ONLY numbers");
+                System.out.print("Seller ID: ");
+                temp = reader.readLine();
+            }
+            sellerId = Integer.parseInt(temp);
+            System.out.println("Please Introduce GoodId:");
+            System.out.print("Good ID: ");
+            temp = reader.readLine();
+            while (!tryParseInt(temp)) {
+                System.out.println("The Introduced ID is not a valid Number, please introduce ONLY numbers");
+                System.out.print("Good ID: ");
+                temp = reader.readLine();
+            }
+            goodId = Integer.parseInt(temp);
+
+            return "";
+
+        } catch (Exception e) {
+            return "";
         }
     }
 
