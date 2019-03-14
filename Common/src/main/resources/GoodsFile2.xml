@@ -1,0 +1,18 @@
+<?xml version = "1.0"?>
+<class>
+    <good id="1">
+        <ownerId>2</ownerId>
+        <goodName>Fiambre</goodName>
+        <onsaleState>false</onsaleState>
+    </good>
+    <good id="2">
+        <ownerId>2</ownerId>
+        <goodName>Queijo</goodName>
+        <onsaleState>false</onsaleState>
+    </good>
+    <good id="3">
+        <ownerId>3</ownerId>
+        <goodName>Carne</goodName>
+        <onsaleState>true</onsaleState>
+    </good>
+</class>
