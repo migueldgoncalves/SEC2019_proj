@@ -7,6 +7,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Dictionary;
 
 public class FileReader {
 
@@ -16,14 +17,14 @@ public class FileReader {
     private static final String GOOD_NAME_TAG = "goodName";
     private static final String ON_SALE_STATE = "onsaleState";
 
-    private ArrayList<ArrayList<Good>> parsedGoods = new ArrayList<>();
+    private Dictionary<Integer, ArrayList<Good>> parsedGoods;
 
 
     public FileReader() {
 
     }
 
-    public ArrayList<ArrayList<Good>> goodsListConstructor(String path) {
+    public Dictionary<Integer, ArrayList<Good>> goodsListConstructor(String path) {
 
         try {
             File input = new File(path);
@@ -60,6 +61,8 @@ public class FileReader {
                 }
             }
 
+            return parsedGoods;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,7 +70,25 @@ public class FileReader {
     }
 
     private void addGoodsToArrayList(Good goodToAdd) {
+        try {
+            if (parsedGoods.get(goodToAdd.getOwnerId()) == null) {
+                ArrayList<Good> temp = new ArrayList<>();
+                temp.add(goodToAdd);
+                parsedGoods.put(goodToAdd.getOwnerId(), temp);
+            } else {
+                ArrayList<Good> good = parsedGoods.get(goodToAdd.getOwnerId());
+                good.add(goodToAdd);
+                parsedGoods.remove(goodToAdd.getOwnerId());
+                parsedGoods.put(goodToAdd.getOwnerId(), good);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Something Went Wrong During Good Adition to Dictionary");
+        }
+    }
 
+    public Dictionary<Integer, ArrayList<Good>> getParsedGoods() {
+        return parsedGoods;
     }
 
 }

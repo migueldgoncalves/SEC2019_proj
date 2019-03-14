@@ -1,10 +1,11 @@
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Dictionary;
 
 public class Server extends UnicastRemoteObject implements iProxy {
 
-    private ArrayList<ArrayList<Good>> goods = new ArrayList<ArrayList<Good>>();
+    private Dictionary<Integer, ArrayList<Good>> goods;
 
     Server() throws RemoteException {
         super();
