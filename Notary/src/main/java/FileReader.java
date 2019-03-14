@@ -8,6 +8,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.Hashtable;
 
 public class FileReader {
 
@@ -17,7 +18,7 @@ public class FileReader {
     private static final String GOOD_NAME_TAG = "goodName";
     private static final String ON_SALE_STATE = "onsaleState";
 
-    private Dictionary<Integer, ArrayList<Good>> parsedGoods;
+    private Dictionary<Integer, ArrayList<Good>> parsedGoods = new Hashtable<>();
 
 
     public FileReader() {
@@ -57,7 +58,7 @@ public class FileReader {
                     System.out.println(onSaleState);
                     System.out.println("\n");
 
-                    addGoodsToArrayList(new Good(Integer.parseInt(ownerId), Integer.parseInt(goodId), goodName, false));
+                    addGoodsToArrayList(new Good(Integer.parseInt(ownerId), Integer.parseInt(goodId), goodName, onSaleState.equals("true")));
                 }
             }
 
