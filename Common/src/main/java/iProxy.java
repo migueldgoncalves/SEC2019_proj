@@ -3,11 +3,11 @@ import java.rmi.RemoteException;
 
 public interface iProxy extends Remote {
 
-    String sell() throws RemoteException;
+    String sell(int ownerId, int goodId) throws RemoteException;
 
-    String getStateOfGood(String goodId) throws RemoteException;
+    String getStateOfGood(int goodId) throws RemoteException;
 
-    String transferGood() throws RemoteException;
+    String transferGood(int ownerId, int newOwnerId, int goodId) throws RemoteException;
 
     boolean checkUserId(int ID) throws RemoteException;
 }

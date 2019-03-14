@@ -22,7 +22,6 @@ public class Client {
 
                     switch (input) {
                         case "1":
-                            proxy.sell();
                             break;
                         case "2":
                             //Os clientes têm de se registar num porto conhecido de modo a podermos invocar um comando Buy a partir de outro cliente
