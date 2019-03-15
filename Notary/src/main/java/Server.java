@@ -8,6 +8,16 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
     private Dictionary<Integer, ArrayList<Good>> goods;
 
+    public Server(String FilePath) throws RemoteException {
+        super();
+        try {
+            FileReader fileReader = new FileReader();
+            goods = fileReader.goodsListConstructor(FilePath);
+        } catch (Exception e) {
+            System.out.println("Something Went Wrong");
+        }
+    }
+
     Server() throws RemoteException {
         super();
         try {
@@ -29,9 +39,12 @@ public class Server extends UnicastRemoteObject implements iProxy {
             ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
             for (Good i : temp) {
                 if (i.getGoodId() == goodId && i.getOwnerId() == ownerId) {
-                    if (!i.isOnSale())
+                    if (!i.isOnSale()) {
                         i.setOnSale(true);
-                    return (i.isOnSale() ? "The Item is Already On Sale" : "The Item is Now on Sale");
+                        return ("The Item is Now on Sale");
+                    } else {
+                        return "The Item was Already On Sale";
+                    }
                 }
             }
         }
@@ -44,11 +57,11 @@ public class Server extends UnicastRemoteObject implements iProxy {
             ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
             for (Good i : temp) {
                 if (i.getGoodId() == goodId) {
-                    return "<" + i.getOwnerId() + ", " + (i.isOnSale() ? "On-Sale" : "Not-On-Sale" + ">");
+                    return "<" + i.getOwnerId() + ", " + (i.isOnSale() ? "On-Sale>" : "Not-On-Sale>");
                 }
             }
         }
-        return "The GoodId" + goodId + "Is Not Present In The Server!";
+        return "The GoodId " + goodId + " Is Not Present In The Server!";
     }
 
     public String transferGood(int ownerId, int newOwnerId, int goodId) throws RemoteException {

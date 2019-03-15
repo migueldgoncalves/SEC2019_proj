@@ -15,6 +15,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         super();
     }
 
+
     public static void main(String[] args) {
         try {
             //Prompt User For Input of Port To Register
@@ -25,7 +26,7 @@ public class Client extends UnicastRemoteObject implements iClient {
             System.out.print("PORT Number: ");
             String port = reader.readLine();
 
-            while (tryParseInt(port)) {
+            while (!tryParseInt(port)) {
                 System.out.println("Introduce a valida Port Number:");
                 System.out.print("Port Number: ");
                 port = reader.readLine();
@@ -54,6 +55,7 @@ public class Client extends UnicastRemoteObject implements iClient {
                             break;
                         case "2":
                             //Os clientes têm de se registar num porto conhecido de modo a podermos invocar um comando Buy a partir de outro cliente
+                            invokeSeller();
                             break;
                         case "3":
                             //To receive good ID
@@ -83,28 +85,20 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
-    public String Buy(int ownerId, int newOwnerId, int goodId) {
-        try {
-            return proxy.transferGood(ownerId, newOwnerId, goodId);
-        } catch (Exception e) {
-            System.out.println("Something Went Wrong During the Transfer");
-            return "The Good Transfer Has Failed. Please Try Again.";
-        }
-    }
-
-    private String invokeSeller() {
-        int sellerId, goodId;
+    private static String invokeSeller() {
+        int sellerId, goodId, portNumber;
         System.out.println("Please Introduce Seller ID:");
         System.out.print("Seller ID: ");
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             String temp = reader.readLine();
-            while (tryParseInt(temp)) {
+            while (!tryParseInt(temp)) {
                 System.out.println("The introduced ID is not a valid Number, please introduce ONLY numbers");
                 System.out.print("Seller ID: ");
                 temp = reader.readLine();
             }
             sellerId = Integer.parseInt(temp);
+
             System.out.println("Please Introduce GoodId:");
             System.out.print("Good ID: ");
             temp = reader.readLine();
@@ -115,10 +109,23 @@ public class Client extends UnicastRemoteObject implements iClient {
             }
             goodId = Integer.parseInt(temp);
 
-            return "";
+            System.out.println("Please Introduce GoodId:");
+            System.out.print("Good ID: ");
+            temp = reader.readLine();
+            while (!tryParseInt(temp)) {
+                System.out.println("The Introduced Port Number is not a valid Number, please introduce ONLY numbers");
+                System.out.print("Port Number: ");
+                temp = reader.readLine();
+            }
+            portNumber = Integer.parseInt(temp);
+
+            iClient clientProxy = (iClient) Naming.lookup("rmi://localhost:" + portNumber + "/" + sellerId);
+
+            return clientProxy.Buy(sellerId, UserID, goodId);
 
         } catch (Exception e) {
-            return "";
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -143,7 +150,19 @@ public class Client extends UnicastRemoteObject implements iClient {
     }
 
     private static void printMenu() {
-        System.out.print("Please Introduce The Desired Option Number: \n 1. Sell an Item. \n 2. Buy an Item. \n 3. Get Item State.");
+        System.out.print("Please Introduce The Desired Option Number: \n 1. Sell an Item. \n 2. Buy an Item. \n 3. Get Item State. \n Option Number: ");
+    }
+
+
+
+    public String Buy(int ownerId, int newOwnerId, int goodId) {
+        try {
+            iProxy proxy = (iProxy) Naming.lookup("rmi://localhost:8086/Notary");
+            return proxy.transferGood(ownerId, newOwnerId, goodId);
+        } catch (Exception e) {
+            System.out.println("Something Went Wrong During the Transfer");
+            return "The Good Transfer Has Failed. Please Try Again.";
+        }
     }
 
 }
