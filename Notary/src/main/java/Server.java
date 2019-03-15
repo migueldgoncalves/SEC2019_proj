@@ -10,8 +10,12 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
     Server() throws RemoteException {
         super();
-        FileReader fileReader = new FileReader();
-        goods = fileReader.goodsListConstructor("Notary\\src\\main\\resources\\GoodsFile1.xml");
+        try {
+            FileReader fileReader = new FileReader();
+            goods = fileReader.goodsListConstructor("Notary\\src\\main\\resources\\GoodsFile1.xml");
+        } catch (Exception e) {
+            System.out.println("File Was Not Found! ERROR.");
+        }
 
         if (goods.size() == 0) {
             System.out.println("WARNING: No good were loaded into the Notary!");
@@ -25,6 +29,8 @@ public class Server extends UnicastRemoteObject implements iProxy {
             ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
             for (Good i : temp) {
                 if (i.getGoodId() == goodId && i.getOwnerId() == ownerId) {
+                    if (!i.isOnSale())
+                        i.setOnSale(true);
                     return (i.isOnSale() ? "The Item is Already On Sale" : "The Item is Now on Sale");
                 }
             }

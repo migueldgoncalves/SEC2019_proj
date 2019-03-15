@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Dictionary;
 
-public class FileReaderTester {
+public class FileReaderTest {
 
     private static final String PATH_XML_FILE_1 = "src\\main\\resources\\GoodsFile1.xml";
     private static final String PATH_XML_FILE_2 = "src\\main\\resources\\GoodsFile2.xml";
