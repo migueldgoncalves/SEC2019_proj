@@ -3,6 +3,7 @@ import java.io.InputStreamReader;
 import java.rmi.ConnectException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 
 public class Client extends UnicastRemoteObject implements iClient {
@@ -16,9 +17,29 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     public static void main(String[] args) {
         try {
+            //Prompt User For Input of Port To Register
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            iClient Clientproxy = new Client();
+
+            System.out.println("Please Introduce The Port You Want to Register:");
+            System.out.print("PORT Number: ");
+            String port = reader.readLine();
+
+            while (tryParseInt(port)) {
+                System.out.println("Introduce a valida Port Number:");
+                System.out.print("Port Number: ");
+                port = reader.readLine();
+            }
+            int portNumber = Integer.parseInt(port);
+
+            LocateRegistry.createRegistry(portNumber);
+
+            Naming.rebind("rmi://localhost:" + port + "/" + UserID, Clientproxy);
+
+            //End Of Client Registration in RMI
+
             proxy = (iProxy) Naming.lookup("rmi://localhost:8086/Notary");
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             System.out.println("Please Introduce User ID: ");
             String ID = reader.readLine();
 
