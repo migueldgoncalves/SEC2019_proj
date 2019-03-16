@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 
@@ -12,37 +9,46 @@ public class RSAKeyGenerator {
     }
 
     public static void main(String[] args) {
+        RSAStoreInFile(11);
+    }
+
+    public static void RSAStoreInFile(int NumberOfKeysToGenerate) {
         try {
-            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-            kpg.initialize(2048);
-            KeyPair kp = kpg.generateKeyPair();
-            Key pub = kp.getPublic();
-            Key pvt = kp.getPrivate();
+            for (int i = 0; i < NumberOfKeysToGenerate; i++) {
 
-            System.out.println("Please Insert Number of Keys To Generate:");
-            System.out.print("Number of Keys to Generate: ");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            String limit = reader.readLine();
-            int max = Integer.parseInt(limit);
+                KeyPair pair = generateRSAKeyPair();
 
-            for (int i = 0; i < max; i++) {
                 FileOutputStream out = new FileOutputStream("User" + i + ".key");
-                out.write(pvt.getEncoded());
+                out.write(pair.getPrivate().getEncoded());
                 out.close();
 
                 out = new FileOutputStream("User" + i + ".pub");
-                out.write(pub.getEncoded());
+                out.write(pair.getPublic().getEncoded());
                 out.close();
 
-                System.out.println("Private Key Format: " + pvt.getFormat());
+                System.out.println("Private Key Format: " + pair.getPrivate().getFormat());
 
-                System.out.println("Public Key Format: " + pub.getFormat());
+                System.out.println("Public Key Format: " + pair.getPublic().getFormat());
             }
 
             System.out.println("Finished Key Generation!");
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static KeyPair generateRSAKeyPair() {
+        try {
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(2048);
+            KeyPair kp = kpg.generateKeyPair();
+
+            return kp;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

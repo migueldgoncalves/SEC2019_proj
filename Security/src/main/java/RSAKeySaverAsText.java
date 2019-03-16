@@ -4,7 +4,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Base64;
 
-public class RSAKeySaver {
+public class RSAKeySaverAsText {
 
     public static void SavePublicKeyAsText(PublicKey key, String fileName) {
         try {
