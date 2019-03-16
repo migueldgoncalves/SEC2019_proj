@@ -12,6 +12,7 @@
         <module>Client</module>
         <module>Notary</module>
         <module>Common</module>
+        <module>Security</module>
     </modules>
 
     <build>

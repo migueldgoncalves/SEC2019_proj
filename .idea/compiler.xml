@@ -9,6 +9,7 @@
         <module name="Client" />
         <module name="Common" />
         <module name="Notary" />
+        <module name="Security" />
       </profile>
     </annotationProcessing>
   </component>
