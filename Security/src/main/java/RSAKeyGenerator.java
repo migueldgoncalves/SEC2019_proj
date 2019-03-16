@@ -8,10 +8,6 @@ public class RSAKeyGenerator {
 
     }
 
-    public static void main(String[] args) {
-        RSAStoreInFile(11);
-    }
-
     public static void RSAStoreInFile(int NumberOfKeysToGenerate) {
         try {
             for (int i = 0; i < NumberOfKeysToGenerate; i++) {
