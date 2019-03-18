@@ -52,14 +52,13 @@ public class Client extends UnicastRemoteObject implements iClient {
 
                     switch (input) {
                         case "1":
+                            proxy.sell(UserID, promptForGoodId());
                             break;
                         case "2":
-                            //Os clientes têm de se registar num porto conhecido de modo a podermos invocar um comando Buy a partir de outro cliente
                             invokeSeller();
                             break;
                         case "3":
-                            //To receive good ID
-                            //proxy.getStateOfGood(input);
+                            proxy.getStateOfGood(promptForGoodId());
                             break;
                         default:
                             System.out.println("The Introduced Input is not a valid number, please try again or type 'exit' to exit program.");
@@ -72,7 +71,7 @@ public class Client extends UnicastRemoteObject implements iClient {
                 reader.close();
                 System.exit(1);
             } else {
-                throw new Exception("The Introduced value is not convertable to an Integer type variable or user ID does not exist in the server. Exiting ...");
+                throw new Exception("The Introduced value is not convertible to an Integer type variable or user ID does not exist in the server. Exiting ...");
             }
 
         }catch (ConnectException e){
@@ -126,6 +125,26 @@ public class Client extends UnicastRemoteObject implements iClient {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    private static int promptForGoodId() {
+        try {
+            System.out.println("Please Introduce the Good ID you intend to sell:");
+            System.out.print("Good ID: ");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            String input = reader.readLine();
+            while (!tryParseInt(input)) {
+                System.out.println("The Introduced ID is invalid, please type only the number of the Good ID you want to sell");
+                System.out.print("Good ID: ");
+                input = reader.readLine();
+            }
+
+            return Integer.parseInt(input);
+
+        } catch (Exception e) {
+            System.out.println("Something went wrong during prompting for Good ID");
+            return -1;
         }
     }
 
