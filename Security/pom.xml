@@ -11,5 +11,14 @@
 
     <artifactId>Security</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>tecnico</groupId>
+            <artifactId>ldapjdk</artifactId>
+            <scope>system</scope>
+            <version>1.0</version>
+            <systemPath>C:/Users/migue/IdeaProjects/Java_Crypto/src/main/resources/pteidlibj.jar</systemPath>
+        </dependency>
+    </dependencies>
 
 </project>
