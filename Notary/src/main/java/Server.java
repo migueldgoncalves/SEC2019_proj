@@ -1,3 +1,5 @@
+import com.google.gson.Gson;
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -35,11 +37,13 @@ public class Server extends UnicastRemoteObject implements iProxy {
         }
     }
 
-    public String sell(int ownerId, int goodId) throws RemoteException {
+    public String sell(String jsonRequest) throws RemoteException {
+        Gson gson = new Gson();
+        Request pedido = gson.fromJson(jsonRequest, Request.class);
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
             ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
             for (Good i : temp) {
-                if (i.getGoodId() == goodId && i.getOwnerId() == ownerId) {
+                if (i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getUserId()) {
                     if (!i.isOnSale()) {
                         i.setOnSale(true);
                         return ("The Item is Now on Sale");
@@ -53,34 +57,34 @@ public class Server extends UnicastRemoteObject implements iProxy {
     }
 
     //return OwnerId and State of The Good
-    public String getStateOfGood(int goodId) throws RemoteException {
+    public String getStateOfGood(String jsonRequest) throws RemoteException {
+        Gson gson = new Gson();
+        Request pedido = gson.fromJson(jsonRequest, Request.class);
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
             ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
             for (Good i : temp) {
-                if (i.getGoodId() == goodId) {
+                if (i.getGoodId() == pedido.getGoodId()) {
                     return "<" + i.getOwnerId() + ", " + (i.isOnSale() ? "On-Sale>" : "Not-On-Sale>");
                 }
             }
         }
-        return "The GoodId " + goodId + " Is Not Present In The Server!";
+        return "The GoodId " + pedido.getGoodId() + " Is Not Present In The Server!";
     }
 
-    public String transferGood(int ownerId, int newOwnerId, int goodId) throws RemoteException {
+    public String transferGood(String jsonRequest) throws RemoteException {
+        Gson gson = new Gson();
+        Request pedido = gson.fromJson(jsonRequest, Request.class);
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
             ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
             for (Good i : temp) {
-                if (i.getGoodId() == goodId && i.getOwnerId() == ownerId && i.isOnSale()) {
-                    Good newOwner = new Good(newOwnerId, i.getGoodId(), i.getName(), !i.isOnSale());
+                if (i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getBuyerId() && i.isOnSale()) {
+                    Good newOwner = new Good(pedido.getBuyerId(), i.getGoodId(), i.getName(), !i.isOnSale());
                     temp.set(temp.indexOf(i), newOwner);
-                    return "The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + newOwnerId;
+                    return "The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId();
                 }
             }
         }
         return "The Good Id, Owner Id or New Owner ID is not present in the server!";
-    }
-
-    public boolean checkUserId(int ID) throws RemoteException {
-        return true;
     }
 
 }
