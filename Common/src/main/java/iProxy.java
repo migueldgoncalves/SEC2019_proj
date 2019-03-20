@@ -9,5 +9,4 @@ public interface iProxy extends Remote {
 
     String transferGood(String request) throws RemoteException;
 
-    boolean checkUserId(String request) throws RemoteException;
 }

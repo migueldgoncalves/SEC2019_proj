@@ -1,3 +1,5 @@
+import com.google.gson.Gson;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.rmi.ConnectException;
@@ -5,16 +7,29 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 public class Client extends UnicastRemoteObject implements iClient {
 
     private static iProxy proxy = null;
+    private static PrivateKey privKey;
+    private static PublicKey pubKey;
     private static int UserID;
 
     Client() throws RemoteException {
         super();
     }
 
+    private static void loadKeys() {
+        try {
+            privKey = RSAKeyLoader.getPriv("User" + UserID + ".key");
+            pubKey = RSAKeyLoader.getPub("User" + UserID + ".pub");
+            System.out.println("KEYS LOADED MY DUDE");
+        } catch (Exception e) {
+            System.out.println("SOMETHING WENT TO HELL WHILE LOADING THE DARNED KEYS!");
+        }
+    }
 
     public static void main(String[] args) {
         try {
@@ -27,7 +42,7 @@ public class Client extends UnicastRemoteObject implements iClient {
             String port = reader.readLine();
 
             while (!tryParseInt(port)) {
-                System.out.println("Introduce a valida Port Number:");
+                System.out.println("Introduce a valid Port Number:");
                 System.out.print("Port Number: ");
                 port = reader.readLine();
             }
@@ -44,18 +59,21 @@ public class Client extends UnicastRemoteObject implements iClient {
             System.out.println("Please Introduce User ID: ");
             String ID = reader.readLine();
 
-            if (tryParseInt(ID) && checkUserIdExistence(Integer.parseInt(ID))) {
+            if (tryParseInt(ID)) {
+
                 UserID = Integer.parseInt(ID);
+                loadKeys();
                 printMenu();
+
                 String input = reader.readLine();
                 while (tryParseInt(input) && !input.equals("exit")) {
 
                     switch (input) {
                         case "1":
-                            proxy.sell(UserID, promptForGoodId());
+                            proxy.sell(promptForGoodId());
                             break;
                         case "2":
-                            invokeSeller();
+                            System.out.println(invokeSeller());
                             break;
                         case "3":
                             proxy.getStateOfGood(promptForGoodId());
@@ -77,8 +95,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         }catch (ConnectException e){
             System.out.println("Could not connect to server. The server may be offline or unavailable due to network reasons.");
             System.exit(-1);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             System.exit(-1);
         }
@@ -108,8 +125,8 @@ public class Client extends UnicastRemoteObject implements iClient {
             }
             goodId = Integer.parseInt(temp);
 
-            System.out.println("Please Introduce GoodId:");
-            System.out.print("Good ID: ");
+            System.out.println("Please Introduce Port Number:");
+            System.out.print("Port Number: ");
             temp = reader.readLine();
             while (!tryParseInt(temp)) {
                 System.out.println("The Introduced Port Number is not a valid Number, please introduce ONLY numbers");
@@ -120,7 +137,23 @@ public class Client extends UnicastRemoteObject implements iClient {
 
             iClient clientProxy = (iClient) Naming.lookup("rmi://localhost:" + portNumber + "/" + sellerId);
 
-            return clientProxy.Buy(sellerId, UserID, goodId);
+            Request pedido = new Request();
+
+            pedido.setBuyerId(UserID);
+            pedido.setSellerId(sellerId);
+            pedido.setGoodId(goodId);
+            pedido.setSignature(null);
+
+            Gson gson = new Gson();
+            String jsonInString = gson.toJson(pedido);
+
+            pedido.setSignature(SignatureGenerator.generateSignature(privKey, jsonInString));
+
+            String request = gson.toJson(pedido);
+
+            System.out.println("This is the Jason Object: " + jsonInString + " THIS FUCKING PRINT IS IN INVOKE SELLER YOU FOOL");
+
+            return clientProxy.Buy(request);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -128,7 +161,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
-    private static int promptForGoodId() {
+    private static String promptForGoodId() {
         try {
             System.out.println("Please Introduce the Good ID you intend to sell:");
             System.out.print("Good ID: ");
@@ -140,11 +173,19 @@ public class Client extends UnicastRemoteObject implements iClient {
                 input = reader.readLine();
             }
 
-            return Integer.parseInt(input);
+            Request pedido = new Request();
+            pedido.setGoodId(Integer.parseInt(input));
+
+            Gson gson = new Gson();
+            String jsonToString = gson.toJson(pedido);
+
+            pedido.setSignature(SignatureGenerator.generateSignature(privKey, jsonToString));
+
+            return gson.toJson(pedido);
 
         } catch (Exception e) {
             System.out.println("Something went wrong during prompting for Good ID");
-            return -1;
+            return null;
         }
     }
 
@@ -158,26 +199,24 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
-    private static boolean checkUserIdExistence(int ID) {
-        try {
-            return proxy.checkUserId(ID);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
-        return false;
-    }
-
     private static void printMenu() {
         System.out.print("Please Introduce The Desired Option Number: \n 1. Sell an Item. \n 2. Buy an Item. \n 3. Get Item State. \n Option Number: ");
     }
 
 
-
-    public String Buy(int ownerId, int newOwnerId, int goodId) {
+    public String Buy(String request) {
         try {
-            iProxy proxy = (iProxy) Naming.lookup("rmi://localhost:8086/Notary");
-            return proxy.transferGood(ownerId, newOwnerId, goodId);
+            //Signature Verification
+            Gson gson = new Gson();
+            Request received = gson.fromJson(request, Request.class);
+            byte[] temp = received.getSignature();
+            received.setSignature(null);
+            SignatureGenerator.verifySignature(RSAKeyLoader.getPub("User" + received.getBuyerId() + ".pub"), temp, gson.toJson(received));
+
+            //Request To Transfer Item
+            received.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(received)));
+
+            return proxy.transferGood(gson.toJson(received));
         } catch (Exception e) {
             System.out.println("Something Went Wrong During the Transfer");
             return "The Good Transfer Has Failed. Please Try Again.";
