@@ -77,7 +77,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
             ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
             for (Good i : temp) {
-                if (i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getBuyerId() && i.isOnSale()) {
+                if (i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getSellerId() && i.isOnSale()) {
                     Good newOwner = new Good(pedido.getBuyerId(), i.getGoodId(), i.getName(), !i.isOnSale());
                     temp.set(temp.indexOf(i), newOwner);
                     return "The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId();
