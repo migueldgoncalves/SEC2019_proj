@@ -17,7 +17,7 @@
             <artifactId>ldapjdk</artifactId>
             <scope>system</scope>
             <version>1.0</version>
-            <systemPath>C:/Users/migue/IdeaProjects/Java_Crypto/src/main/resources/pteidlibj.jar</systemPath>
+            <systemPath>${basedir}/../pteidlibj.jar</systemPath>
         </dependency>
     </dependencies>
 
