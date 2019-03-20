@@ -6,6 +6,9 @@ import sun.security.pkcs11.wrapper.*;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.security.PublicKey;
+import java.security.Signature;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -28,7 +31,12 @@ public class eIDLib_PKCS11_test {
     private static final int Global_Chambersign_Root_2008 = 11;
     private static final int MULTICERT_Root_Certification_Authority_01 = 12;
 
-    private static final int CERTIFICATE_TO_USE = Cartao_de_Cidadao_001;
+    private static final int CERTIFICATE_TO_USE = CITIZEN_AUTHENTICATION_CERTIFICATE;
+
+    private static final int MAX_OBJECT_COUNT = 5; //Max number of object handles to get in a search
+
+    private static final int AUTHENTICATION_PRIVATE_KEY_HANDLE = 0;
+    // Setting this to 1 will return digital signature private key handle, which has legal value!
 
     // Slot - A logical reader that potentially contains a token
     // Token - The logical view of a cryptographic device defined by Cryptoki
@@ -66,6 +74,12 @@ public class eIDLib_PKCS11_test {
 
             Class pkcs11Class = Class.forName("sun.security.pkcs11.wrapper.PKCS11"); //Returns a PKCS11 class object
 
+            // getInstance
+            // public static synchronized PKCS11 getInstance(String pkcs11ModulePath,
+            //            String functionList, CK_C_INITIALIZE_ARGS pInitArgs,
+            //            boolean omitInitialize)
+            // RETURNS PKCS11 object
+
             // Returns Method object: "getInstance" is the method name, with arguments (String, String, CK_C_INITIALIZE_ARGS, boolean)
             Method getInstanceMethode = pkcs11Class.getDeclaredMethod("getInstance", String.class, String.class, CK_C_INITIALIZE_ARGS.class, boolean.class);
             // Invokes getInstance method with args (libName, "C_GetFunctionList", null, false). Obj can be null because getInstance is static
@@ -75,9 +89,14 @@ public class eIDLib_PKCS11_test {
             System.out.println("            //Open the PKCS11 session");
 
             // C_OpenSession
-            // Opens a connection between an application and a particular token or sets up an application callback for token insertion
+            // public native long C_OpenSession(long slotID, long flags,
+            //      Object pApplication, CK_NOTIFY Notify)
+            // Opens a connection between an application and a particular token or sets up an application callback
+            //      for token insertion
             // SLOT_ID - Identifies logic reader potentially with token, in this case the smart card connected
             // PKCS11Constants.CKF_SERIAL_SESSION - Corresponds to CK_FLAGS parameter, it is a valid argument
+            // pApplication - Passed to callback, null in this case
+            // Notify - Notify the callback function, also null in this case
             // RETURNS session's handle
 
             long p11_session = pkcs11.C_OpenSession(SLOT_ID, PKCS11Constants.CKF_SERIAL_SESSION, null, null);
@@ -95,10 +114,12 @@ public class eIDLib_PKCS11_test {
             attributes[0].pValue = new Long(PKCS11Constants.CKO_PRIVATE_KEY); // CKO_PRIVATE_KEY objects hold private keys
 
             // C_FindObjectsInit
+            // public native void C_FindObjectsInit(long hSession, CK_ATTRIBUTE[] pTemplate)
             // Initializes a search for token and session objects that match a template
             // p11_session - Session's handle
             // attributes - The value of this argument should point to a search template that
             // specifies the attribute values to match
+            // RETURNS void
 
             // After calling C_FindObjectsInit, the application may call C_FindObjects one or more times to obtain handles
             // for objects matching the template, and then eventually call C_FindObjectsFinal to finish the active search
@@ -107,31 +128,79 @@ public class eIDLib_PKCS11_test {
             pkcs11.C_FindObjectsInit(p11_session, attributes);
 
             // C_FindObjects
-            // to be continued...
+            // public native long[] C_FindObjects(long hSession, long ulMaxObjectCount)
+            // Continues a search for token and session objects that match a template, obtaining additional object handles
+            // p11_session - Session's handle
+            // MAX_OBJECT_COUNT - Max number of object handles to get in the search
+            // RETURNS object handles
 
-            long[] keyHandles = pkcs11.C_FindObjects(p11_session, 5);
+            long[] keyHandles = pkcs11.C_FindObjects(p11_session, MAX_OBJECT_COUNT);
 
             // points to auth_key
             System.out.println("            //points to auth_key. No. of keys:" + keyHandles.length);
 
-            long signatureKey = keyHandles[0];        //test with other keys to see what you get
+            // Authentication private key handle - Private keys cannot be directly read from Cartao de Cidadao
+            long signatureKey = keyHandles[AUTHENTICATION_PRIVATE_KEY_HANDLE];        //test with other keys to see what you get
+
+            // C_FindObjectsFinal
+            // public native void C_FindObjectsFinal(long hSession)
+            // Finishes a search for token and session objects
+            // p11_session - Session's handle
+            // RETURNS void
+
             pkcs11.C_FindObjectsFinal(p11_session);
 
             // initialize the signature method
             System.out.println("            //initialize the signature method");
-            CK_MECHANISM mechanism = new CK_MECHANISM();
-            mechanism.mechanism = PKCS11Constants.CKM_SHA1_RSA_PKCS;
-            mechanism.pParameter = null;
-            pkcs11.C_SignInit(p11_session, mechanism, signatureKey);
 
-            //...
+            // CK_MECHANISM is a structure that specifies a particular mechanism and any parameters it requires
+
+            CK_MECHANISM mechanism = new CK_MECHANISM();
+            // "mechanism" defines mechanism type (There are several available)
+            mechanism.mechanism = PKCS11Constants.CKM_SHA1_RSA_PKCS;
+            // pParameter is a pointer to the parameter required by mechanism type - In this case no parameter is needed
+            mechanism.pParameter = null;
+
+            // C_SignInit
+            // public synchronized void C_SignInit(long hSession, CK_MECHANISM pMechanism, long hKey)
+            // Initializes a signature (private key encryption) operation, where the signature is (will be) an appendix to
+            //      the data, and plaintext cannot be recovered from the signature
+            // p11_session - Session's handle
+            // mechanism - Signature mechanism
+            // signatureKey - Handle to private key
+            // RETURNS void
+
+            pkcs11.C_SignInit(p11_session, mechanism, signatureKey);
 
             // sign
             System.out.println("            //sign");
-            //byte[] signature = pkcs11.C_Sign(p11_session, "data".getBytes(Charset.forName("UTF-8"))); //WILL ask for authentication PIN
-            //System.out.println("            //signature:"+encoder.encode(signature));
 
-            //...
+            // C_Sign
+            // public native byte[] C_Sign(long hSession, byte[] pData)
+            // Signs (encrypts with private key) data in a single part, where the signature is (will be) an appendix to the
+            //      data, and plaintext cannot be recovered from the signature
+            // p11_session - Session's handle
+            // pData - Data to sign
+            // RETURNS signature
+
+            byte[] signature = pkcs11.C_Sign(p11_session, "data".getBytes(Charset.forName("UTF-8"))); //WILL ask for authentication PIN
+            System.out.println("            //signature:" + encoder.encode(signature));
+
+            for (int i = 0; i < signature.length; i++) {
+                System.out.print(signature[i]);
+            }
+            System.out.println("\n");
+
+            X509Certificate certificate = getCertFromByteArray(getCertificateInBytes(CITIZEN_AUTHENTICATION_CERTIFICATE));
+            PublicKey key = certificate.getPublicKey();
+
+            Signature signatureClass = Signature.getInstance("SHA1withRSA");
+            signatureClass.initVerify(key);
+            signatureClass.update("data".getBytes(Charset.forName("UTF-8")));
+            System.out.println("Result is: " + signatureClass.verify(signature));
+
+            //pkcs11.C_VerifyInit(p11_session, mechanism, signatureKey);
+            //pkcs11.C_Verify(p11_session, "data".getBytes(Charset.forName("UTF-8")), signature);
 
             pteid.Exit(pteid.PTEID_EXIT_LEAVE_CARD); //OBRIGATORIO Termina a eID Lib
 
