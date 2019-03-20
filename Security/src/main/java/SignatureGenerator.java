@@ -5,7 +5,7 @@ import java.security.Signature;
 
 public class SignatureGenerator {
 
-    public static byte[] generateSignature(PrivateKey key, String message, PublicKey pubKey) {
+    public static byte[] generateSignature(PrivateKey key, String message) {
         try {
             Signature sign = Signature.getInstance("SHA512withRSA");
 

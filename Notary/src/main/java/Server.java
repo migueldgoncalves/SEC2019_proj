@@ -7,6 +7,7 @@ import java.util.Enumeration;
 public class Server extends UnicastRemoteObject implements iProxy {
 
     private Dictionary<Integer, ArrayList<Good>> goods;
+    private SignatureGenerator signatureHandler;
 
     public Server(String FilePath) throws RemoteException {
         super();
