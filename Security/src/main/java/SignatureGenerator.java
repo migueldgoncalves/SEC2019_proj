@@ -25,7 +25,7 @@ public class SignatureGenerator {
         }
     }
 
-    public static void verifySignature(PublicKey key, byte[] data, String messageToVerify) {
+    public static boolean verifySignature(PublicKey key, byte[] data, String messageToVerify) {
         try {
             Signature sign = Signature.getInstance("SHA512withRSA");
             sign.initVerify(key);
@@ -38,9 +38,11 @@ public class SignatureGenerator {
             } else {
                 System.out.println("Signature failed");
             }
+            return valid;
 
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
 
