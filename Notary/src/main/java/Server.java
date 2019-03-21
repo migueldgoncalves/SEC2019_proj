@@ -4,6 +4,10 @@ import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.security.PublicKey;
 import java.util.*;
 
 public class Server extends UnicastRemoteObject implements iProxy {
@@ -17,6 +21,13 @@ public class Server extends UnicastRemoteObject implements iProxy {
         try {
             FileReader fileReader = new FileReader();
             goods = fileReader.goodsListConstructor(FilePath);
+
+            //Add public key from Cartao de Cidadao to file
+            PublicKey key = CartaoCidadao.getPublicKeyFromCC();
+            // User directory will include Notary directory, which we want to remove from path
+            String baseDir = System.getProperty("user.dir").replace("\\Notary", "");
+            RSAKeySaverAsText.SavePublicKeyAsText(key, baseDir + "\\Client\\src\\main\\resources\\Notary");
+
             for (int i = 0; i < 9; i++) {
                 publicKeys.put(i, RSAKeyLoader.getPub("src\\main\\resources\\User" + i + ".pub"));
             }

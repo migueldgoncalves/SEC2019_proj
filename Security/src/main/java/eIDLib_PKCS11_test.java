@@ -16,20 +16,9 @@ import java.security.cert.X509Certificate;
 
 public class eIDLib_PKCS11_test {
 
-    // Available certificates in Cartao de Cidadao
+    // Main available certificates in Cartao de Cidadao
     private static final int CITIZEN_AUTHENTICATION_CERTIFICATE = 0; // WILL require PIN
     private static final int CITIZEN_SIGNATURE_CERTIFICATE = 1; //WILL require PIN, has legal value!
-    private static final int SIGNATURE_SUB_CA = 2;
-    private static final int AUTHENTICATION_SUB_CA = 3;
-    private static final int Baltimore_CyberTrust_Root = 4;
-    private static final int Cartao_de_Cidadao_001 = 5;
-    private static final int Cartao_de_Cidadao_002 = 6;
-    private static final int Cartao_de_Cidadao_003 = 7;
-    private static final int Cartao_de_Cidadao_004 = 8;
-    private static final int COMODO_RSA_Certification_Authority = 9;
-    private static final int ECRaizEstado = 10;
-    private static final int Global_Chambersign_Root_2008 = 11;
-    private static final int MULTICERT_Root_Certification_Authority_01 = 12;
 
     private static final int CERTIFICATE_TO_USE = CITIZEN_AUTHENTICATION_CERTIFICATE;
 
@@ -42,7 +31,11 @@ public class eIDLib_PKCS11_test {
     // Token - The logical view of a cryptographic device defined by Cryptoki
     private static final int SLOT_ID = 0; //0 is the only valid value if you have a single smart card
 
-    public static void main(String[] args) {
+    private static PKCS11 pkcs11 = null;
+    private static String libName = "libbeidpkcs11.so"; //For Linux - Will be changed below if Windows or Mac
+    private static X509Certificate cert = null;
+
+    public static void setUp() {
 
         try {
             System.out.println("            //Load the PTEidlibj");
@@ -51,12 +44,8 @@ public class eIDLib_PKCS11_test {
             pteid.Init(""); // Initializes the eID Lib, requires card reader AND card inserted
             pteid.SetSODChecking(false); // Don't check the integrity of the ID, address and photo (!)
 
-            PKCS11 pkcs11;
             String osName = System.getProperty("os.name");
 
-            java.util.Base64.Encoder encoder = java.util.Base64.getEncoder();
-
-            String libName = "libbeidpkcs11.so"; //For Linux - Will be changed below if Windows or Mac
             if (-1 != osName.indexOf("Windows"))
                 libName = "pteidpkcs11.dll";
             else if (-1 != osName.indexOf("Mac"))
@@ -66,8 +55,15 @@ public class eIDLib_PKCS11_test {
             System.out.println("            -- accessing the ID  data via the pteidlib interface");
 
             // There are 13 certificates and 2 private keys in the card
-            X509Certificate cert = getCertFromByteArray(getCertificateInBytes(CERTIFICATE_TO_USE)); //Does NOT require PINs
-            System.out.println("Printing certificate: " + cert);
+            cert = getCertFromByteArray(getCertificateInBytes(CERTIFICATE_TO_USE)); //Does NOT require PINs
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static byte[] sign(String message) {
+
+        try {
 
             // access the ID and Address data via the pteidlib
             System.out.println("            -- generating signature via the PKCS11 interface");
@@ -183,8 +179,7 @@ public class eIDLib_PKCS11_test {
             // pData - Data to sign
             // RETURNS signature
 
-            byte[] signature = pkcs11.C_Sign(p11_session, "data".getBytes(Charset.forName("UTF-8"))); //WILL ask for authentication PIN
-            System.out.println("            //signature:" + encoder.encode(signature));
+            byte[] signature = pkcs11.C_Sign(p11_session, message.getBytes(Charset.forName("UTF-8"))); //WILL ask for authentication PIN
 
             for (int i = 0; i < signature.length; i++) {
                 System.out.print(signature[i]);
@@ -202,10 +197,21 @@ public class eIDLib_PKCS11_test {
             //pkcs11.C_VerifyInit(p11_session, mechanism, signatureKey);
             //pkcs11.C_Verify(p11_session, "data".getBytes(Charset.forName("UTF-8")), signature);
 
-            pteid.Exit(pteid.PTEID_EXIT_LEAVE_CARD); //OBRIGATORIO Termina a eID Lib
+            return signature;
 
         } catch (Throwable e) {
             System.out.println("[Catch] Exception: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void exitPteid() {
+        try {
+            pteid.Exit(pteid.PTEID_EXIT_LEAVE_CARD); //OBRIGATORIO Termina a eID Lib
+            pkcs11 = null;
+            cert = null;
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -222,10 +228,19 @@ public class eIDLib_PKCS11_test {
         return certificate_bytes;
     }
 
-    public static X509Certificate getCertFromByteArray(byte[] certificateEncoded) throws CertificateException {
+    private static X509Certificate getCertFromByteArray(byte[] certificateEncoded) throws CertificateException {
         CertificateFactory f = CertificateFactory.getInstance("X.509");
         InputStream in = new ByteArrayInputStream(certificateEncoded);
         X509Certificate cert = (X509Certificate) f.generateCertificate(in);
         return cert;
+    }
+
+    public static PublicKey getPublicKeyFromCertificate() {
+        try {
+            return getCertFromByteArray(getCertificateInBytes(CERTIFICATE_TO_USE)).getPublicKey();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
