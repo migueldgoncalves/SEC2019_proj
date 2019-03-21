@@ -46,4 +46,25 @@ public class SignatureGenerator {
         }
     }
 
+    public static boolean verifySignatureCartaoCidadao(PublicKey key, byte[] data, String messageToVerify) {
+        try {
+            Signature sign = Signature.getInstance("SHA1withRSA");
+            sign.initVerify(key);
+            sign.update(messageToVerify.getBytes());
+
+            boolean valid = sign.verify(data);
+
+            if (valid) {
+                System.out.println("Signature verified");
+            } else {
+                System.out.println("Signature failed");
+            }
+            return valid;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
