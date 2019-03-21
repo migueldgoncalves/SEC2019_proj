@@ -10,6 +10,7 @@ public class CartaoCidadao {
             return signature;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
     }
 
@@ -19,6 +20,7 @@ public class CartaoCidadao {
             return SignatureGenerator.verifySignatureCartaoCidadao(key, signature, message);
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -30,6 +32,7 @@ public class CartaoCidadao {
             return key;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
     }
 }
