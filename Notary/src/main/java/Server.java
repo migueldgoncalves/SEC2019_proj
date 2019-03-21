@@ -11,6 +11,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.PublicKey;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
@@ -189,4 +191,27 @@ public class Server extends UnicastRemoteObject implements iProxy {
         }
     }
 
+    public String wait(int time) {
+        try {
+            return Executors.newSingleThreadExecutor().submit(new Wait(time)).get();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Exception";
+        }
+    }
+
+}
+
+class Wait implements Callable<String> {
+    private int time;
+
+    public Wait(int time) {
+        this.time = time;
+    }
+
+    @Override
+    public String call() throws Exception {
+        Thread.sleep(this.time);
+        return "Finished " + time;
+    }
 }
