@@ -1,4 +1,3 @@
-import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -16,7 +15,7 @@ public class SignatureGenerator {
 
             byte[] signature = sign.sign();
 
-            System.out.println("Digital Signature for given Message: " + new String(signature, StandardCharsets.UTF_8));
+            //System.out.println("Digital Signature for given Message: " + new String(signature, StandardCharsets.UTF_8));
 
             return signature;
         } catch (Exception e) {
@@ -31,14 +30,7 @@ public class SignatureGenerator {
             sign.initVerify(key);
             sign.update(messageToVerify.getBytes());
 
-            boolean valid = sign.verify(data);
-
-            if (valid) {
-                System.out.println("Signature verified");
-            } else {
-                System.out.println("Signature failed");
-            }
-            return valid;
+            return sign.verify(data);
 
         } catch (Exception e) {
             e.printStackTrace();

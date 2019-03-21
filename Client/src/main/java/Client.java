@@ -23,10 +23,11 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     private static void loadKeys() {
         try {
-            privKey = RSAKeyLoader.getPriv("User" + UserID + ".key");
-            pubKey = RSAKeyLoader.getPub("User" + UserID + ".pub");
+            privKey = RSAKeyLoader.getPriv("F:\\Documentos\\GitHub\\SEC2019_proj\\Client\\src\\main\\resources\\User" + UserID + ".key");
+            pubKey = RSAKeyLoader.getPub("F:\\Documentos\\GitHub\\SEC2019_proj\\Client\\src\\main\\resources\\User" + UserID + ".pub");
             System.out.println("KEYS LOADED MY DUDE");
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("SOMETHING WENT TO HELL WHILE LOADING THE DARNED KEYS!");
         }
     }
@@ -70,13 +71,13 @@ public class Client extends UnicastRemoteObject implements iClient {
 
                     switch (input) {
                         case "1":
-                            proxy.sell(promptForGoodId());
+                            System.out.println(proxy.sell(promptForGoodId()));
                             break;
                         case "2":
                             System.out.println(invokeSeller());
                             break;
                         case "3":
-                            proxy.getStateOfGood(promptForGoodId());
+                            System.out.println(proxy.getStateOfGood(promptForGoodId()));
                             break;
                         default:
                             System.out.println("The Introduced Input is not a valid number, please try again or type 'exit' to exit program.");
@@ -139,6 +140,7 @@ public class Client extends UnicastRemoteObject implements iClient {
 
             Request pedido = new Request();
 
+            pedido.setUserId(UserID);
             pedido.setBuyerId(UserID);
             pedido.setSellerId(sellerId);
             pedido.setGoodId(goodId);
@@ -163,23 +165,23 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     private static String promptForGoodId() {
         try {
-            System.out.println("Please Introduce the Good ID you intend to sell:");
+            System.out.println("Please Introduce the Good ID:");
             System.out.print("Good ID: ");
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             String input = reader.readLine();
             while (!tryParseInt(input)) {
-                System.out.println("The Introduced ID is invalid, please type only the number of the Good ID you want to sell");
+                System.out.println("The Introduced ID is invalid, please type only the number of the Good ID you want");
                 System.out.print("Good ID: ");
                 input = reader.readLine();
             }
 
             Request pedido = new Request();
             pedido.setGoodId(Integer.parseInt(input));
-
+            pedido.setUserId(UserID);
             Gson gson = new Gson();
             String jsonToString = gson.toJson(pedido);
-
-            pedido.setSignature(SignatureGenerator.generateSignature(privKey, jsonToString));
+            byte[] sig = SignatureGenerator.generateSignature(privKey, jsonToString);
+            pedido.setSignature(sig);
 
             return gson.toJson(pedido);
 
