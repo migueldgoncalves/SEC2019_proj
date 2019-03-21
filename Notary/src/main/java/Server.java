@@ -1,23 +1,29 @@
 import com.google.gson.Gson;
 
+import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Enumeration;
+import java.security.PublicKey;
+import java.util.*;
 
 public class Server extends UnicastRemoteObject implements iProxy {
 
     private Dictionary<Integer, ArrayList<Good>> goods;
     private SignatureGenerator signatureHandler;
+    private Map<Integer, PublicKey> publicKeys = new HashMap<>();
 
     public Server(String FilePath) throws RemoteException {
         super();
         try {
             FileReader fileReader = new FileReader();
             goods = fileReader.goodsListConstructor(FilePath);
+            for (int i = 0; i < 9; i++) {
+                publicKeys.put(i, RSAKeyLoader.getPub("src\\main\\resources\\User" + i + ".pub"));
+            }
+            System.out.println(publicKeys.size() + " Keys have been loaded into the Notary");
         } catch (Exception e) {
             System.out.println("Something Went Wrong");
+            e.printStackTrace();
         }
     }
 
@@ -26,6 +32,10 @@ public class Server extends UnicastRemoteObject implements iProxy {
         try {
             FileReader fileReader = new FileReader();
             goods = fileReader.goodsListConstructor("Notary\\src\\main\\resources\\GoodsFile1.xml");
+            for (int i = 0; i < 9; i++) {
+                publicKeys.put(i, RSAKeyLoader.getPub("Notary\\src\\main\\resources\\User" + i + ".pub"));
+            }
+            System.out.println(publicKeys.size() + " Keys have been loaded into the Notary");
         } catch (Exception e) {
             System.out.println("File Was Not Found! ERROR.");
         }
@@ -38,8 +48,15 @@ public class Server extends UnicastRemoteObject implements iProxy {
     }
 
     public String sell(String jsonRequest) throws RemoteException {
+        //Transform to Request Object
         Gson gson = new Gson();
         Request pedido = gson.fromJson(jsonRequest, Request.class);
+
+        //Verify Signature withing Object
+        if (!validateRequest(jsonRequest, pedido)) {
+            return "Invalid Authorization To Invoke Method Sell on Server!";
+        }
+
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
             ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
             for (Good i : temp) {
@@ -60,6 +77,12 @@ public class Server extends UnicastRemoteObject implements iProxy {
     public String getStateOfGood(String jsonRequest) throws RemoteException {
         Gson gson = new Gson();
         Request pedido = gson.fromJson(jsonRequest, Request.class);
+
+        //Verify Signature withing Object
+        if (!validateRequest(jsonRequest, pedido)) {
+            return "Invalid Authorization to Invoke Method Get State Of Good in Server!";
+        }
+
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
             ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
             for (Good i : temp) {
@@ -72,8 +95,14 @@ public class Server extends UnicastRemoteObject implements iProxy {
     }
 
     public String transferGood(String jsonRequest) throws RemoteException {
+
         Gson gson = new Gson();
         Request pedido = gson.fromJson(jsonRequest, Request.class);
+
+        if (!validateRequest(jsonRequest, pedido)) {
+            return "Invalid Authorization to Transfer Good!";
+        }
+
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
             ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
             for (Good i : temp) {
@@ -85,6 +114,25 @@ public class Server extends UnicastRemoteObject implements iProxy {
             }
         }
         return "The Good Id, Owner Id or New Owner ID is not present in the server!";
+    }
+
+    private boolean validateRequest(String jsonRequest, Request pedido) {
+        Gson gson = new Gson();
+        //Verify Signature withing Object
+        byte[] signature = pedido.getSignature();
+        pedido.setSignature(null);
+
+        return SignatureGenerator.verifySignature(publicKeys.get(pedido.getUserId()), signature, gson.toJson(pedido));
+    }
+
+    private synchronized void saveServerState() {
+        try {
+            Gson gson = new Gson();
+            PrintWriter writer = new PrintWriter("ServerState.old");
+            writer.println(gson.toJson(this));
+        } catch (Exception e) {
+
+        }
     }
 
 }

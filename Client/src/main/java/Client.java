@@ -139,6 +139,7 @@ public class Client extends UnicastRemoteObject implements iClient {
 
             Request pedido = new Request();
 
+            pedido.setUserId(UserID);
             pedido.setBuyerId(UserID);
             pedido.setSellerId(sellerId);
             pedido.setGoodId(goodId);
@@ -175,11 +176,11 @@ public class Client extends UnicastRemoteObject implements iClient {
 
             Request pedido = new Request();
             pedido.setGoodId(Integer.parseInt(input));
-
+            pedido.setUserId(UserID);
             Gson gson = new Gson();
             String jsonToString = gson.toJson(pedido);
-
-            pedido.setSignature(SignatureGenerator.generateSignature(privKey, jsonToString));
+            byte[] sig = SignatureGenerator.generateSignature(privKey, jsonToString);
+            pedido.setSignature(sig);
 
             return gson.toJson(pedido);
 

@@ -31,14 +31,7 @@ public class SignatureGenerator {
             sign.initVerify(key);
             sign.update(messageToVerify.getBytes());
 
-            boolean valid = sign.verify(data);
-
-            if (valid) {
-                System.out.println("Signature verified");
-            } else {
-                System.out.println("Signature failed");
-            }
-            return valid;
+            return sign.verify(data);
 
         } catch (Exception e) {
             e.printStackTrace();
