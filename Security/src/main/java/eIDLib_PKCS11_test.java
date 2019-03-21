@@ -35,7 +35,7 @@ public class eIDLib_PKCS11_test {
     private static String libName = "libbeidpkcs11.so"; //For Linux - Will be changed below if Windows or Mac
     private static X509Certificate cert = null;
 
-    public static void setUp() {
+    public static void setUp() throws Exception {
 
         try {
             System.out.println("            //Load the PTEidlibj");
@@ -56,8 +56,12 @@ public class eIDLib_PKCS11_test {
 
             // There are 13 certificates and 2 private keys in the card
             cert = getCertFromByteArray(getCertificateInBytes(CERTIFICATE_TO_USE)); //Does NOT require PINs
+        /*} catch (PTEID_ExNoReader e) {
+            throw new Exception("A smart card reader must in inserted");
+        } catch (PTEID_ExNoCardPresent e) {
+            throw new Exception("A smart card must be inserted in the card reader");*/
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception("An unexpected situation ocurred");
         }
     }
 
