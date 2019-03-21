@@ -9,4 +9,6 @@ public interface iProxy extends Remote {
 
     String transferGood(String request) throws RemoteException;
 
+    String wait(int time) throws RemoteException;
+
 }

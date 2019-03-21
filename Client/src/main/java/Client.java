@@ -225,4 +225,14 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
+    public void testMethod() {
+        try {
+            BufferedReader buff = new BufferedReader(new InputStreamReader(System.in));
+            System.out.println(proxy.wait(Integer.parseInt(buff.readLine())));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }
