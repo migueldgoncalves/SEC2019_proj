@@ -41,8 +41,9 @@ public class ServerTest {
         try {
             Gson gson = new Gson();
             Request pedido = new Request();
-            pedido.setUserId(0);
+            pedido.setUserId(1);
             pedido.setGoodId(0);
+            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv("src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             String temp = servidor.sell(gson.toJson(pedido));
             Assert.assertEquals("The Requested Item To Be Put on Sell Is Not Available In The System", temp);
         } catch (Exception e) {
@@ -77,6 +78,8 @@ public class ServerTest {
             Gson gson = new Gson();
             Request pedido = new Request();
             pedido.setGoodId(10);
+            pedido.setUserId(1);
+            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv("src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             String temp = servidor.getStateOfGood(gson.toJson(pedido));
             Assert.assertEquals("The GoodId 10 Is Not Present In The Server!", temp);
         } catch (Exception e) {
@@ -110,6 +113,12 @@ public class ServerTest {
             Assert.fail();
         }
 
+    }
+
+    @Test
+    public void methodWriteStateAtomically() {
+        servidor.saveServerState("Backups/");
+        servidor.getSystemState();
     }
 
     @After

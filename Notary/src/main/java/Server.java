@@ -1,14 +1,18 @@
 import com.google.gson.Gson;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.io.PrintWriter;
+import java.nio.file.AccessDeniedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.security.PublicKey;
 import java.util.*;
+
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
 public class Server extends UnicastRemoteObject implements iProxy {
 
@@ -106,7 +110,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
     }
 
     public String transferGood(String jsonRequest) throws RemoteException {
-
         Gson gson = new Gson();
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
@@ -118,9 +121,11 @@ public class Server extends UnicastRemoteObject implements iProxy {
             ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
             for (Good i : temp) {
                 if (i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getSellerId() && i.isOnSale()) {
-                    Good newOwner = new Good(pedido.getBuyerId(), i.getGoodId(), i.getName(), !i.isOnSale());
-                    temp.set(temp.indexOf(i), newOwner);
-                    return "The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId();
+                    synchronized (i) {
+                        Good newOwner = new Good(pedido.getBuyerId(), i.getGoodId(), i.getName(), !i.isOnSale());
+                        temp.set(temp.indexOf(i), newOwner);
+                        return "The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId();
+                    }
                 }
             }
         }
@@ -136,13 +141,51 @@ public class Server extends UnicastRemoteObject implements iProxy {
         return SignatureGenerator.verifySignature(publicKeys.get(pedido.getUserId()), signature, gson.toJson(pedido));
     }
 
-    private synchronized void saveServerState() {
+    //TO ALTER TO PRIVATE IN THE FUTURE
+    public synchronized boolean saveServerState(String path) {
         try {
             Gson gson = new Gson();
-            PrintWriter writer = new PrintWriter("ServerState.old");
+            File file = new File("ServerState.new");
+            PrintWriter writer = new PrintWriter("ServerState.new");
             writer.println(gson.toJson(this));
+            writer.close();
         } catch (Exception e) {
+            System.out.println("A Crash occured during system save state.");
+            e.printStackTrace();
+            return false;
+        }
 
+        try {
+            Path path1 = Paths.get(path);
+            Path path2 = path1.resolve("../ServerState.new");
+            Path path3 = path1.resolve("ServerState.old");
+            Files.move(path2, path3, ATOMIC_MOVE);
+
+            return true;
+        } catch (AccessDeniedException e) {
+            System.out.println("Run as Administrator!");
+            return false;
+        } catch (Exception e) {
+            System.out.println("An error ocurred during system save!");
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+    public void getSystemState() {
+        try {
+            Gson gson = new Gson();
+            String jsonString = FileUtils.readFileToString(new File("Backups/ServerState.old"));
+            String temp = gson.toJson(this);
+            jsonString = jsonString.replace("\n", "").replace("\r", "");
+            if (jsonString.equals(temp)) {
+                System.out.println("THEY ARE THE SAME STATE");
+            }
+            System.out.println(jsonString.length());
+            System.out.println(temp.length());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
