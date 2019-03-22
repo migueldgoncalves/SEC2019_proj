@@ -9,6 +9,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -156,6 +157,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
+    //TODO: Send Stuff as json for server
     private static int prompForGoodId() {
         try {
             System.out.println("Please Introduce GoodId:");
@@ -203,6 +205,7 @@ public class Client extends UnicastRemoteObject implements iClient {
             pedido.setSellerId(sellerId);
             pedido.setGoodId(goodId);
             pedido.setSignature(null);
+            pedido.setNounce(new Random().nextInt());
 
             Gson gson = new Gson();
             String jsonInString = gson.toJson(pedido);
@@ -235,6 +238,7 @@ public class Client extends UnicastRemoteObject implements iClient {
             Request pedido = new Request();
             pedido.setGoodId(Integer.parseInt(input));
             pedido.setUserId(UserID);
+            pedido.setNounce(new Random().nextInt());
             Gson gson = new Gson();
             String jsonToString = gson.toJson(pedido);
             byte[] sig = SignatureGenerator.generateSignature(privKey, jsonToString);
