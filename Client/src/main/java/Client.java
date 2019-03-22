@@ -157,7 +157,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
-    //TODO: Send Stuff as json for server
+    //DO NOT TOUCH THIS FUCKING METHOD, DO NOT ATTEMPT TO UNDERSTAND WITHOUT PROPER ANALYSIS
     private static int prompForGoodId() {
         try {
             System.out.println("Please Introduce GoodId:");
