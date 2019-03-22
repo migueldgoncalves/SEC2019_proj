@@ -1,7 +1,9 @@
 import com.google.gson.Gson;
 import org.apache.commons.io.FileUtils;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
@@ -10,9 +12,8 @@ import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.PublicKey;
+import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
 
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
@@ -21,6 +22,36 @@ public class Server extends UnicastRemoteObject implements iProxy {
     private Dictionary<Integer, ArrayList<Good>> goods;
     private SignatureGenerator signatureHandler;
     private Map<Integer, PublicKey> publicKeys = new HashMap<>();
+
+    public String sell(String jsonRequest) throws RemoteException {
+        //Transform to Request Object
+        Gson gson = new Gson();
+        Request pedido = gson.fromJson(jsonRequest, Request.class);
+
+        //Verify Signature withing Object
+        if (!validateRequest(jsonRequest, pedido)) {
+            updateServerLog(OPCODE.SELLGOOD, pedido, "Invalid Authorization To Invoke Method Sell on Server!");
+            return "Invalid Authorization To Invoke Method Sell on Server!";
+        }
+
+        for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
+            ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
+            for (Good i : temp) {
+                if (i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getUserId()) {
+                    if (!i.isOnSale()) {
+                        i.setOnSale(true);
+                        updateServerLog(OPCODE.SELLGOOD, pedido, "The Item is Now on Sale");
+                        return ("The Item is Now on Sale");
+                    } else {
+                        updateServerLog(OPCODE.SELLGOOD, pedido, "The Item was Already On Sale");
+                        return "The Item was Already On Sale";
+                    }
+                }
+            }
+        }
+        updateServerLog(OPCODE.SELLGOOD, pedido, "The Requested Item To Be Put on Sell Is Not Available In The System");
+        return "The Requested Item To Be Put on Sell Is Not Available In The System";
+    }
 
     public Server(String FilePath) throws RemoteException {
         super();
@@ -64,32 +95,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
         }
     }
 
-    public String sell(String jsonRequest) throws RemoteException {
-        //Transform to Request Object
-        Gson gson = new Gson();
-        Request pedido = gson.fromJson(jsonRequest, Request.class);
-
-        //Verify Signature withing Object
-        if (!validateRequest(jsonRequest, pedido)) {
-            return "Invalid Authorization To Invoke Method Sell on Server!";
-        }
-
-        for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
-            ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
-            for (Good i : temp) {
-                if (i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getUserId()) {
-                    if (!i.isOnSale()) {
-                        i.setOnSale(true);
-                        return ("The Item is Now on Sale");
-                    } else {
-                        return "The Item was Already On Sale";
-                    }
-                }
-            }
-        }
-        return "The Requested Item To Be Put on Sell Is Not Available In The System";
-    }
-
     //return OwnerId and State of The Good
     public String getStateOfGood(String jsonRequest) throws RemoteException {
         Gson gson = new Gson();
@@ -97,17 +102,26 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
         //Verify Signature withing Object
         if (!validateRequest(jsonRequest, pedido)) {
+            updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "Invalid Authorization to Invoke Method Get State Of Good in Server!");
             return "Invalid Authorization to Invoke Method Get State Of Good in Server!";
+        }
+
+        try {
+            Thread.sleep(2000);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
             ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
             for (Good i : temp) {
                 if (i.getGoodId() == pedido.getGoodId()) {
+                    updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "<" + i.getOwnerId() + ", " + (i.isOnSale() ? "On-Sale>" : "Not-On-Sale>"));
                     return "<" + i.getOwnerId() + ", " + (i.isOnSale() ? "On-Sale>" : "Not-On-Sale>");
                 }
             }
         }
+        updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "The GoodId " + pedido.getGoodId() + " Is Not Present In The Server!");
         return "The GoodId " + pedido.getGoodId() + " Is Not Present In The Server!";
     }
 
@@ -116,6 +130,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
         if (!validateRequest(jsonRequest, pedido)) {
+            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "Invalid Authorization to Transfer Good!");
             return "Invalid Authorization to Transfer Good!";
         }
 
@@ -126,12 +141,28 @@ public class Server extends UnicastRemoteObject implements iProxy {
                     synchronized (i) {
                         Good newOwner = new Good(pedido.getBuyerId(), i.getGoodId(), i.getName(), !i.isOnSale());
                         temp.set(temp.indexOf(i), newOwner);
+                        updateServerLog(OPCODE.TRANSFERGOOD, pedido, "The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId());
                         return "The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId();
                     }
                 }
             }
         }
+        updateServerLog(OPCODE.TRANSFERGOOD, pedido, "The Good Id, Owner Id or New Owner ID is not present in the server!");
         return "The Good Id, Owner Id or New Owner ID is not present in the server!";
+    }
+
+    public void getSystemState() {
+        try {
+            Gson gson = new Gson();
+            String jsonString = FileUtils.readFileToString(new File("Backups/ServerState.old"));
+            jsonString = jsonString.replace("\n", "").replace("\r", "");
+            Server temp = gson.fromJson(jsonString, Server.class);
+            this.publicKeys = temp.publicKeys;
+            this.goods = temp.goods;
+            System.out.println("Recovered Server State");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean validateRequest(String jsonRequest, Request pedido) {
@@ -175,43 +206,48 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
     }
 
-    public void getSystemState() {
+    public void updateServerLog(OPCODE operation, Request pedido, String result) {
         try {
-            Gson gson = new Gson();
-            String jsonString = FileUtils.readFileToString(new File("Backups/ServerState.old"));
-            String temp = gson.toJson(this);
-            jsonString = jsonString.replace("\n", "").replace("\r", "");
-            if (jsonString.equals(temp)) {
-                System.out.println("THEY ARE THE SAME STATE");
+            BufferedWriter writer = new BufferedWriter(new FileWriter("ServerLog.txt", true));
+            switch (operation) {
+                case GETSTATEOFGOOD:
+                    writer.write("Operation: Get State of Good\n");
+                    writer.write("Time of Operation Completion: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "\n");
+                    writer.write("User ID of Method Caller: " + pedido.getUserId() + "\n");
+                    writer.write("Requested Good ID: " + pedido.getGoodId() + "\n");
+                    writer.write("Operation Result: " + result + "\n");
+                    writer.write("---------------------------------------------------------------------------------------------------------------\n");
+                    writer.close();
+                    break;
+                case SELLGOOD:
+                    writer.write("Operation: Sell Good\n");
+                    writer.write("Time of Operation Completion: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "\n");
+                    writer.write("User ID of Method Caller: " + pedido.getUserId() + "\n");
+                    writer.write("Requested Good ID: " + pedido.getGoodId() + "\n");
+                    writer.write("Operation Result: " + result + "\n");
+                    writer.write("---------------------------------------------------------------------------------------------------------------\n");
+                    writer.close();
+                    break;
+                case TRANSFERGOOD:
+                    writer.write("Operation: Transfer Good\n");
+                    writer.write("Time of Operation Completion: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "\n");
+                    writer.write("User ID of Method Caller: " + pedido.getUserId() + "\n");
+                    writer.write("Seller ID: " + pedido.getSellerId() + "\n");
+                    writer.write("Buyer ID: " + pedido.getBuyerId() + "\n");
+                    writer.write("Good ID: " + pedido.getGoodId() + "\n");
+                    writer.write("Operation Result: " + result + "\n");
+                    writer.write("---------------------------------------------------------------------------------------------------------------\n");
+                    writer.close();
+                    break;
             }
-            System.out.println(jsonString.length());
-            System.out.println(temp.length());
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Something Went Wrong During Server Log Update");
         }
     }
 
-    public String wait(int time) {
-        try {
-            return Executors.newSingleThreadExecutor().submit(new Wait(time)).get();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Exception";
-        }
-    }
-
-}
-
-class Wait implements Callable<String> {
-    private int time;
-
-    public Wait(int time) {
-        this.time = time;
-    }
-
-    @Override
-    public String call() throws Exception {
-        Thread.sleep(this.time);
-        return "Finished " + time;
+    private enum OPCODE {
+        TRANSFERGOOD, SELLGOOD, GETSTATEOFGOOD
     }
 }
+

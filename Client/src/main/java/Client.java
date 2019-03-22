@@ -9,6 +9,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Client extends UnicastRemoteObject implements iClient {
 
@@ -16,6 +18,16 @@ public class Client extends UnicastRemoteObject implements iClient {
     private static PrivateKey privKey;
     private static PublicKey pubKey;
     private static int UserID;
+
+    private static final ExecutorService THREADPOOL = Executors.newCachedThreadPool();
+
+    public static void runButNotOn(Runnable toRun, Thread notOn) {
+        if (Thread.currentThread() == notOn) {
+            THREADPOOL.submit(toRun);
+        } else {
+            toRun.run();
+        }
+    }
 
     Client() throws RemoteException {
         super();
@@ -71,13 +83,21 @@ public class Client extends UnicastRemoteObject implements iClient {
 
                     switch (input) {
                         case "1":
-                            System.out.println(proxy.sell(promptForGoodId()));
+                            String data = promptForGoodId();
+                            Runnable r = () -> sell(data);
+                            new Thread(r).start();
                             break;
                         case "2":
-                            System.out.println(invokeSeller());
+                            int seller = promptForSellerId();
+                            int good = prompForGoodId();
+                            int clientPort = promptForPortNumber();
+                            Runnable r2 = () -> invokeSeller(seller, good, clientPort);
+                            new Thread(r2).start();
                             break;
                         case "3":
-                            System.out.println(proxy.getStateOfGood(promptForGoodId()));
+                            String data3 = promptForGoodId();
+                            Runnable r3 = () -> getStateOfGood(data3);
+                            new Thread(r3).start();
                             break;
                         default:
                             System.out.println("The Introduced Input is not a valid number, please try again or type 'exit' to exit program.");
@@ -102,8 +122,23 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
-    private static String invokeSeller() {
-        int sellerId, goodId, portNumber;
+    private static void sell(String data) {
+        try {
+            System.out.println(proxy.sell(data));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void getStateOfGood(String data) {
+        try {
+            System.out.println(proxy.getStateOfGood(data));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static int promptForSellerId() {
         System.out.println("Please Introduce Seller ID:");
         System.out.print("Seller ID: ");
         try {
@@ -114,28 +149,51 @@ public class Client extends UnicastRemoteObject implements iClient {
                 System.out.print("Seller ID: ");
                 temp = reader.readLine();
             }
-            sellerId = Integer.parseInt(temp);
+            return Integer.parseInt(temp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
 
+    private static int prompForGoodId() {
+        try {
             System.out.println("Please Introduce GoodId:");
             System.out.print("Good ID: ");
-            temp = reader.readLine();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            String temp = reader.readLine();
             while (!tryParseInt(temp)) {
                 System.out.println("The Introduced ID is not a valid Number, please introduce ONLY numbers");
                 System.out.print("Good ID: ");
                 temp = reader.readLine();
             }
-            goodId = Integer.parseInt(temp);
+            return Integer.parseInt(temp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
 
+    private static int promptForPortNumber() {
+        try {
             System.out.println("Please Introduce Port Number:");
             System.out.print("Port Number: ");
-            temp = reader.readLine();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            String temp = reader.readLine();
             while (!tryParseInt(temp)) {
                 System.out.println("The Introduced Port Number is not a valid Number, please introduce ONLY numbers");
                 System.out.print("Port Number: ");
                 temp = reader.readLine();
             }
-            portNumber = Integer.parseInt(temp);
+            return Integer.parseInt(temp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
 
+    private static void invokeSeller(int sellerId, int goodId, int portNumber) {
+        try {
             iClient clientProxy = (iClient) Naming.lookup("rmi://localhost:" + portNumber + "/" + sellerId);
 
             Request pedido = new Request();
@@ -155,11 +213,10 @@ public class Client extends UnicastRemoteObject implements iClient {
 
             System.out.println("This is the Jason Object: " + jsonInString + " THIS FUCKING PRINT IS IN INVOKE SELLER YOU FOOL");
 
-            return clientProxy.Buy(request);
+            System.out.println(clientProxy.Buy(request));
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
     }
 
@@ -223,16 +280,6 @@ public class Client extends UnicastRemoteObject implements iClient {
             System.out.println("Something Went Wrong During the Transfer");
             return "The Good Transfer Has Failed. Please Try Again.";
         }
-    }
-
-    public void testMethod() {
-        try {
-            BufferedReader buff = new BufferedReader(new InputStreamReader(System.in));
-            System.out.println(proxy.wait(Integer.parseInt(buff.readLine())));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
 }
