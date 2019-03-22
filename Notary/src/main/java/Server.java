@@ -28,6 +28,9 @@ public class Server extends UnicastRemoteObject implements iProxy {
         Gson gson = new Gson();
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
+        if (!NonceVerifier.isNonceValid(pedido))
+            return "This message has already been processed";
+
         //Verify Signature withing Object
         if (!validateRequest(jsonRequest, pedido)) {
             updateServerLog(OPCODE.SELLGOOD, pedido, "Invalid Authorization To Invoke Method Sell on Server!");
@@ -100,6 +103,9 @@ public class Server extends UnicastRemoteObject implements iProxy {
         Gson gson = new Gson();
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
+        if (!NonceVerifier.isNonceValid(pedido))
+            return "This message has already been processed";
+
         //Verify Signature withing Object
         if (!validateRequest(jsonRequest, pedido)) {
             updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "Invalid Authorization to Invoke Method Get State Of Good in Server!");
@@ -128,6 +134,9 @@ public class Server extends UnicastRemoteObject implements iProxy {
     public String transferGood(String jsonRequest) throws RemoteException {
         Gson gson = new Gson();
         Request pedido = gson.fromJson(jsonRequest, Request.class);
+
+        if (!NonceVerifier.isNonceValid(pedido))
+            return "This message has already been processed";
 
         if (!validateRequest(jsonRequest, pedido)) {
             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "Invalid Authorization to Transfer Good!");

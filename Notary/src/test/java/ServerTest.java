@@ -116,6 +116,24 @@ public class ServerTest {
     }
 
     @Test
+    public void replayAttack() {
+        try {
+            Request pedido = new Request();
+            pedido.setUserId(1);
+            pedido.setGoodId(1);
+            pedido.setNounce(1);
+            Gson gson = new Gson();
+            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.
+                    getPriv("src\\main\\resources\\User1.key"), gson.toJson(pedido)));
+            System.out.println(servidor.getStateOfGood(gson.toJson(pedido)));
+            Assert.assertEquals("This message has already been processed", servidor.getStateOfGood(gson.toJson(pedido)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
     public void methodWriteStateAtomically() {
         servidor.saveServerState("Backups/");
         servidor.getSystemState();
