@@ -5,6 +5,15 @@ public class Request {
     private byte[] signature;
     private int buyerId;
     private int sellerId;
+    private int nounce;
+
+    public int getNounce() {
+        return nounce;
+    }
+
+    public void setNounce(int nounce) {
+        this.nounce = nounce;
+    }
 
     public int getBuyerId() {
         return buyerId;
