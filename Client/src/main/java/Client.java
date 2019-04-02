@@ -10,8 +10,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Client extends UnicastRemoteObject implements iClient {
 
@@ -20,17 +18,7 @@ public class Client extends UnicastRemoteObject implements iClient {
     private static PublicKey pubKey;
     private static int UserID;
 
-    private static final ExecutorService THREADPOOL = Executors.newCachedThreadPool();
-
-    public static void runButNotOn(Runnable toRun, Thread notOn) {
-        if (Thread.currentThread() == notOn) {
-            THREADPOOL.submit(toRun);
-        } else {
-            toRun.run();
-        }
-    }
-
-    Client() throws RemoteException {
+    private Client() throws RemoteException {
         super();
     }
 
@@ -38,10 +26,10 @@ public class Client extends UnicastRemoteObject implements iClient {
         try {
             privKey = RSAKeyLoader.getPriv("F:\\Documentos\\GitHub\\SEC2019_proj\\Client\\src\\main\\resources\\User" + UserID + ".key");
             pubKey = RSAKeyLoader.getPub("F:\\Documentos\\GitHub\\SEC2019_proj\\Client\\src\\main\\resources\\User" + UserID + ".pub");
-            System.out.println("KEYS LOADED MY DUDE");
+            System.out.println("Public and Private Keys Loaded");
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("SOMETHING WENT TO HELL WHILE LOADING THE DARNED KEYS!");
+            System.out.println("Exception Thrown in Body of Method loadKeys! Public and Private keys unable to load!");
         }
     }
 
@@ -49,7 +37,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         try {
             //Prompt User For Input of Port To Register
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            iClient Clientproxy = new Client();
+            iClient ClientProxy = new Client();
 
             System.out.println("Please Introduce The Port You Want to Register:");
             System.out.print("PORT Number: ");
@@ -64,7 +52,7 @@ public class Client extends UnicastRemoteObject implements iClient {
 
             LocateRegistry.createRegistry(portNumber);
 
-            Naming.rebind("rmi://localhost:" + port + "/" + UserID, Clientproxy);
+            Naming.rebind("rmi://localhost:" + port + "/" + UserID, ClientProxy);
 
             //End Of Client Registration in RMI
 
@@ -157,7 +145,6 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
-    //DO NOT TOUCH THIS FUCKING METHOD, DO NOT ATTEMPT TO UNDERSTAND WITHOUT PROPER ANALYSIS
     private static int prompForGoodId() {
         try {
             System.out.println("Please Introduce GoodId:");
@@ -214,7 +201,7 @@ public class Client extends UnicastRemoteObject implements iClient {
 
             String request = gson.toJson(pedido);
 
-            System.out.println("This is the Jason Object: " + jsonInString + " THIS FUCKING PRINT IS IN INVOKE SELLER YOU FOOL");
+            System.out.println("This is the Jason Object: " + jsonInString);
 
             System.out.println(clientProxy.Buy(request));
 
@@ -257,7 +244,7 @@ public class Client extends UnicastRemoteObject implements iClient {
             Integer.parseInt(value);
             return true;
         } catch (Exception e) {
-            System.out.println("The introduced Input could not be converted to an integer. Exiting...");
+            System.out.println("The introduced Input could not be converted to an integer.");
             return false;
         }
     }
@@ -282,6 +269,7 @@ public class Client extends UnicastRemoteObject implements iClient {
             return proxy.transferGood(gson.toJson(received));
         } catch (Exception e) {
             System.out.println("Something Went Wrong During the Transfer");
+            e.printStackTrace();
             return "The Good Transfer Has Failed. Please Try Again.";
         }
     }
