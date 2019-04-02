@@ -173,7 +173,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId());
                             return "The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId();
                         }else {
-                            return "The Item was already Sold";
+                            return "The Item was already Sold, Does not Exist or Is not On Sale";
                         }
                     }
                 }

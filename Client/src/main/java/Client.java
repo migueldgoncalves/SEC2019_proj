@@ -24,8 +24,8 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     private static void loadKeys() {
         try {
-            privKey = RSAKeyLoader.getPriv("F:\\Documentos\\GitHub\\SEC2019_proj\\Client\\src\\main\\resources\\User" + UserID + ".key");
-            pubKey = RSAKeyLoader.getPub("F:\\Documentos\\GitHub\\SEC2019_proj\\Client\\src\\main\\resources\\User" + UserID + ".pub");
+            privKey = RSAKeyLoader.getPriv("Client\\src\\main\\resources\\User" + UserID + ".key");
+            pubKey = RSAKeyLoader.getPub("Client\\src\\main\\resources\\User" + UserID + ".pub");
             System.out.println("Public and Private Keys Loaded");
         } catch (Exception e) {
             e.printStackTrace();
@@ -260,7 +260,7 @@ public class Client extends UnicastRemoteObject implements iClient {
             Request received = gson.fromJson(request, Request.class);
             byte[] temp = received.getSignature();
             received.setSignature(null);
-            SignatureGenerator.verifySignature(RSAKeyLoader.getPub("F:\\Documentos\\GitHub\\SEC2019_proj\\Client\\src\\main\\resources\\User" + received.getBuyerId() + ".pub"), temp, gson.toJson(received));
+            SignatureGenerator.verifySignature(RSAKeyLoader.getPub("Client\\src\\main\\resources\\User" + received.getBuyerId() + ".pub"), temp, gson.toJson(received));
 
             //Request To Transfer Item
             received.setUserId(UserID);

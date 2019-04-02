@@ -616,3 +616,41 @@ User ID of Method Caller: 2
 Requested Good ID: 1
 Operation Result: <2, Not-On-Sale>
 ---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 02/04/2019 23:08:54
+User ID of Method Caller: 2
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 02/04/2019 23:09:09
+User ID of Method Caller: 2
+Requested Good ID: 1
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 02/04/2019 23:09:19
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 02/04/2019 23:09:24
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 02/04/2019 23:09:31
+User ID of Method Caller: 2
+Requested Good ID: 1
+Operation Result: <1, On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Transfer Good
+Time of Operation Completion: 02/04/2019 23:09:42
+User ID of Method Caller: 1
+Seller ID: 1
+Buyer ID: 2
+Good ID: 1
+Operation Result: The Good with Good ID 1 Has now Been transfered to the new Owner with Owner ID 2
+---------------------------------------------------------------------------------------------------------------
