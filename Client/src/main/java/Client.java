@@ -52,8 +52,6 @@ public class Client extends UnicastRemoteObject implements iClient {
 
             LocateRegistry.createRegistry(portNumber);
 
-            Naming.rebind("rmi://localhost:" + port + "/" + UserID, ClientProxy);
-
             //End Of Client Registration in RMI
 
             proxy = (iProxy) Naming.lookup("rmi://localhost:8086/Notary");
@@ -64,6 +62,7 @@ public class Client extends UnicastRemoteObject implements iClient {
             if (tryParseInt(ID)) {
 
                 UserID = Integer.parseInt(ID);
+                Naming.rebind("rmi://localhost:" + port + "/" + UserID, ClientProxy);
                 loadKeys();
                 printMenu();
 
@@ -261,9 +260,10 @@ public class Client extends UnicastRemoteObject implements iClient {
             Request received = gson.fromJson(request, Request.class);
             byte[] temp = received.getSignature();
             received.setSignature(null);
-            SignatureGenerator.verifySignature(RSAKeyLoader.getPub("User" + received.getBuyerId() + ".pub"), temp, gson.toJson(received));
+            SignatureGenerator.verifySignature(RSAKeyLoader.getPub("F:\\Documentos\\GitHub\\SEC2019_proj\\Client\\src\\main\\resources\\User" + received.getBuyerId() + ".pub"), temp, gson.toJson(received));
 
             //Request To Transfer Item
+            received.setUserId(UserID);
             received.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(received)));
 
             return proxy.transferGood(gson.toJson(received));
