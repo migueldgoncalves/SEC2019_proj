@@ -19,6 +19,8 @@ public class Client extends UnicastRemoteObject implements iClient {
     private static Gson gson = new Gson();
     private static int UserID;
 
+    private static final String RESOURCES_DIR = "Client\\src\\main\\resources\\";
+
     private static void sell(String data) {
         try {
             String jsonAnswer = proxy.sell(data);
@@ -264,8 +266,8 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     private static void loadKeys() {
         try {
-            privKey = RSAKeyLoader.getPriv("Client\\src\\main\\resources\\User" + UserID + ".key");
-            pubKey = RSAKeyLoader.getPub("Client\\src\\main\\resources\\User" + UserID + ".pub");
+            privKey = RSAKeyLoader.getPriv(RESOURCES_DIR + "User" + UserID + ".key");
+            pubKey = RSAKeyLoader.getPub(RESOURCES_DIR + "User" + UserID + ".pub");
             System.out.println("Public and Private Keys Loaded");
         } catch (Exception e) {
             e.printStackTrace();
@@ -304,7 +306,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         switch (invoker){
             case BUYER:
                 try{
-                    PublicKey notaryPubKey = RSAKeyLoader.getPub("Client\\src\\main\\resources\\User" + pedido.getUserId() + ".pub");
+                    PublicKey notaryPubKey = RSAKeyLoader.getPub(RESOURCES_DIR + "User" + pedido.getUserId() + ".pub");
                     return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
                 }catch (Exception e){
                     e.printStackTrace();
@@ -312,7 +314,7 @@ public class Client extends UnicastRemoteObject implements iClient {
                 }
             case NOTARY:
                 try{
-                    PublicKey notaryPubKey = RSAKeyLoader.getPub("Client\\src\\main\\resources\\Notary.pub");
+                    PublicKey notaryPubKey = RSAKeyLoader.getPub(RESOURCES_DIR + "Notary.pub");
                     return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
                 }catch (Exception e){
                     e.printStackTrace();

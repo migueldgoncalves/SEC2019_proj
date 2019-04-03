@@ -25,13 +25,14 @@ public class Server extends UnicastRemoteObject implements iProxy {
     private PrivateKey privKey;
     private Gson gson = new Gson();
 
+    private static final String RESOURCES_DIR = "Notary\\src\\main\\resources\\";
+
     /**
      * Method Sell that is responsible for putting a giving Good on sale
      * @param jsonRequest The Request Object that contains the Good ID to be put on sell
      */
     public String sell(String jsonRequest) throws RemoteException {
         //Transform to Request Object
-        Gson gson = new Gson();
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
         //Replay Attack Prevention
@@ -49,7 +50,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
             answer.setAnswer("Invalid Authorization To Invoke Method Sell on Server!");
             answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
             return gson.toJson(answer);
-            //return "Invalid Authorization To Invoke Method Sell on Server!";
         }
 
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
@@ -63,14 +63,12 @@ public class Server extends UnicastRemoteObject implements iProxy {
                         answer.setAnswer("The Item is Now on Sale");
                         answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
                         return gson.toJson(answer);
-                        //return ("The Item is Now on Sale");
                     } else {
                         updateServerLog(OPCODE.SELLGOOD, pedido, "The Item was Already On Sale");
                         Request answer = new Request();
                         answer.setAnswer("The Item was Already On Sale");
                         answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
                         return gson.toJson(answer);
-                        //return "The Item was Already On Sale";
                     }
                 }
             }
@@ -80,7 +78,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
         answer.setAnswer("The Requested Item To Be Put on Sell Is Not Available In The System");
         answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
         return gson.toJson(answer);
-        //return "The Requested Item To Be Put on Sell Is Not Available In The System";
     }
 
     /**
@@ -105,7 +102,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                 publicKeys.put(i, RSAKeyLoader.getPub("src\\main\\resources\\User" + i + ".pub"));
             }
 
-            privKey = RSAKeyLoader.getPriv("Notary\\src\\main\\resources\\Notary.key");
+            privKey = RSAKeyLoader.getPriv(RESOURCES_DIR + "Notary.key");
 
             System.out.println(publicKeys.size() + " Keys Have Been Loaded Into The Notary");
         } catch (Exception e) {
@@ -121,13 +118,13 @@ public class Server extends UnicastRemoteObject implements iProxy {
         super();
         try {
             FileReader fileReader = new FileReader();
-            goods = fileReader.goodsListConstructor("Notary\\src\\main\\resources\\GoodsFile1.xml");
+            goods = fileReader.goodsListConstructor( RESOURCES_DIR + "GoodsFile1.xml");
 
             for (int i = 0; i < 9; i++) {
-                publicKeys.put(i, RSAKeyLoader.getPub("Notary\\src\\main\\resources\\User" + i + ".pub"));
+                publicKeys.put(i, RSAKeyLoader.getPub(RESOURCES_DIR + "User" + i + ".pub"));
             }
 
-            privKey = RSAKeyLoader.getPriv("Notary\\src\\main\\resources\\Notary.key");
+            privKey = RSAKeyLoader.getPriv( RESOURCES_DIR + "Notary.key");
 
             System.out.println(publicKeys.size() + " Keys Have Been Loaded Into The Notary!");
         } catch (Exception e) {
@@ -149,7 +146,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
      * @param jsonRequest The Request Object that contains the Parameters to validate request (Signature, Good ID, etc...)
      */
     public String getStateOfGood(String jsonRequest) throws RemoteException {
-        Gson gson = new Gson();
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
         if (!NonceVerifier.isNonceValid(pedido)){
@@ -192,7 +188,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
      */
     private synchronized boolean saveServerState(String path) {
         try {
-            Gson gson = new Gson();
             //File file = new File("ServerState.new"); TO BE DELETED IF MODIFICATION IS WORKING
             PrintWriter writer = new PrintWriter(new File("ServerState.new"));
             writer.println(gson.toJson(this));
@@ -225,7 +220,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
      * @param jsonRequest The Request Object containing all necessary data
      */
     public String transferGood(String jsonRequest) throws RemoteException {
-        Gson gson = new Gson();
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
         if (!NonceVerifier.isNonceValid(pedido)){
@@ -284,7 +278,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
      */
     private void getSystemState() {
         try {
-            Gson gson = new Gson();
             String jsonString = FileUtils.readFileToString(new File("Backups/ServerState.old"));
             jsonString = jsonString.replace("\n", "").replace("\r", "");
             Server temp = gson.fromJson(jsonString, Server.class);
