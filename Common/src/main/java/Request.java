@@ -6,6 +6,7 @@ public class Request {
     private int buyerId;
     private int sellerId;
     private int nounce;
+    private String answer;
 
     public int getNounce() {
         return nounce;
@@ -53,6 +54,14 @@ public class Request {
 
     public void setSignature(byte[] signature) {
         this.signature = signature;
+    }
+
+    public String getAnswer(){
+        return answer;
+    }
+
+    public void setAnswer(String answer){
+        this.answer = answer;
     }
 
 }

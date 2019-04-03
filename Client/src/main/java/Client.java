@@ -16,7 +16,23 @@ public class Client extends UnicastRemoteObject implements iClient {
     private static iProxy proxy = null;
     private static PrivateKey privKey;
     private static PublicKey pubKey;
+    private static Gson gson = new Gson();
     private static int UserID;
+
+    private static void sell(String data) {
+        try {
+            String jsonAnswer = proxy.sell(data);
+            Request answer = gson.fromJson(jsonAnswer, Request.class);
+
+            if(!validateRequest(answer, Sender.NOTARY)){
+                System.out.println("The Signature of The Message is Invalid. Message Has Been Tampered With");
+            }else {
+                System.out.println(answer.getAnswer());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private Client() throws RemoteException {
         super();
@@ -110,17 +126,52 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
-    private static void sell(String data) {
+    private static void getStateOfGood(String data) {
         try {
-            System.out.println(proxy.sell(data));
+            String jsonAnswer = proxy.getStateOfGood(data);
+            Request answer = gson.fromJson(jsonAnswer, Request.class);
+
+            if(!validateRequest(answer, Sender.NOTARY)){
+                System.out.println("The Signature of The Message is Invalid. Message Has Been Tampered With");
+            }else {
+                System.out.println(answer.getAnswer());
+            }
+
+            //System.out.println(proxy.getStateOfGood(data));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void getStateOfGood(String data) {
+    private static void invokeSeller(int sellerId, int goodId, int portNumber) {
         try {
-            System.out.println(proxy.getStateOfGood(data));
+            iClient clientProxy = (iClient) Naming.lookup("rmi://localhost:" + portNumber + "/" + sellerId);
+
+            Request pedido = new Request();
+
+            pedido.setUserId(UserID);
+            pedido.setBuyerId(UserID);
+            pedido.setSellerId(sellerId);
+            pedido.setGoodId(goodId);
+            pedido.setSignature(null);
+            pedido.setNounce(new Random().nextInt());
+
+            String jsonInString = gson.toJson(pedido);
+
+            pedido.setSignature(SignatureGenerator.generateSignature(privKey, jsonInString));
+
+            String request = gson.toJson(pedido);
+
+            System.out.println("This is the Jason Object: " + jsonInString);
+
+            String jsonAnswer = clientProxy.Buy(request);
+            Request answer = gson.fromJson(jsonAnswer, Request.class);
+            if(!validateRequest(answer, Sender.NOTARY)){
+                System.out.println("Message Has Been Tampered With");
+            }else {
+                System.out.println(answer.getAnswer());
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -180,33 +231,33 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
-    private static void invokeSeller(int sellerId, int goodId, int portNumber) {
-        try {
-            iClient clientProxy = (iClient) Naming.lookup("rmi://localhost:" + portNumber + "/" + sellerId);
+    private static boolean validateRequest(Request pedido, Sender invoker) {
 
-            Request pedido = new Request();
+        //Verify Signature withing Object
+        byte[] signature = pedido.getSignature();
+        pedido.setSignature(null);
 
-            pedido.setUserId(UserID);
-            pedido.setBuyerId(UserID);
-            pedido.setSellerId(sellerId);
-            pedido.setGoodId(goodId);
-            pedido.setSignature(null);
-            pedido.setNounce(new Random().nextInt());
-
-            Gson gson = new Gson();
-            String jsonInString = gson.toJson(pedido);
-
-            pedido.setSignature(SignatureGenerator.generateSignature(privKey, jsonInString));
-
-            String request = gson.toJson(pedido);
-
-            System.out.println("This is the Jason Object: " + jsonInString);
-
-            System.out.println(clientProxy.Buy(request));
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        switch (invoker){
+            case BUYER:
+                try{
+                    PublicKey notaryPubKey = RSAKeyLoader.getPub("Client\\src\\main\\resources\\User" + pedido.getUserId() + ".pub");
+                    return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
+                }catch (Exception e){
+                    e.printStackTrace();
+                    return false;
+                }
+            case NOTARY:
+                try{
+                    PublicKey notaryPubKey = RSAKeyLoader.getPub("Client\\src\\main\\resources\\Notary.pub");
+                    return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
+                }catch (Exception e){
+                    e.printStackTrace();
+                    return false;
+                }
         }
+
+        return false;
+
     }
 
     private static String promptForGoodId() {
@@ -225,7 +276,6 @@ public class Client extends UnicastRemoteObject implements iClient {
             pedido.setGoodId(Integer.parseInt(input));
             pedido.setUserId(UserID);
             pedido.setNounce(new Random().nextInt());
-            Gson gson = new Gson();
             String jsonToString = gson.toJson(pedido);
             byte[] sig = SignatureGenerator.generateSignature(privKey, jsonToString);
             pedido.setSignature(sig);
@@ -252,15 +302,14 @@ public class Client extends UnicastRemoteObject implements iClient {
         System.out.print("Please Introduce The Desired Option Number: \n 1. Sell an Item. \n 2. Buy an Item. \n 3. Get Item State. \n Option Number: ");
     }
 
-
     public String Buy(String request) {
         try {
             //Signature Verification
-            Gson gson = new Gson();
             Request received = gson.fromJson(request, Request.class);
-            byte[] temp = received.getSignature();
-            received.setSignature(null);
-            SignatureGenerator.verifySignature(RSAKeyLoader.getPub("Client\\src\\main\\resources\\User" + received.getBuyerId() + ".pub"), temp, gson.toJson(received));
+
+            if(!validateRequest(received, Sender.BUYER)){
+                return "Message Has Been Tampered With!";
+            }
 
             //Request To Transfer Item
             received.setUserId(UserID);
@@ -272,6 +321,10 @@ public class Client extends UnicastRemoteObject implements iClient {
             e.printStackTrace();
             return "The Good Transfer Has Failed. Please Try Again.";
         }
+    }
+
+    private enum Sender {
+        NOTARY, BUYER
     }
 
 }
