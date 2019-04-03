@@ -38,17 +38,6 @@ public class Client extends UnicastRemoteObject implements iClient {
         super();
     }
 
-    private static void loadKeys() {
-        try {
-            privKey = RSAKeyLoader.getPriv("Client\\src\\main\\resources\\User" + UserID + ".key");
-            pubKey = RSAKeyLoader.getPub("Client\\src\\main\\resources\\User" + UserID + ".pub");
-            System.out.println("Public and Private Keys Loaded");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Exception Thrown in Body of Method loadKeys! Public and Private keys unable to load!");
-        }
-    }
-
     public static void main(String[] args) {
         try {
             //Prompt User For Input of Port To Register
@@ -126,6 +115,55 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
+    //########################################### Main Methods #####################################################
+
+    private static int prompForGoodId() {
+        try {
+            System.out.println("Please Introduce GoodId:");
+            System.out.print("Good ID: ");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            String temp = reader.readLine();
+            while (!tryParseInt(temp)) {
+                System.out.println("The Introduced ID is not a valid Number, please introduce ONLY numbers");
+                System.out.print("Good ID: ");
+                temp = reader.readLine();
+            }
+            return Integer.parseInt(temp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    private static String promptForGoodId() {
+        try {
+            System.out.println("Please Introduce the Good ID:");
+            System.out.print("Good ID: ");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            String input = reader.readLine();
+
+            while (!tryParseInt(input)) {
+                System.out.println("The Introduced ID is invalid, please type only the number of the Good ID you want");
+                System.out.print("Good ID: ");
+                input = reader.readLine();
+            }
+
+            Request pedido = new Request();
+            pedido.setGoodId(Integer.parseInt(input));
+            pedido.setUserId(UserID);
+            pedido.setNounce(new Random().nextInt());
+            String jsonToString = gson.toJson(pedido);
+            byte[] sig = SignatureGenerator.generateSignature(privKey, jsonToString);
+            pedido.setSignature(sig);
+
+            return gson.toJson(pedido);
+
+        } catch (Exception e) {
+            System.out.println("Something went wrong during prompting for Good ID");
+            return null;
+        }
+    }
+
     private static void getStateOfGood(String data) {
         try {
             String jsonAnswer = proxy.getStateOfGood(data);
@@ -137,7 +175,6 @@ public class Client extends UnicastRemoteObject implements iClient {
                 System.out.println(answer.getAnswer());
             }
 
-            //System.out.println(proxy.getStateOfGood(data));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -177,6 +214,26 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
+    //###################################### User Prompts For Input ################################################
+
+    private static int promptForPortNumber() {
+        try {
+            System.out.println("Please Introduce Port Number:");
+            System.out.print("Port Number: ");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            String temp = reader.readLine();
+            while (!tryParseInt(temp)) {
+                System.out.println("The Introduced Port Number is not a valid Number, please introduce ONLY numbers");
+                System.out.print("Port Number: ");
+                temp = reader.readLine();
+            }
+            return Integer.parseInt(temp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
     private static int promptForSellerId() {
         System.out.println("Please Introduce Seller ID:");
         System.out.print("Seller ID: ");
@@ -195,39 +252,46 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
-    private static int prompForGoodId() {
+    private static boolean tryParseInt(String value) {
         try {
-            System.out.println("Please Introduce GoodId:");
-            System.out.print("Good ID: ");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            String temp = reader.readLine();
-            while (!tryParseInt(temp)) {
-                System.out.println("The Introduced ID is not a valid Number, please introduce ONLY numbers");
-                System.out.print("Good ID: ");
-                temp = reader.readLine();
-            }
-            return Integer.parseInt(temp);
+            Integer.parseInt(value);
+            return true;
         } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
+            System.out.println("The introduced Input could not be converted to an integer.");
+            return false;
         }
     }
 
-    private static int promptForPortNumber() {
+    private static void loadKeys() {
         try {
-            System.out.println("Please Introduce Port Number:");
-            System.out.print("Port Number: ");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            String temp = reader.readLine();
-            while (!tryParseInt(temp)) {
-                System.out.println("The Introduced Port Number is not a valid Number, please introduce ONLY numbers");
-                System.out.print("Port Number: ");
-                temp = reader.readLine();
-            }
-            return Integer.parseInt(temp);
+            privKey = RSAKeyLoader.getPriv("Client\\src\\main\\resources\\User" + UserID + ".key");
+            pubKey = RSAKeyLoader.getPub("Client\\src\\main\\resources\\User" + UserID + ".pub");
+            System.out.println("Public and Private Keys Loaded");
         } catch (Exception e) {
             e.printStackTrace();
-            return -1;
+            System.out.println("Exception Thrown in Body of Method loadKeys! Public and Private keys unable to load!");
+        }
+    }
+
+    //########################################## Auxiliary Methods ####################################################
+
+    public String Buy(String request) {
+        try {
+            Request received = gson.fromJson(request, Request.class);
+
+            if(!validateRequest(received, Sender.BUYER)){
+                return "Message Has Been Tampered With!";
+            }
+
+            //Request To Transfer Item
+            received.setUserId(UserID);
+            received.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(received)));
+
+            return proxy.transferGood(gson.toJson(received));
+        } catch (Exception e) {
+            System.out.println("Something Went Wrong During the Transfer");
+            e.printStackTrace();
+            return "The Good Transfer Has Failed. Please Try Again.";
         }
     }
 
@@ -260,71 +324,12 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     }
 
-    private static String promptForGoodId() {
-        try {
-            System.out.println("Please Introduce the Good ID:");
-            System.out.print("Good ID: ");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            String input = reader.readLine();
-            while (!tryParseInt(input)) {
-                System.out.println("The Introduced ID is invalid, please type only the number of the Good ID you want");
-                System.out.print("Good ID: ");
-                input = reader.readLine();
-            }
-
-            Request pedido = new Request();
-            pedido.setGoodId(Integer.parseInt(input));
-            pedido.setUserId(UserID);
-            pedido.setNounce(new Random().nextInt());
-            String jsonToString = gson.toJson(pedido);
-            byte[] sig = SignatureGenerator.generateSignature(privKey, jsonToString);
-            pedido.setSignature(sig);
-
-            return gson.toJson(pedido);
-
-        } catch (Exception e) {
-            System.out.println("Something went wrong during prompting for Good ID");
-            return null;
-        }
-    }
-
-    private static boolean tryParseInt(String value) {
-        try {
-            Integer.parseInt(value);
-            return true;
-        } catch (Exception e) {
-            System.out.println("The introduced Input could not be converted to an integer.");
-            return false;
-        }
+    private enum Sender {
+        NOTARY, BUYER
     }
 
     private static void printMenu() {
         System.out.print("Please Introduce The Desired Option Number: \n 1. Sell an Item. \n 2. Buy an Item. \n 3. Get Item State. \n Option Number: ");
-    }
-
-    public String Buy(String request) {
-        try {
-            //Signature Verification
-            Request received = gson.fromJson(request, Request.class);
-
-            if(!validateRequest(received, Sender.BUYER)){
-                return "Message Has Been Tampered With!";
-            }
-
-            //Request To Transfer Item
-            received.setUserId(UserID);
-            received.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(received)));
-
-            return proxy.transferGood(gson.toJson(received));
-        } catch (Exception e) {
-            System.out.println("Something Went Wrong During the Transfer");
-            e.printStackTrace();
-            return "The Good Transfer Has Failed. Please Try Again.";
-        }
-    }
-
-    private enum Sender {
-        NOTARY, BUYER
     }
 
 }
