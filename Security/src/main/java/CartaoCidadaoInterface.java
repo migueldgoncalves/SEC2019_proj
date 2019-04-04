@@ -14,7 +14,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 
-public class eIDLib_PKCS11_test {
+public class CartaoCidadaoInterface {
 
     // Main available certificates in Cartao de Cidadao
     private static final int CITIZEN_AUTHENTICATION_CERTIFICATE = 0; // WILL require PIN
@@ -55,13 +55,14 @@ public class eIDLib_PKCS11_test {
             System.out.println("            -- accessing the ID  data via the pteidlib interface");
 
             // There are 13 certificates and 2 private keys in the card
-            cert = getCertFromByteArray(getCertificateInBytes(CERTIFICATE_TO_USE)); //Does NOT require PINs
+            cert = getCertFromByteArray(getCertificateInBytes()); //Does NOT require PINs
+
         /*} catch (PTEID_ExNoReader e) {
             throw new Exception("A smart card reader must in inserted");
         } catch (PTEID_ExNoCardPresent e) {
             throw new Exception("A smart card must be inserted in the card reader");*/
         } catch (Exception e) {
-            throw new Exception("An unexpected situation ocurred");
+            e.printStackTrace();
         }
     }
 
@@ -190,7 +191,7 @@ public class eIDLib_PKCS11_test {
             }
             System.out.println("\n");
 
-            X509Certificate certificate = getCertFromByteArray(getCertificateInBytes(CITIZEN_AUTHENTICATION_CERTIFICATE));
+            X509Certificate certificate = getCertFromByteArray(getCertificateInBytes());
             PublicKey key = certificate.getPublicKey();
 
             Signature signatureClass = Signature.getInstance("SHA1withRSA");
@@ -221,11 +222,11 @@ public class eIDLib_PKCS11_test {
     }
 
     // Returns the n-th certificate, starting from 0
-    private static byte[] getCertificateInBytes(int n) {
+    private static byte[] getCertificateInBytes() {
         byte[] certificate_bytes = null;
         try {
             PTEID_Certif[] certs = pteid.GetCertificates();
-            certificate_bytes = certs[n].certif; //gets the byte[] with the n-th certif*/
+            certificate_bytes = certs[CERTIFICATE_TO_USE].certif; //gets the byte[] with the n-th certif*/
         } catch (PteidException e) {
             e.printStackTrace();
         }
@@ -241,7 +242,7 @@ public class eIDLib_PKCS11_test {
 
     public static PublicKey getPublicKeyFromCertificate() {
         try {
-            return getCertFromByteArray(getCertificateInBytes(CERTIFICATE_TO_USE)).getPublicKey();
+            return getCertFromByteArray(getCertificateInBytes()).getPublicKey();
         } catch (Exception e) {
             e.printStackTrace();
             return null;

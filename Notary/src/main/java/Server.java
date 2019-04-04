@@ -105,7 +105,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                 publicKeys.put(i, RSAKeyLoader.getPub("src\\main\\resources\\User" + i + ".pub"));
             }
 
-            privKey = RSAKeyLoader.getPriv("Notary\\src\\main\\resources\\Notary.key");
+            privKey = RSAKeyLoader.getPriv("src\\main\\resources\\Notary.key");
 
             System.out.println(publicKeys.size() + " Keys Have Been Loaded Into The Notary");
         } catch (Exception e) {
