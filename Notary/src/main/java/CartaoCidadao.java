@@ -4,9 +4,9 @@ public class CartaoCidadao {
 
     public static byte[] sign(String message) {
         try {
-            eIDLib_PKCS11_test.setUp();
-            byte[] signature = eIDLib_PKCS11_test.sign(message);
-            eIDLib_PKCS11_test.exitPteid();
+            CartaoCidadaoInterface.setUp();
+            byte[] signature = CartaoCidadaoInterface.sign(message);
+            CartaoCidadaoInterface.exitPteid();
             return signature;
         } catch (Exception e) {
             e.printStackTrace();
@@ -26,13 +26,26 @@ public class CartaoCidadao {
 
     public static PublicKey getPublicKeyFromCC() {
         try {
-            eIDLib_PKCS11_test.setUp();
-            PublicKey key = eIDLib_PKCS11_test.getPublicKeyFromCertificate();
-            eIDLib_PKCS11_test.exitPteid();
+            CartaoCidadaoInterface.setUp();
+            PublicKey key = CartaoCidadaoInterface.getPublicKeyFromCertificate();
+            CartaoCidadaoInterface.exitPteid();
             return key;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public static void writeCCPublicKeyToFile() {
+        try {
+            CartaoCidadaoInterface.setUp();
+            PublicKey key = CartaoCidadaoInterface.getPublicKeyFromCertificate();
+            String baseDir = System.getProperty("user.dir").replace("\\Notary", "");
+            RSAKeySaverAsText.SavePublicKeyAsText(key, baseDir + "\\Client\\src\\main\\resources\\Notary_CC");
+            RSAKeySaverAsText.SavePublicKeyAsText(key, baseDir + "\\Notary\\src\\main\\resources\\Notary_CC");
+            CartaoCidadaoInterface.exitPteid();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

@@ -678,3 +678,471 @@ User ID of Method Caller: 1
 Requested Good ID: 1
 Operation Result: <1, Not-On-Sale>
 ---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 00:40:45
+User ID of Method Caller: 1
+Requested Good ID: 10
+Operation Result: The GoodId 10 Is Not Present In The Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 00:40:47
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 00:40:49
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 00:40:51
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 00:40:53
+User ID of Method Caller: 1
+Requested Good ID: 0
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 00:40:55
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 00:44:05
+User ID of Method Caller: 1
+Requested Good ID: 10
+Operation Result: The GoodId 10 Is Not Present In The Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 00:44:07
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 00:44:09
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 00:44:11
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 00:44:13
+User ID of Method Caller: 1
+Requested Good ID: 0
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 00:44:15
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 02:58:41
+User ID of Method Caller: 1
+Requested Good ID: 10
+Operation Result: The GoodId 10 Is Not Present In The Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 02:58:41
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 02:58:41
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 02:58:41
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 02:58:41
+User ID of Method Caller: 1
+Requested Good ID: 0
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 02:58:41
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:13:32
+User ID of Method Caller: 1
+Requested Good ID: 10
+Operation Result: The GoodId 10 Is Not Present In The Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:13:34
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:13:35
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:13:37
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:13:38
+User ID of Method Caller: 1
+Requested Good ID: 0
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:13:40
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:14:48
+User ID of Method Caller: 1
+Requested Good ID: 10
+Operation Result: The GoodId 10 Is Not Present In The Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:14:50
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:14:51
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:14:53
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:14:54
+User ID of Method Caller: 1
+Requested Good ID: 0
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:14:56
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:18:49
+User ID of Method Caller: 1
+Requested Good ID: 10
+Operation Result: The GoodId 10 Is Not Present In The Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:18:51
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:18:53
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:18:54
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:18:55
+User ID of Method Caller: 1
+Requested Good ID: 0
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:18:57
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:28:51
+User ID of Method Caller: 1
+Requested Good ID: 10
+Operation Result: The GoodId 10 Is Not Present In The Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:28:53
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:28:55
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:28:57
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:28:59
+User ID of Method Caller: 1
+Requested Good ID: 0
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:29:01
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:31:52
+User ID of Method Caller: 1
+Requested Good ID: 10
+Operation Result: The GoodId 10 Is Not Present In The Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:31:54
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:31:55
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:31:57
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:31:58
+User ID of Method Caller: 1
+Requested Good ID: 0
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:32:00
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:33:43
+User ID of Method Caller: 1
+Requested Good ID: 10
+Operation Result: The GoodId 10 Is Not Present In The Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:33:45
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:33:46
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:33:48
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:33:49
+User ID of Method Caller: 1
+Requested Good ID: 0
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:33:51
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:50:05
+User ID of Method Caller: 1
+Requested Good ID: 10
+Operation Result: The GoodId 10 Is Not Present In The Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:50:07
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:50:09
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:50:11
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:50:13
+User ID of Method Caller: 1
+Requested Good ID: 0
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:50:15
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:53:43
+User ID of Method Caller: 1
+Requested Good ID: 10
+Operation Result: The GoodId 10 Is Not Present In The Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:53:45
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:53:47
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:53:49
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:53:51
+User ID of Method Caller: 1
+Requested Good ID: 0
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:53:53
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:58:53
+User ID of Method Caller: 1
+Requested Good ID: 10
+Operation Result: The GoodId 10 Is Not Present In The Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:58:55
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:58:56
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:58:58
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 03:58:59
+User ID of Method Caller: 1
+Requested Good ID: 0
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 03:59:01
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 04:18:53
+User ID of Method Caller: 1
+Requested Good ID: 10
+Operation Result: The GoodId 10 Is Not Present In The Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 04:18:54
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 04:18:56
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 04:18:57
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 04/04/2019 04:18:59
+User ID of Method Caller: 1
+Requested Good ID: 0
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 04/04/2019 04:19:00
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
