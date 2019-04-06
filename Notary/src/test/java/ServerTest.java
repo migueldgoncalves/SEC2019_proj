@@ -156,7 +156,7 @@ public class ServerTest {
 
     @Test
     public void methodWriteStateAtomically() {
-        //servidor.saveServerState("Backups/");
+        //servidor.saveServerState();
         //servidor.getSystemState();
     }
 

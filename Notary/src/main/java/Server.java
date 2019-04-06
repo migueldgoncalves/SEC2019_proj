@@ -27,57 +27,8 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
     private static final String RESOURCES_DIR = "Notary\\src\\main\\resources\\";
 
-    /**
-     * Method Sell that is responsible for putting a giving Good on sale
-     * @param jsonRequest The Request Object that contains the Good ID to be put on sell
-     */
-    public String sell(String jsonRequest) throws RemoteException {
-        //Transform to Request Object
-        Request pedido = gson.fromJson(jsonRequest, Request.class);
-
-        //Replay Attack Prevention
-        if (!NonceVerifier.isNonceValid(pedido)){
-            Request answer = new Request();
-            answer.setAnswer("This message has already been processed by The Server!");
-            answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
-            return gson.toJson(answer);
-        }
-
-        //Verify Signature withing Object
-        if (!validateRequest(pedido)) {
-            updateServerLog(OPCODE.SELLGOOD, pedido, "Invalid Authorization To Invoke Method Sell on Server!");
-            Request answer = new Request();
-            answer.setAnswer("Invalid Authorization To Invoke Method Sell on Server!");
-            answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
-            return gson.toJson(answer);
-        }
-
-        for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
-            ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
-            for (Good i : temp) {
-                if (i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getUserId()) {
-                    if (!i.isOnSale()) {
-                        i.setOnSale(true);
-                        updateServerLog(OPCODE.SELLGOOD, pedido, "The Item is Now on Sale");
-                        Request answer = new Request();
-                        answer.setAnswer("The Item is Now on Sale");
-                        answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
-                        return gson.toJson(answer);
-                    } else {
-                        updateServerLog(OPCODE.SELLGOOD, pedido, "The Item was Already On Sale");
-                        Request answer = new Request();
-                        answer.setAnswer("The Item was Already On Sale");
-                        answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
-                        return gson.toJson(answer);
-                    }
-                }
-            }
-        }
-        updateServerLog(OPCODE.SELLGOOD, pedido, "The Requested Item To Be Put on Sell Is Not Available In The System");
-        Request answer = new Request();
-        answer.setAnswer("The Requested Item To Be Put on Sell Is Not Available In The System");
-        answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
-        return gson.toJson(answer);
+    private enum OPCODE {
+        TRANSFERGOOD, SELLGOOD, GETSTATEOFGOOD
     }
 
     /**
@@ -117,6 +68,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
     Server() throws RemoteException {
         super();
         try {
+
             FileReader fileReader = new FileReader();
             goods = fileReader.goodsListConstructor( RESOURCES_DIR + "GoodsFile1.xml");
 
@@ -127,6 +79,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
             privKey = RSAKeyLoader.getPriv( RESOURCES_DIR + "Notary.key");
 
             System.out.println(publicKeys.size() + " Keys Have Been Loaded Into The Notary!");
+
         } catch (Exception e) {
             System.out.println("An Exception Was Thrown In Server Constructor!");
             e.printStackTrace();
@@ -183,39 +136,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
     }
 
     /**
-     * Method That Atomically Saves The Server State to a given path
-     * @param path The path to where the server state should be saved
-     */
-    private synchronized boolean saveServerState(String path) {
-        try {
-            //File file = new File("ServerState.new"); TO BE DELETED IF MODIFICATION IS WORKING
-            PrintWriter writer = new PrintWriter(new File("ServerState.new"));
-            writer.println(gson.toJson(this));
-            writer.close();
-        } catch (Exception e) {
-            System.out.println("A Crash Occurred During System Save State.");
-            e.printStackTrace();
-            return false;
-        }
-
-        try {
-            Path path1 = Paths.get(path);
-            Path path2 = path1.resolve("../ServerState.new");
-            Path path3 = path1.resolve("ServerState.old");
-            Files.move(path2, path3, ATOMIC_MOVE);
-            return true;
-        } catch (AccessDeniedException e) {
-            System.out.println("Run as Administrator!");
-            return false;
-        } catch (Exception e) {
-            System.out.println("An error ocurred during system save!");
-            e.printStackTrace();
-            return false;
-        }
-
-    }
-
-    /**
      * This Method is responsible for transfering a good that is on sale from one user (Seller) to another (Buyer)
      * @param jsonRequest The Request Object containing all necessary data
      */
@@ -267,11 +187,61 @@ public class Server extends UnicastRemoteObject implements iProxy {
         return gson.toJson(answer);
     }
 
+    /**
+     * Method Sell that is responsible for putting a giving Good on sale
+     * @param jsonRequest The Request Object that contains the Good ID to be put on sell
+     */
+    public String sell(String jsonRequest) throws RemoteException {
+        //Transform to Request Object
+        Request pedido = gson.fromJson(jsonRequest, Request.class);
+
+        //Replay Attack Prevention
+        if (!NonceVerifier.isNonceValid(pedido)){
+            Request answer = new Request();
+            answer.setAnswer("This message has already been processed by The Server!");
+            answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
+            return gson.toJson(answer);
+        }
+
+        //Verify Signature withing Object
+        if (!validateRequest(pedido)) {
+            updateServerLog(OPCODE.SELLGOOD, pedido, "Invalid Authorization To Invoke Method Sell on Server!");
+            Request answer = new Request();
+            answer.setAnswer("Invalid Authorization To Invoke Method Sell on Server!");
+            answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
+            return gson.toJson(answer);
+        }
+
+        for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
+            ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
+            for (Good i : temp) {
+                if (i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getUserId()) {
+                    if (!i.isOnSale()) {
+                        i.setOnSale(true);
+                        updateServerLog(OPCODE.SELLGOOD, pedido, "The Item is Now on Sale");
+                        Request answer = new Request();
+                        answer.setAnswer("The Item is Now on Sale");
+                        answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
+                        return gson.toJson(answer);
+                    } else {
+                        updateServerLog(OPCODE.SELLGOOD, pedido, "The Item was Already On Sale");
+                        Request answer = new Request();
+                        answer.setAnswer("The Item was Already On Sale");
+                        answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
+                        return gson.toJson(answer);
+                    }
+                }
+            }
+        }
+        updateServerLog(OPCODE.SELLGOOD, pedido, "The Requested Item To Be Put on Sell Is Not Available In The System");
+        Request answer = new Request();
+        answer.setAnswer("The Requested Item To Be Put on Sell Is Not Available In The System");
+        answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
+        return gson.toJson(answer);
+    }
+
     //####################################### Server State Methods #####################################################
 
-    private enum OPCODE {
-        TRANSFERGOOD, SELLGOOD, GETSTATEOFGOOD
-    }
 
     /**
      * Method The recovers a Server state (If a previous state exists in the directory)
@@ -346,6 +316,38 @@ public class Server extends UnicastRemoteObject implements iProxy {
             e.printStackTrace();
             System.out.println("Something Went Wrong During Server Log Update");
         }
+    }
+
+    /**
+     * Method That Atomically Saves The Server State to a given path
+     */
+    private synchronized boolean saveServerState() {
+        try {
+            //File file = new File("ServerState.new"); TO BE DELETED IF MODIFICATION IS WORKING
+            PrintWriter writer = new PrintWriter(new File("ServerState.new"));
+            writer.println(gson.toJson(this));
+            writer.close();
+        } catch (Exception e) {
+            System.out.println("A Crash Occurred During System Save State.");
+            e.printStackTrace();
+            return false;
+        }
+
+        try {
+            Path path1 = Paths.get("Backups/");
+            Path path2 = path1.resolve("../ServerState.new");
+            Path path3 = path1.resolve("ServerState.old");
+            Files.move(path2, path3, ATOMIC_MOVE);
+            return true;
+        } catch (AccessDeniedException e) {
+            System.out.println("Run as Administrator!");
+            return false;
+        } catch (Exception e) {
+            System.out.println("An error ocurred during system save!");
+            e.printStackTrace();
+            return false;
+        }
+
     }
 }
 
