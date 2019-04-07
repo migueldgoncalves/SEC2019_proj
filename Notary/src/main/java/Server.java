@@ -10,14 +10,17 @@ import java.rmi.server.UnicastRemoteObject;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
 public class Server extends UnicastRemoteObject implements iProxy {
 
-    private Dictionary<Integer, ArrayList<Good>> goods;
-    private Map<Integer, PublicKey> publicKeys = new HashMap<>();
+    private Hashtable<Integer, ArrayList<Good>> goods = new Hashtable<>();
+    private Hashtable<Integer, PublicKey> publicKeys = new Hashtable<>();
     private PrivateKey privKey;
     private boolean USING_CC = false;
 
@@ -36,7 +39,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
         super();
         try {
             FileReader fileReader = new FileReader();
-            goods = fileReader.goodsListConstructor(FilePath);
+            goods = (Hashtable) fileReader.goodsListConstructor(FilePath);
 
             //Add public key from Cartao de Cidadao to file
             PublicKey key = CartaoCidadao.getPublicKeyFromCC();
@@ -65,11 +68,11 @@ public class Server extends UnicastRemoteObject implements iProxy {
     /**
      * Default server constructor used during actual program execution
      */
-    Server() throws RemoteException {
+    Server(int number) throws RemoteException {
         super();
         try {
             FileReader fileReader = new FileReader();
-            goods = fileReader.goodsListConstructor( RESOURCES_DIR + "GoodsFile1.xml");
+            goods = (Hashtable) fileReader.goodsListConstructor( RESOURCES_DIR + "GoodsFile1.xml");
 
             for (int i = 0; i < 9; i++) {
                 publicKeys.put(i, RSAKeyLoader.getPub(RESOURCES_DIR + "User" + i + ".pub"));
@@ -215,6 +218,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                         if (i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getSellerId() && i.isOnSale()){
                             Good newOwner = new Good(pedido.getBuyerId(), i.getGoodId(), i.getName(), !i.isOnSale());
                             temp.set(temp.indexOf(i), newOwner);
+                            saveServerState();
                             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId());
                             Request answer = new Request();
                             answer.setAnswer("The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId());
@@ -290,6 +294,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                 if (i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getUserId()) {
                     if (!i.isOnSale()) {
                         i.setOnSale(true);
+                        saveServerState();
                         updateServerLog(OPCODE.SELLGOOD, pedido, "The Item is Now on Sale");
                         Request answer = new Request();
                         answer.setAnswer("The Item is Now on Sale");
@@ -338,9 +343,8 @@ public class Server extends UnicastRemoteObject implements iProxy {
                 String jsonString = FileUtils.readFileToString(new File(finalBackupPath), "UTF-8");
                 jsonString = jsonString.replace("\n", "").replace("\r", "");
                 Server temp = gson.fromJson(jsonString, Server.class);
-                this.publicKeys = temp.publicKeys;
-                this.goods = temp.goods;
-                this.privKey = temp.privKey;
+                if(this.goods.size() < temp.goods.size())
+                    this.goods = temp.goods;
                 System.out.println("Recovered Server State");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -363,7 +367,10 @@ public class Server extends UnicastRemoteObject implements iProxy {
         try {
             //File file = new File("ServerState.new"); TO BE DELETED IF MODIFICATION IS WORKING
             PrintWriter writer = new PrintWriter(new File(temporaryBackupPath));
-            writer.println(gson.toJson(this));
+            Server simplified = this;
+            simplified.publicKeys = null;
+            simplified.privKey = null;
+            writer.println(gson.toJson(simplified));
             writer.close();
         } catch (Exception e) {
             System.out.println("A Crash Occurred During System Save State.");
