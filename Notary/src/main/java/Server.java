@@ -76,10 +76,10 @@ public class Server extends UnicastRemoteObject implements iProxy {
         super();
         try {
             FileReader fileReader = new FileReader();
-            goods = (Hashtable) fileReader.goodsListConstructor( RESOURCES_DIR + "GoodsFile1.xml");
+            goods = (Hashtable) fileReader.goodsListConstructor( "src\\main\\resources\\GoodsFile1.xml");
 
             for (int i = 0; i < 9; i++) {
-                publicKeys.put(i, RSAKeyLoader.getPub(RESOURCES_DIR + "User" + i + ".pub"));
+                publicKeys.put(i, RSAKeyLoader.getPub("src\\main\\resources\\User" + i + ".pub"));
             }
 
             System.out.println(publicKeys.size() + " Keys Have Been Loaded Into The Notary!");
