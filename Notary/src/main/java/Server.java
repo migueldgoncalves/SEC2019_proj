@@ -72,10 +72,10 @@ public class Server extends UnicastRemoteObject implements iProxy {
         super();
         try {
             FileReader fileReader = new FileReader();
-            goods = (Hashtable) fileReader.goodsListConstructor( baseDirGenerator() + "src\\main\\resources\\GoodsFile1.xml");
+            goods = (Hashtable) fileReader.goodsListConstructor( baseDirGenerator() + "\\src\\main\\resources\\GoodsFile1.xml");
 
             for (int i = 0; i < 9; i++) {
-                publicKeys.put(i, RSAKeyLoader.getPub(baseDirGenerator() + "src\\main\\resources\\User" + i + ".pub"));
+                publicKeys.put(i, RSAKeyLoader.getPub(baseDirGenerator() + "\\src\\main\\resources\\User" + i + ".pub"));
             }
 
             System.out.println(publicKeys.size() + " Keys Have Been Loaded Into The Notary!");
@@ -96,7 +96,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                     out.close();
                     break;
                 case "2":
-                    privKey = RSAKeyLoader.getPriv( RESOURCES_DIR + "Notary.key");
+                    privKey = RSAKeyLoader.getPriv( baseDirGenerator() + "\\src\\main\\resources\\Notary.key");
                     break;
                 default:
                     System.out.println("Invalid Option. Exiting...");
@@ -486,8 +486,8 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
     private String baseDirGenerator() {
         String basePath = System.getProperty("user.dir");
-        if(!basePath.contains("\\Notary\\"))
-            basePath+="\\Notary\\";
+        if(!basePath.contains("\\Notary"))
+            basePath+="\\Notary";
         return basePath;
     }
 }

@@ -288,8 +288,8 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     private static void loadKeys() {
         try {
-            privKey = RSAKeyLoader.getPriv(RESOURCES_DIR + "User" + UserID + ".key");
-            pubKey = RSAKeyLoader.getPub(RESOURCES_DIR + "User" + UserID + ".pub");
+            privKey = RSAKeyLoader.getPriv( Client.baseDirGenerator() + "\\src\\main\\resources\\User" + UserID + ".key");
+            pubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\User" + UserID + ".pub");
             System.out.println("Public and Private Keys Loaded");
         } catch (Exception e) {
             e.printStackTrace();
@@ -328,7 +328,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         switch (invoker){
             case BUYER:
                 try{
-                    PublicKey notaryPubKey = RSAKeyLoader.getPub(RESOURCES_DIR + "User" + pedido.getUserId() + ".pub");
+                    PublicKey notaryPubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\User" + pedido.getUserId() + ".pub");
                     return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
                 }catch (Exception e){
                     e.printStackTrace();
@@ -337,10 +337,10 @@ public class Client extends UnicastRemoteObject implements iClient {
             case NOTARY:
                 try{
                     if(USING_CC){
-                        PublicKey notaryPubKey = RSAKeyLoader.getPub(RESOURCES_DIR + "Notary_CC.pub");
+                        PublicKey notaryPubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\Notary_CC.pub");
                         return SignatureGenerator.verifySignatureCartaoCidadao(notaryPubKey, signature, gson.toJson(pedido));
                     }else {
-                        PublicKey notaryPubKey = RSAKeyLoader.getPub(RESOURCES_DIR + "Notary.pub");
+                        PublicKey notaryPubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\Notary.pub");
                         return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
                     }
                 }catch (Exception e){
@@ -359,6 +359,13 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     private static void printMenu() {
         System.out.print("Please Introduce The Desired Option Number: \n 1. Sell an Item. \n 2. Buy an Item. \n 3. Get Item State. \n Option Number: ");
+    }
+
+    private static String baseDirGenerator() {
+        String basePath = System.getProperty("user.dir");
+        if(!basePath.contains("\\Client"))
+            basePath+="\\Client";
+        return basePath;
     }
 
 }
