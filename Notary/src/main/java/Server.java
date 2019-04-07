@@ -347,7 +347,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                 String jsonString = FileUtils.readFileToString(new File(finalBackupPath), "UTF-8");
                 jsonString = jsonString.replace("\n", "").replace("\r", "");
                 Server temp = gson.fromJson(jsonString, Server.class);
-                if(this.goods.size() < temp.goods.size())
+                if(this.goods.size() <= temp.goods.size())
                     this.goods = temp.goods;
                 System.out.println("Recovered Server State");
             } catch (Exception e) {
@@ -371,7 +371,8 @@ public class Server extends UnicastRemoteObject implements iProxy {
         try {
             //File file = new File("ServerState.new"); TO BE DELETED IF MODIFICATION IS WORKING
             PrintWriter writer = new PrintWriter(new File(temporaryBackupPath));
-            Server simplified = this;
+            Server simplified = new Server();
+            simplified.goods = this.goods;
             simplified.publicKeys = null;
             simplified.privKey = null;
             writer.println(gson.toJson(simplified));
