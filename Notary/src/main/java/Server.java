@@ -4,7 +4,6 @@ import org.apache.commons.io.FileUtils;
 import java.io.*;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -20,11 +19,9 @@ public class Server extends UnicastRemoteObject implements iProxy {
     private Dictionary<Integer, ArrayList<Good>> goods;
     private Map<Integer, PublicKey> publicKeys = new HashMap<>();
     private PrivateKey privKey;
-    private NonceVerifier nonceVerifier = new NonceVerifier();
-    private Gson gson = new Gson();
     private boolean USING_CC = false;
 
-    private static final String RESOURCES_DIR = "Notary\\src\\main\\resources\\";
+    private static final String RESOURCES_DIR = System.getProperty("user.dir") + "\\Notary\\src\\main\\resources\\";
 
     private enum OPCODE {
         TRANSFERGOOD, SELLGOOD, GETSTATEOFGOOD
@@ -43,7 +40,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
             //Add public key from Cartao de Cidadao to file
             PublicKey key = CartaoCidadao.getPublicKeyFromCC();
-            FileOutputStream out = new FileOutputStream(RESOURCES_DIR + "Notary_CC.pub");
+            FileOutputStream out = new FileOutputStream(System.getProperty("user.dir") + "\\src\\main\\resources\\Notary_CC.pub");
             out.write(key.getEncoded());
             out.flush();
             out.close();
@@ -56,7 +53,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                 publicKeys.put(i, RSAKeyLoader.getPub("src\\main\\resources\\User" + i + ".pub"));
             }
 
-            privKey = RSAKeyLoader.getPriv(RESOURCES_DIR + "Notary.key");
+            privKey = RSAKeyLoader.getPriv(System.getProperty("user.dir") + "\\src\\main\\resources\\Notary.key");
 
             System.out.println(publicKeys.size() + " Keys Have Been Loaded Into The Notary");
         } catch (Exception e) {
@@ -71,7 +68,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
     Server() throws RemoteException {
         super();
         try {
-
             FileReader fileReader = new FileReader();
             goods = fileReader.goodsListConstructor( RESOURCES_DIR + "GoodsFile1.xml");
 
@@ -125,9 +121,10 @@ public class Server extends UnicastRemoteObject implements iProxy {
      * @param jsonRequest The Request Object that contains the Parameters to validate request (Signature, Good ID, etc...)
      */
     public String getStateOfGood(String jsonRequest) throws RemoteException {
+        Gson gson = new Gson();
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
-        if (!nonceVerifier.isNonceValid(pedido)){
+        if (!NonceVerifier.isNonceValid(pedido)){
             if(USING_CC){
                 Request answer = new Request();
                 answer.setAnswer("This message has already been processed!");
@@ -195,6 +192,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
      * @param jsonRequest The Request Object containing all necessary data
      */
     public String transferGood(String jsonRequest) throws RemoteException {
+        Gson gson = new Gson();
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
         if (!NonceVerifier.isNonceValid(pedido)){
@@ -282,6 +280,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
      * @param jsonRequest The Request Object that contains the Good ID to be put on sell
      */
     public String sell(String jsonRequest) throws RemoteException {
+        Gson gson = new Gson();
         //Transform to Request Object
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
@@ -371,17 +370,59 @@ public class Server extends UnicastRemoteObject implements iProxy {
     /**
      * Method The recovers a Server state (If a previous state exists in the directory)
      */
-    private void getSystemState() {
-        try {
-            String jsonString = FileUtils.readFileToString(new File("Backups/ServerState.old"));
-            jsonString = jsonString.replace("\n", "").replace("\r", "");
-            Server temp = gson.fromJson(jsonString, Server.class);
-            this.publicKeys = temp.publicKeys;
-            this.goods = temp.goods;
-            System.out.println("Recovered Server State");
-        } catch (Exception e) {
-            e.printStackTrace();
+    protected synchronized void getSystemState() {
+        Gson gson = new Gson();
+        String finalBackupPath = getBackupPaths()[0];
+        if (isBackupFileCreatedAndNotEmpty()) {
+            try {
+                String jsonString = FileUtils.readFileToString(new File(finalBackupPath), "UTF-8");
+                jsonString = jsonString.replace("\n", "").replace("\r", "");
+                Server temp = gson.fromJson(jsonString, Server.class);
+                this.publicKeys = temp.publicKeys;
+                this.goods = temp.goods;
+                this.privKey = temp.privKey;
+                System.out.println("Recovered Server State");
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Backup file found is unreadable - Creating a new one");
+                saveServerState();
+            }
+        } else {
+            System.out.println("No written backup file found - Creating a new one");
+            saveServerState();
         }
+    }
+
+    /**
+     * Method That Atomically Saves The Server State to a given path
+     */
+    private synchronized boolean saveServerState() {
+        Gson gson = new Gson();
+        String finalBackupPath = getBackupPaths()[0];
+        String temporaryBackupPath = getBackupPaths()[1];
+        try {
+            //File file = new File("ServerState.new"); TO BE DELETED IF MODIFICATION IS WORKING
+            PrintWriter writer = new PrintWriter(new File(temporaryBackupPath));
+            writer.println(gson.toJson(this));
+            writer.close();
+        } catch (Exception e) {
+            System.out.println("A Crash Occurred During System Save State.");
+            e.printStackTrace();
+            return false;
+        }
+
+        try {
+            Files.move(Paths.get(temporaryBackupPath), Paths.get(finalBackupPath), ATOMIC_MOVE);
+            return true;
+        } catch (AccessDeniedException e) {
+            System.out.println("Run as Administrator!");
+            return false;
+        } catch (Exception e) {
+            System.out.println("An error occurred during system save!");
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
     //########################################## Auxiliary Methods ####################################################
@@ -391,6 +432,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
      * @param pedido The Request object that will be verified
      */
     private boolean validateRequest(Request pedido) {
+        Gson gson = new Gson();
         byte[] signature = pedido.getSignature();
         pedido.setSignature(null);
 
@@ -403,7 +445,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
      * @param pedido The Request Object Sent By The Client
      * @param result The result of the executed operation that had as argument the Request object
      */
-    private void updateServerLog(OPCODE operation, Request pedido, String result) {
+    private synchronized void updateServerLog(OPCODE operation, Request pedido, String result) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("ServerLog.txt", true));
             switch (operation) {
@@ -443,35 +485,34 @@ public class Server extends UnicastRemoteObject implements iProxy {
         }
     }
 
-    /**
-     * Method That Atomically Saves The Server State to a given path
-     */
-    private synchronized boolean saveServerState() {
-        try {
-            //File file = new File("ServerState.new"); TO BE DELETED IF MODIFICATION IS WORKING
-            PrintWriter writer = new PrintWriter(new File("ServerState.new"));
-            writer.println(gson.toJson(this));
-            writer.close();
-        } catch (Exception e) {
-            System.out.println("A Crash Occurred During System Save State.");
-            e.printStackTrace();
-            return false;
+    private synchronized boolean isBackupFileCreatedAndNotEmpty() {
+        String finalBackupPath = getBackupPaths()[0];
+        File f = new File(finalBackupPath);
+        if (f.exists() && !f.isDirectory()) {
+            try {
+                String jsonString = FileUtils.readFileToString(new File(finalBackupPath), "UTF-8");
+                jsonString = jsonString.replace("\n", "").replace("\r", "");
+                jsonString = jsonString.trim();
+                if (jsonString.length() > 0)
+                    return true;
+                System.out.println("Backup file is empty");
+                return false;
+            } catch (Exception e) {
+                System.out.println("Failed to assert if backup file is not empty");
+                return false;
+            }
         }
+        System.out.println("Backup file not found");
+        return false;
+    }
 
-        try {
-            Path path1 = Paths.get("Backups/");
-            Path path2 = path1.resolve("../ServerState.new");
-            Path path3 = path1.resolve("ServerState.old");
-            Files.move(path2, path3, ATOMIC_MOVE);
-            return true;
-        } catch (AccessDeniedException e) {
-            System.out.println("Run as Administrator!");
-            return false;
-        } catch (Exception e) {
-            System.out.println("An error ocurred during system save!");
-            e.printStackTrace();
-            return false;
-        }
-
+    private String[] getBackupPaths() {
+        String[] paths = new String[2];
+        String basePath = System.getProperty("user.dir");
+        if(!basePath.contains("\\Notary"))
+            basePath+="\\Notary";
+        paths[0] = basePath + "\\Backups\\ServerState.old";
+        paths[1] = basePath + "\\Backups\\ServerState.new";
+        return paths;
     }
 }

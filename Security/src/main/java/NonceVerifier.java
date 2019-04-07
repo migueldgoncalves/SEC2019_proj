@@ -8,6 +8,7 @@ public class NonceVerifier {
     public static boolean isNonceValid(Request request) {
         if (nonceMap.get(request.getUserId()) == null) {
             nonceMap.put(request.getUserId(), new ArrayList<>());
+            nonceMap.get(request.getUserId()).add(request.getNounce());
             return true;
         } else if (nonceMap.get(request.getUserId()).contains(request.getNounce())) {
             return false;
