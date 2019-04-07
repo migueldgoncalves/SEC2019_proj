@@ -124,7 +124,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
         Gson gson = new Gson();
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
-        if (!nonceVerifier.isNonceValid(pedido)){
+        if (!NonceVerifier.isNonceValid(pedido)){
             updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "This message has already been processed!");
             Request answer = new Request();
             answer.setAnswer("This message has already been processed!");
