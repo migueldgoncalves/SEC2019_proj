@@ -148,7 +148,8 @@ public class ServerTest {
             Gson gson = new Gson();
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv("src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             System.out.println(servidor.getStateOfGood(gson.toJson(pedido)));
-            Assert.assertEquals("This message has already been processed!", gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class).getAnswer());
+            Request temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
+            Assert.assertEquals("This message has already been processed!", temp.getAnswer());
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();

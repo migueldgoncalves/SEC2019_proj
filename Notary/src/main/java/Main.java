@@ -8,7 +8,9 @@ public class Main {
     public static void main(String[] args) {
         try {
             //Create an interface object from the implementation class
-            iProxy proxy = new Server();
+            Server servidor = new Server();
+            servidor.getSystemState();
+            iProxy proxy = servidor;
 
             LocateRegistry.createRegistry(8086);
 
