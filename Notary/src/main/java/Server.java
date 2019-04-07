@@ -1,10 +1,7 @@
 import com.google.gson.Gson;
 import org.apache.commons.io.FileUtils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,6 +20,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
     private Dictionary<Integer, ArrayList<Good>> goods;
     private Map<Integer, PublicKey> publicKeys = new HashMap<>();
     private PrivateKey privKey;
+    private NonceVerifier nonceVerifier = new NonceVerifier();
     private Gson gson = new Gson();
 
     private static final String RESOURCES_DIR = "Notary\\src\\main\\resources\\";
@@ -44,6 +42,10 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
             //Add public key from Cartao de Cidadao to file
             PublicKey key = CartaoCidadao.getPublicKeyFromCC();
+            FileOutputStream out = new FileOutputStream(RESOURCES_DIR + "Notary_CC.pub");
+            out.write(key.getEncoded());
+            out.flush();
+            out.close();
 
             // User directory will include Notary directory, which we want to remove from path
             String baseDir = System.getProperty("user.dir").replace("\\Notary", "");
@@ -101,7 +103,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
     public String getStateOfGood(String jsonRequest) throws RemoteException {
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
-        if (!NonceVerifier.isNonceValid(pedido)){
+        if (!nonceVerifier.isNonceValid(pedido)){
             Request answer = new Request();
             answer.setAnswer("This message has already been processed!");
             answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
