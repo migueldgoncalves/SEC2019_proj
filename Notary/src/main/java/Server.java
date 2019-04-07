@@ -52,10 +52,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
             out.flush();
             out.close();
 
-            // User directory will include Notary directory, which we want to remove from path
-            //String baseDir = System.getProperty("user.dir").replace("\\Notary", "");
-            //RSAKeySaverAsText.SavePublicKeyAsText(key, baseDir + "\\Client\\src\\main\\resources\\Notary");
-
             for (int i = 0; i < 9; i++) {
                 publicKeys.put(i, RSAKeyLoader.getPub("src\\main\\resources\\User" + i + ".pub"));
             }
