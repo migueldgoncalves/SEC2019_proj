@@ -18,6 +18,7 @@ public class Client extends UnicastRemoteObject implements iClient {
     private static PublicKey pubKey;
     private static Gson gson = new Gson();
     private static int UserID;
+    private static boolean USING_CC = false;
 
     private static final String RESOURCES_DIR = "Client\\src\\main\\resources\\";
 
@@ -45,6 +46,27 @@ public class Client extends UnicastRemoteObject implements iClient {
             //Prompt User For Input of Port To Register
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             iClient ClientProxy = new Client();
+
+            System.out.println("Is Server Running With CC? Introduce Option Number:");
+            System.out.println("1. YES");
+            System.out.println("2. NO");
+            System.out.print("Option Number:");
+            String option =reader.readLine();
+
+            while (!tryParseInt(option)){
+                System.out.println("Please Introduce only the Number of The Option You Select:");
+                System.out.print("Option Number:");
+                option = reader.readLine();
+            }
+
+            switch (Integer.parseInt(option)){
+                case 1:
+                    USING_CC = true;
+                    break;
+                case 2:
+                    USING_CC = false;
+                    break;
+            }
 
             System.out.println("Please Introduce The Port You Want to Register:");
             System.out.print("PORT Number: ");
@@ -314,8 +336,13 @@ public class Client extends UnicastRemoteObject implements iClient {
                 }
             case NOTARY:
                 try{
-                    PublicKey notaryPubKey = RSAKeyLoader.getPub(RESOURCES_DIR + "Notary.pub");
-                    return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
+                    if(USING_CC){
+                        PublicKey notaryPubKey = RSAKeyLoader.getPub(RESOURCES_DIR + "Notary_CC.pub");
+                        return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
+                    }else {
+                        PublicKey notaryPubKey = RSAKeyLoader.getPub(RESOURCES_DIR + "Notary.pub");
+                        return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
+                    }
                 }catch (Exception e){
                     e.printStackTrace();
                     return false;
