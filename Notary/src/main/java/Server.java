@@ -27,6 +27,10 @@ public class Server extends UnicastRemoteObject implements iProxy {
         TRANSFERGOOD, SELLGOOD, GETSTATEOFGOOD
     }
 
+    public Server() throws RemoteException{
+
+    }
+
     /**
      * The Server Constructor used for test reasons. This method was implemented to be called during
      * test phase of the program in order to verify the correct behaviour of the system
@@ -65,7 +69,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
     /**
      * Default server constructor used during actual program execution
      */
-    Server() throws RemoteException {
+    Server(int mode) throws RemoteException {
         super();
         try {
             FileReader fileReader = new FileReader();
@@ -337,10 +341,17 @@ public class Server extends UnicastRemoteObject implements iProxy {
             try {
                 String jsonString = FileUtils.readFileToString(new File(finalBackupPath), "UTF-8");
                 jsonString = jsonString.replace("\n", "").replace("\r", "");
-                Server temp = gson.fromJson(jsonString, Server.class);
-                this.publicKeys = temp.publicKeys;
-                this.goods = temp.goods;
-                this.privKey = temp.privKey;
+                try{
+                    Server temp = gson.fromJson(jsonString, Server.class);
+                    if(this.publicKeys.size() <= temp.publicKeys.size()){
+                        this.publicKeys = temp.publicKeys;
+                    }
+                    if(this.goods.size() <= temp.goods.size()){
+                        this.goods = temp.goods;
+                    }
+                }catch (Exception e){
+                    System.out.println("Errors Occurred While Loading System State!");
+                }
                 System.out.println("Recovered Server State");
             } catch (Exception e) {
                 e.printStackTrace();

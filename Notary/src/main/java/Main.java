@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             //Create an interface object from the implementation class
-            Server servidor = new Server();
+            Server servidor = new Server(0);
             servidor.getSystemState();
             iProxy proxy = servidor;
 
