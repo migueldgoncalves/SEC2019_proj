@@ -338,7 +338,7 @@ public class Client extends UnicastRemoteObject implements iClient {
                 try{
                     if(USING_CC){
                         PublicKey notaryPubKey = RSAKeyLoader.getPub(RESOURCES_DIR + "Notary_CC.pub");
-                        return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
+                        return SignatureGenerator.verifySignatureCartaoCidadao(notaryPubKey, signature, gson.toJson(pedido));
                     }else {
                         PublicKey notaryPubKey = RSAKeyLoader.getPub(RESOURCES_DIR + "Notary.pub");
                         return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
