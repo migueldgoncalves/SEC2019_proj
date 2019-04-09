@@ -2,7 +2,7 @@ import java.security.PublicKey;
 
 public class CartaoCidadao {
 
-    public static byte[] sign(String message) {
+    public synchronized static byte[] sign(String message) {
         try {
             CartaoCidadaoInterface.setUp();
             byte[] signature = CartaoCidadaoInterface.sign(message);
@@ -14,17 +14,20 @@ public class CartaoCidadao {
         }
     }
 
-    public static boolean verify(String message, byte[] signature) {
+    public synchronized static boolean verify(String message, byte[] signature) {
         try {
+            CartaoCidadaoInterface.setUp();
             PublicKey key = CartaoCidadao.getPublicKeyFromCC();
-            return SignatureGenerator.verifySignatureCartaoCidadao(key, signature, message);
+            boolean verify = SignatureGenerator.verifySignatureCartaoCidadao(key, signature, message);
+            CartaoCidadaoInterface.exitPteid();
+            return verify;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    public static PublicKey getPublicKeyFromCC() {
+    public synchronized static PublicKey getPublicKeyFromCC() {
         try {
             CartaoCidadaoInterface.setUp();
             PublicKey key = CartaoCidadaoInterface.getPublicKeyFromCertificate();
@@ -36,7 +39,7 @@ public class CartaoCidadao {
         }
     }
 
-    public static void writeCCPublicKeyToFile() {
+    public synchronized static void writeCCPublicKeyToFile() {
         try {
             CartaoCidadaoInterface.setUp();
             PublicKey key = CartaoCidadaoInterface.getPublicKeyFromCertificate();

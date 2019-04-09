@@ -19,14 +19,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>GovernoPortugal</groupId>
-            <artifactId>CartaoCidadaoLib</artifactId>
-            <scope>system</scope>
-            <version>1.0</version>
-            <systemPath>${basedir}/pteidlibj.jar</systemPath>
-        </dependency>
-
     </dependencies>
 
 </project>

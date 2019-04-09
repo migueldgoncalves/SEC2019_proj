@@ -63,6 +63,14 @@
             <version>1.3.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>GovernoPortugal</groupId>
+            <artifactId>CartaoCidadaoLib</artifactId>
+            <scope>system</scope>
+            <version>1.0</version>
+            <systemPath>C:/Users/migue/IdeaProjects/SEC2019_proj/pteidlibj.jar</systemPath>
+        </dependency>
+
     </dependencies>
 
 </project>
