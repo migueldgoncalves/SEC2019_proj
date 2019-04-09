@@ -24,8 +24,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
     private PrivateKey privKey;
     private boolean USING_CC = false;
 
-    private static final String RESOURCES_DIR = System.getProperty("user.dir") + "\\Notary\\src\\main\\resources\\";
-
     private enum OPCODE {
         TRANSFERGOOD, SELLGOOD, GETSTATEOFGOOD
     }
@@ -46,17 +44,17 @@ public class Server extends UnicastRemoteObject implements iProxy {
             goods = (Hashtable) fileReader.goodsListConstructor(FilePath);
 
             //Add public key from Cartao de Cidadao to file
-            PublicKey key = CartaoCidadao.getPublicKeyFromCC();
-            FileOutputStream out = new FileOutputStream(System.getProperty("user.dir") + "\\src\\main\\resources\\Notary_CC.pub");
+            PublicKey key = iCartaoCidadao.getPublicKeyFromCC();
+            FileOutputStream out = new FileOutputStream(baseDirGenerator() + "\\src\\main\\resources\\Notary_CC.pub");
             out.write(key.getEncoded());
             out.flush();
             out.close();
 
             for (int i = 0; i < 9; i++) {
-                publicKeys.put(i, RSAKeyLoader.getPub("src\\main\\resources\\User" + i + ".pub"));
+                publicKeys.put(i, RSAKeyLoader.getPub(baseDirGenerator() + "\\src\\main\\resources\\User" + i + ".pub"));
             }
 
-            privKey = RSAKeyLoader.getPriv(System.getProperty("user.dir") + "\\src\\main\\resources\\Notary.key");
+            privKey = RSAKeyLoader.getPriv(baseDirGenerator() + "\\src\\main\\resources\\Notary.key");
 
             System.out.println(publicKeys.size() + " Keys Have Been Loaded Into The Notary");
         } catch (Exception e) {
@@ -80,7 +78,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
             System.out.println(publicKeys.size() + " Keys Have Been Loaded Into The Notary!");
 
-            //Prompt User To Decide Wether To Use Or Not Citizen Card
+            //Prompt User To Decide Whether To Use Or Not Citizen Card
             System.out.println("Please Choose One Of The Following Options:");
             System.out.println("1. Run With Citizen Card.");
             System.out.println("2. Run Without Citizen Card");
@@ -89,8 +87,8 @@ public class Server extends UnicastRemoteObject implements iProxy {
             switch (reader.readLine()){
                 case "1":
                     USING_CC = true;
-                    PublicKey pubKey = CartaoCidadao.getPublicKeyFromCC();
-                    FileOutputStream out = new FileOutputStream("Client\\src\\main\\resources\\Notary_CC.pub");
+                    PublicKey pubKey = iCartaoCidadao.getPublicKeyFromCC();
+                    FileOutputStream out = new FileOutputStream(baseDirGenerator() + "\\src\\main\\resources\\Notary_CC.pub");
                     out.write(pubKey.getEncoded());
                     out.flush();
                     out.close();
@@ -132,7 +130,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
             Request answer = new Request();
             answer.setAnswer("This message has already been processed!");
             if(USING_CC){
-                answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
+                answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
             }else {
                 answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
             }
@@ -144,7 +142,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
             Request answer = new Request();
             answer.setAnswer("Invalid Authorization to Invoke Method Get State Of Good in Server!");
             if(USING_CC){
-                answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
+                answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
             }else {
                 answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
             }
@@ -159,7 +157,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                     Request answer = new Request();
                     answer.setAnswer("<" + i.getOwnerId() + ", " + (i.isOnSale() ? "On-Sale>" : "Not-On-Sale>"));
                     if(USING_CC){
-                        answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
+                        answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
                     }else{
                         answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
                     }
@@ -171,7 +169,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
         Request answer = new Request();
         answer.setAnswer("The GoodId " + pedido.getGoodId() + " Is Not Present In The Server!");
         if(USING_CC){
-            answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
+            answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
         }else {
             answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
         }
@@ -191,7 +189,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
             Request answer = new Request();
             answer.setAnswer("This message has already been processed");
             if(USING_CC){
-                answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
+                answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
             }else {
                 answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
             }
@@ -203,7 +201,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
             Request answer = new Request();
             answer.setAnswer("Invalid Authorization to Transfer Good!");
             if(USING_CC){
-                answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
+                answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
             }else {
                 answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
             }
@@ -223,7 +221,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                             Request answer = new Request();
                             answer.setAnswer("The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId());
                             if(USING_CC){
-                                answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
+                                answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
                             }else {
                                 answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
                             }
@@ -232,7 +230,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                             Request answer = new Request();
                             answer.setAnswer("The Item was already Sold, Does not Exist or Is not On Sale");
                             if(USING_CC){
-                                answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
+                                answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
                             }else {
                                 answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
                             }
@@ -246,7 +244,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
         Request answer = new Request();
         answer.setAnswer("The Good Id, Owner Id or New Owner ID is not present in the server!");
         if(USING_CC){
-            answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
+            answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
         }else {
             answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
         }
@@ -268,7 +266,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
             Request answer = new Request();
             answer.setAnswer("This message has already been processed by The Server!");
             if(USING_CC){
-                answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
+                answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
             }else {
                 answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
             }
@@ -281,7 +279,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
             Request answer = new Request();
             answer.setAnswer("Invalid Authorization To Invoke Method Sell on Server!");
             if(USING_CC){
-                answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
+                answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
             }else {
                 answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
             }
@@ -299,7 +297,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                         Request answer = new Request();
                         answer.setAnswer("The Item is Now on Sale");
                         if(USING_CC){
-                            answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
+                            answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
                         }else {
                             answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
                         }
@@ -309,7 +307,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                         Request answer = new Request();
                         answer.setAnswer("The Item was Already On Sale");
                         if(USING_CC){
-                            answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
+                            answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
                         }else {
                             answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
                         }
@@ -322,7 +320,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
         Request answer = new Request();
         answer.setAnswer("The Requested Item To Be Put on Sell Is Not Available In The System");
         if(USING_CC){
-            answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
+            answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
         }else {
             answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
         }

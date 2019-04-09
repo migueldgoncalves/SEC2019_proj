@@ -20,8 +20,6 @@ public class Client extends UnicastRemoteObject implements iClient {
     private static int UserID;
     private static boolean USING_CC = false;
 
-    private static final String RESOURCES_DIR = "Client\\src\\main\\resources\\";
-
     private static void sell(String data) {
         try {
             String jsonAnswer = proxy.sell(data);
@@ -337,7 +335,7 @@ public class Client extends UnicastRemoteObject implements iClient {
             case NOTARY:
                 try{
                     if(USING_CC){
-                        PublicKey notaryPubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\Notary_CC.pub");
+                        PublicKey notaryPubKey = iCartaoCidadao.getPublicKeyFromCC();
                         return SignatureGenerator.verifySignatureCartaoCidadao(notaryPubKey, signature, gson.toJson(pedido));
                     }else {
                         PublicKey notaryPubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\Notary.pub");

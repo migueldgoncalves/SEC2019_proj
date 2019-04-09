@@ -1,12 +1,12 @@
 import java.security.PublicKey;
 
-public class CartaoCidadao {
+public class iCartaoCidadao {
 
     public synchronized static byte[] sign(String message) {
         try {
-            CartaoCidadaoInterface.setUp();
-            byte[] signature = CartaoCidadaoInterface.sign(message);
-            CartaoCidadaoInterface.exitPteid();
+            CartaoCidadao.setUp();
+            byte[] signature = CartaoCidadao.sign(message);
+            CartaoCidadao.exitPteid();
             return signature;
         } catch (Exception e) {
             e.printStackTrace();
@@ -16,10 +16,10 @@ public class CartaoCidadao {
 
     public synchronized static boolean verify(String message, byte[] signature) {
         try {
-            CartaoCidadaoInterface.setUp();
-            PublicKey key = CartaoCidadao.getPublicKeyFromCC();
+            CartaoCidadao.setUp();
+            PublicKey key = iCartaoCidadao.getPublicKeyFromCC();
             boolean verify = SignatureGenerator.verifySignatureCartaoCidadao(key, signature, message);
-            CartaoCidadaoInterface.exitPteid();
+            CartaoCidadao.exitPteid();
             return verify;
         } catch (Exception e) {
             e.printStackTrace();
@@ -29,9 +29,9 @@ public class CartaoCidadao {
 
     public synchronized static PublicKey getPublicKeyFromCC() {
         try {
-            CartaoCidadaoInterface.setUp();
-            PublicKey key = CartaoCidadaoInterface.getPublicKeyFromCertificate();
-            CartaoCidadaoInterface.exitPteid();
+            CartaoCidadao.setUp();
+            PublicKey key = CartaoCidadao.getPublicKeyFromCertificate();
+            CartaoCidadao.exitPteid();
             return key;
         } catch (Exception e) {
             e.printStackTrace();
@@ -41,12 +41,12 @@ public class CartaoCidadao {
 
     public synchronized static void writeCCPublicKeyToFile() {
         try {
-            CartaoCidadaoInterface.setUp();
-            PublicKey key = CartaoCidadaoInterface.getPublicKeyFromCertificate();
+            CartaoCidadao.setUp();
+            PublicKey key = CartaoCidadao.getPublicKeyFromCertificate();
             String baseDir = System.getProperty("user.dir").replace("\\Notary", "");
             RSAKeySaverAsText.SavePublicKeyAsText(key, baseDir + "\\Client\\src\\main\\resources\\Notary_CC");
             RSAKeySaverAsText.SavePublicKeyAsText(key, baseDir + "\\Notary\\src\\main\\resources\\Notary_CC");
-            CartaoCidadaoInterface.exitPteid();
+            CartaoCidadao.exitPteid();
         } catch (Exception e) {
             e.printStackTrace();
         }

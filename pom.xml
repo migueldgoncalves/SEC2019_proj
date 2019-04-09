@@ -64,13 +64,11 @@
         </dependency>
 
         <dependency>
-            <groupId>GovernoPortugal</groupId>
-            <artifactId>CartaoCidadaoLib</artifactId>
-            <scope>system</scope>
+            <groupId>tecnico</groupId>
+            <artifactId>cclib</artifactId>
+            <scope>compile</scope>
             <version>1.0</version>
-            <systemPath>C:/Users/migue/IdeaProjects/SEC2019_proj/pteidlibj.jar</systemPath>
         </dependency>
-
     </dependencies>
 
 </project>

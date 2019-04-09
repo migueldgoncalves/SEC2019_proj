@@ -14,7 +14,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 
-public class CartaoCidadaoInterface {
+public class CartaoCidadao {
 
     // Main available certificates in Cartao de Cidadao
     private static final int CITIZEN_AUTHENTICATION_CERTIFICATE = 0; // WILL require PIN

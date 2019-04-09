@@ -1,11 +1,14 @@
 import com.google.gson.Gson;
 import org.apache.commons.io.FileUtils;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.PrintWriter;
 
-public class CartaoCidadaoTest {
+public class iCartaoCidadaoTest {
 
     @Before
     public void setUp() {
@@ -15,10 +18,10 @@ public class CartaoCidadaoTest {
     public void simpleDataSignVerifyTest() {
         try {
             String data = "data";
-            byte[] signature = CartaoCidadao.sign(data);
+            byte[] signature = iCartaoCidadao.sign(data);
             Assert.assertNotNull(signature);
-            Assert.assertTrue(CartaoCidadao.verify(data, signature));
-            Assert.assertFalse(CartaoCidadao.verify("datas", signature));
+            Assert.assertTrue(iCartaoCidadao.verify(data, signature));
+            Assert.assertFalse(iCartaoCidadao.verify("datas", signature));
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -45,9 +48,9 @@ public class CartaoCidadaoTest {
             Gson json2 = new Gson();
             String jsonToString2 = json2.toJson(request2);
 
-            byte[] signature = CartaoCidadao.sign(jsonToString);
-            Assert.assertTrue(CartaoCidadao.verify(jsonToString, signature));
-            Assert.assertFalse(CartaoCidadao.verify(jsonToString2, signature));
+            byte[] signature = iCartaoCidadao.sign(jsonToString);
+            Assert.assertTrue(iCartaoCidadao.verify(jsonToString, signature));
+            Assert.assertFalse(iCartaoCidadao.verify(jsonToString2, signature));
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -68,7 +71,7 @@ public class CartaoCidadaoTest {
             writer.close();
             writer2.close();
 
-            CartaoCidadao.writeCCPublicKeyToFile();
+            iCartaoCidadao.writeCCPublicKeyToFile();
 
             String jsonString = FileUtils.readFileToString(new File(baseDir + "\\Client\\src\\main\\resources\\Notary_CC.pub"), "UTF-8");
             jsonString = jsonString.replace("\n", "").replace("\r", "");
