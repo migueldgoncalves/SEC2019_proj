@@ -8,85 +8,114 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.security.PublicKey;
-import java.security.Signature;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
-
+/**
+ * This class deals with access to Cartao de Cidadao (CC) data and operations.
+ * WARNING: Do not access it concurrently.
+ */
 public class CartaoCidadao {
 
-    // Main available certificates in Cartao de Cidadao
-    private static final int CITIZEN_AUTHENTICATION_CERTIFICATE = 0; // WILL require PIN
-    private static final int CITIZEN_SIGNATURE_CERTIFICATE = 1; //WILL require PIN, has legal value!
+    /**
+     * There are two main available certificates in the CC,
+     * with the corresponding private keys:
+     * The authentication certificate (represented by 0);
+     * and the digital signature certificate (represented by 1).
+     * WARNING: The digital signature keys have legal value when used!
+     * There are other 11 certificates available in the CC, without the
+     * corresponding private keys
+     */
+    private static final int CERTIFICATE_TO_USE = 0;
 
-    private static final int CERTIFICATE_TO_USE = CITIZEN_AUTHENTICATION_CERTIFICATE;
+    /**
+     * Max number of object handles (references) to get from a search in the CC.
+     */
+    private static final int MAX_OBJECT_COUNT = 5;
 
-    private static final int MAX_OBJECT_COUNT = 5; //Max number of object handles to get in a search
-
+    /**
+     * WARNING: Setting this parameter to 1 will return digital signature
+     * private key handle, which has legal value!
+     */
     private static final int AUTHENTICATION_PRIVATE_KEY_HANDLE = 0;
-    // Setting this to 1 will return digital signature private key handle, which has legal value!
 
-    // Slot - A logical reader that potentially contains a token
-    // Token - The logical view of a cryptographic device defined by Cryptoki
-    private static final int SLOT_ID = 0; //0 is the only valid value if you have a single smart card
+    /**
+     * Token - The logical view of a cryptographic device defined by Cryptoki,
+     * such as a smart card.
+     * Slot - A logical reader that potentially contains a token.
+     * 0 is the only valid value for this parameter if you introduce a single
+     * smart card.
+     */
+    private static final int SLOT_ID = 0;
 
+    /**
+     * Instance of implementation of the PKCS11 library - Needed to access CC
+     */
     private static PKCS11 pkcs11 = null;
-    private static String libName = "libbeidpkcs11.so"; //For Linux - Will be changed below if Windows or Mac
-    private static X509Certificate cert = null;
 
-    public static void setUp() throws Exception {
+    /**
+     * A library required in Linux - Name will be changed in setUp() if Windows or Mac.
+     */
+    private static String libName = "libbeidpkcs11.so";
+
+    /**
+     * Sets up the CC library in the system in order to access the CC.
+     * Must be called before accessing CC's data and operations.
+     * Doesn't need to be called again in runtime until exitPteid() is called.
+     * This method does NOT require PIN.
+     */
+    public static void setUp() {
 
         try {
             System.out.println("            //Load the PTEidlibj");
 
-            System.loadLibrary("pteidlibj"); //You need this line
+            System.loadLibrary("pteidlibj"); //This line is needed, loads CC library into the system
             pteid.Init(""); // Initializes the eID Lib, requires card reader AND card inserted
-            pteid.SetSODChecking(false); // Don't check the integrity of the ID, address and photo (!)
+            pteid.SetSODChecking(false); // Setting to false doesn't check integrity of ID, address and photo - Allows use of test CCs
 
             String osName = System.getProperty("os.name");
 
-            if (-1 != osName.indexOf("Windows"))
+            if (osName.contains("Windows"))
                 libName = "pteidpkcs11.dll";
-            else if (-1 != osName.indexOf("Mac"))
+            else if (osName.contains("Mac"))
                 libName = "pteidpkcs11.dylib";
 
-            // access the ID and Address data via the pteidlib
-            System.out.println("            -- accessing the ID  data via the pteidlib interface");
-
-            // There are 13 certificates and 2 private keys in the card
-            cert = getCertFromByteArray(getCertificateInBytes()); //Does NOT require PINs
-
-        /*} catch (PTEID_ExNoReader e) {
-            throw new Exception("A smart card reader must in inserted");
-        } catch (PTEID_ExNoCardPresent e) {
-            throw new Exception("A smart card must be inserted in the card reader");*/
         } catch (Exception e) {
+            System.out.println("Could not set up the Cartao de Cidadao");
             e.printStackTrace();
         }
     }
 
+    /**
+     * Signs a message with one of the private keys from inserted CC.
+     * Respective PIN will be asked before signing with either authentication
+     * or digital signature private keys.
+     * @param message A string whose signature is needed, cannot be null.
+     * @return A byte array with the signature of the received string
+     */
     public static byte[] sign(String message) {
 
         try {
-
-            // access the ID and Address data via the pteidlib
             System.out.println("            -- generating signature via the PKCS11 interface");
+
+            // 1 - The first thing to do is to get an instance of the PKCS11 interface implementation
 
             Class pkcs11Class = Class.forName("sun.security.pkcs11.wrapper.PKCS11"); //Returns a PKCS11 class object
 
-            // getInstance
+            // getInstance method
             // public static synchronized PKCS11 getInstance(String pkcs11ModulePath,
             //            String functionList, CK_C_INITIALIZE_ARGS pInitArgs,
             //            boolean omitInitialize)
             // RETURNS PKCS11 object
 
-            // Returns Method object: "getInstance" is the method name, with arguments (String, String, CK_C_INITIALIZE_ARGS, boolean)
+            // Returns Method object: "getInstance" is the method name, and receives arguments (String, String, CK_C_INITIALIZE_ARGS, boolean)
             Method getInstanceMethode = pkcs11Class.getDeclaredMethod("getInstance", String.class, String.class, CK_C_INITIALIZE_ARGS.class, boolean.class);
-            // Invokes getInstance method with args (libName, "C_GetFunctionList", null, false). Obj can be null because getInstance is static
+            // Invokes getInstance method with args (libName, "C_GetFunctionList", null, false). Object can be null because getInstance() is static
             pkcs11 = (PKCS11) getInstanceMethode.invoke(null, new Object[]{libName, "C_GetFunctionList", null, false});
 
-            //Open the PKCS11 session
+            // 2 - A session is needed to access CC data and operations - It must be opened beforehand
+
             System.out.println("            //Open the PKCS11 session");
 
             // C_OpenSession
@@ -101,18 +130,23 @@ public class CartaoCidadao {
             // RETURNS session's handle
 
             long p11_session = pkcs11.C_OpenSession(SLOT_ID, PKCS11Constants.CKF_SERIAL_SESSION, null, null);
-            //CK_SESSION_INFO info = pkcs11.C_GetSessionInfo(p11_session);
 
-            // Get available keys
+            // 3 - Private keys in the CC cannot be obtained, only their handles. Before searching for them, it is necessary
+            // to specify the desired object type to search for
+
             System.out.println("            //Get available keys");
+
             // An array of CK_ATTRIBUTEs is called a “template” and is used for creating, manipulating and searching for objects
-            CK_ATTRIBUTE[] attributes = new CK_ATTRIBUTE[1]; //A array of CK_ATTRIBUTE size 1
+            CK_ATTRIBUTE[] attributes = new CK_ATTRIBUTE[1]; //An array of CK_ATTRIBUTE size 1 - Just one object type will be searched
             // CK_ATTRIBUTE is a structure that includes the type, value, and length of an attribute
             attributes[0] = new CK_ATTRIBUTE();
             // Type - Attribute type
-            attributes[0].type = PKCS11Constants.CKA_CLASS; // CKA_CLASS define object class
+            attributes[0].type = PKCS11Constants.CKA_CLASS; // CKA_CLASS defines object class
             // pValue - Pointer to the value of the attribute
-            attributes[0].pValue = new Long(PKCS11Constants.CKO_PRIVATE_KEY); // CKO_PRIVATE_KEY objects hold private keys
+            attributes[0].pValue = PKCS11Constants.CKO_PRIVATE_KEY; // CKO_PRIVATE_KEY objects hold private keys
+
+            // 4 - Now that the objects to search for are established, the search operation can be initialized
+            // It needs to be initialized before the search, and closed after searches are completed
 
             // C_FindObjectsInit
             // public native void C_FindObjectsInit(long hSession, CK_ATTRIBUTE[] pTemplate)
@@ -122,7 +156,7 @@ public class CartaoCidadao {
             // specifies the attribute values to match
             // RETURNS void
 
-            // After calling C_FindObjectsInit, the application may call C_FindObjects one or more times to obtain handles
+            // 5 - After calling C_FindObjectsInit, the application may call C_FindObjects one or more times to obtain handles
             // for objects matching the template, and then eventually call C_FindObjectsFinal to finish the active search
             // operation. At most one search operation may be active at a given time in a given session.
 
@@ -137,30 +171,32 @@ public class CartaoCidadao {
 
             long[] keyHandles = pkcs11.C_FindObjects(p11_session, MAX_OBJECT_COUNT);
 
-            // points to auth_key
-            System.out.println("            //points to auth_key. No. of keys:" + keyHandles.length);
-
-            // Authentication private key handle - Private keys cannot be directly read from Cartao de Cidadao
-            long signatureKey = keyHandles[AUTHENTICATION_PRIVATE_KEY_HANDLE];        //test with other keys to see what you get
+            // Authentication private key handle
+            long signatureKey = keyHandles[AUTHENTICATION_PRIVATE_KEY_HANDLE];
 
             // C_FindObjectsFinal
             // public native void C_FindObjectsFinal(long hSession)
             // Finishes a search for token and session objects
-            // p11_session - Session's handle
+            // p11_session - Session handle
             // RETURNS void
+
+            // 6 - The desired private key handle was found, now the search can be closed
+            // Afterwards, method will proceed to sign the message
 
             pkcs11.C_FindObjectsFinal(p11_session);
 
-            // initialize the signature method
             System.out.println("            //initialize the signature method");
 
-            // CK_MECHANISM is a structure that specifies a particular mechanism and any parameters it requires
+            // 7 - CK_MECHANISM is a structure that specifies a particular mechanism and any parameters it requires
+            // In this case, a mechanism of getting a message hash with SHA1 hash function will be defined
 
             CK_MECHANISM mechanism = new CK_MECHANISM();
             // "mechanism" defines mechanism type (There are several available)
             mechanism.mechanism = PKCS11Constants.CKM_SHA1_RSA_PKCS;
             // pParameter is a pointer to the parameter required by mechanism type - In this case no parameter is needed
             mechanism.pParameter = null;
+
+            // 8 - As with search operation, signing operation must also be initialized before use
 
             // C_SignInit
             // public synchronized void C_SignInit(long hSession, CK_MECHANISM pMechanism, long hKey)
@@ -173,7 +209,6 @@ public class CartaoCidadao {
 
             pkcs11.C_SignInit(p11_session, mechanism, signatureKey);
 
-            // sign
             System.out.println("            //sign");
 
             // C_Sign
@@ -184,55 +219,63 @@ public class CartaoCidadao {
             // pData - Data to sign
             // RETURNS signature
 
-            byte[] signature = pkcs11.C_Sign(p11_session, message.getBytes(Charset.forName("UTF-8"))); //WILL ask for authentication PIN
+            // WILL ask for authentication PIN, is the only line in the class that asks for PIN
+            byte[] signature = pkcs11.C_Sign(p11_session, message.getBytes(Charset.forName("UTF-8")));
+
+            // 9 - Signature of received string was obtained - It can now be printed and returned
+            // Closing session takes place in exitPteid()
 
             for (int i = 0; i < signature.length; i++) {
                 System.out.print(signature[i]);
             }
             System.out.println("\n");
 
-            X509Certificate certificate = getCertFromByteArray(getCertificateInBytes());
-            PublicKey key = certificate.getPublicKey();
-
-            Signature signatureClass = Signature.getInstance("SHA1withRSA");
-            signatureClass.initVerify(key);
-            signatureClass.update("data".getBytes(Charset.forName("UTF-8")));
-            System.out.println("Result is: " + signatureClass.verify(signature));
-
-            //pkcs11.C_VerifyInit(p11_session, mechanism, signatureKey);
-            //pkcs11.C_Verify(p11_session, "data".getBytes(Charset.forName("UTF-8")), signature);
-
             return signature;
-
         } catch (Throwable e) {
-            System.out.println("[Catch] Exception: " + e.getMessage());
+            System.out.println("There was a problem signing the message");
             e.printStackTrace();
             return null;
         }
     }
 
+    /**
+     * Closes CC session and exits from CC library.
+     */
     public static void exitPteid() {
         try {
             pteid.Exit(pteid.PTEID_EXIT_LEAVE_CARD); //OBRIGATORIO Termina a eID Lib
             pkcs11 = null;
-            cert = null;
         } catch (Exception e) {
+            System.out.println("There was a problem exiting from CC library");
             e.printStackTrace();
         }
     }
 
-    // Returns the n-th certificate, starting from 0
+    /**
+     * Gets the byte array with the authentication certificate from the CC.
+     * This method does NOT require PIN.
+     * @return Byte array with the authentication public key certificate,
+     * which can be passed to getCertFromByteArray() to convert to X509 cert.
+     */
     private static byte[] getCertificateInBytes() {
         byte[] certificate_bytes = null;
         try {
             PTEID_Certif[] certs = pteid.GetCertificates();
-            certificate_bytes = certs[CERTIFICATE_TO_USE].certif; //gets the byte[] with the n-th certif*/
+            certificate_bytes = certs[CERTIFICATE_TO_USE].certif; //Gets the byte[] with the selected certificate
         } catch (PteidException e) {
+            System.out.println("Could not get desired certificate bytes");
             e.printStackTrace();
         }
         return certificate_bytes;
     }
 
+    /**
+     * Gets a X509 public key certificate from a byte array with certificate.
+     * This method does NOT require PIN.
+     * @param certificateEncoded The byte array with the public key certificate
+     * @return Same certificate in X509 standard.
+     * @throws CertificateException
+     */
     private static X509Certificate getCertFromByteArray(byte[] certificateEncoded) throws CertificateException {
         CertificateFactory f = CertificateFactory.getInstance("X.509");
         InputStream in = new ByteArrayInputStream(certificateEncoded);
@@ -240,6 +283,11 @@ public class CartaoCidadao {
         return cert;
     }
 
+    /**
+     * Gets the public authentication key of the inserted CC.
+     * This method does NOT require PIN.
+     * @return The public authentication key of the inserted CC.
+     */
     public static PublicKey getPublicKeyFromCertificate() {
         try {
             return getCertFromByteArray(getCertificateInBytes()).getPublicKey();
