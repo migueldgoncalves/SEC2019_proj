@@ -1,4 +1,5 @@
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -30,6 +31,8 @@ public class Client extends UnicastRemoteObject implements iClient {
             }else {
                 System.out.println(answer.getAnswer());
             }
+        } catch (ConnectException e) {
+            System.out.println("Could not connect to server");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -196,13 +199,15 @@ public class Client extends UnicastRemoteObject implements iClient {
             }else {
                 System.out.println(answer.getAnswer());
             }
-
+        } catch (ConnectException e) {
+            System.out.println("Could not connect to server");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private static void invokeSeller(int sellerId, int goodId, int portNumber) {
+        String jsonAnswer = null;
         try {
             iClient clientProxy = (iClient) Naming.lookup("rmi://localhost:" + portNumber + "/" + sellerId);
 
@@ -223,14 +228,15 @@ public class Client extends UnicastRemoteObject implements iClient {
 
             System.out.println("This is the Jason Object: " + jsonInString);
 
-            String jsonAnswer = clientProxy.Buy(request);
+            jsonAnswer = clientProxy.Buy(request);
             Request answer = gson.fromJson(jsonAnswer, Request.class);
             if(!validateRequest(answer, Sender.NOTARY)){
                 System.out.println("Message Has Been Tampered With");
             }else {
                 System.out.println(answer.getAnswer());
             }
-
+        } catch (JsonSyntaxException e) {
+            System.out.println(jsonAnswer);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -298,8 +304,9 @@ public class Client extends UnicastRemoteObject implements iClient {
     //########################################## Auxiliary Methods ####################################################
 
     public String Buy(String request) {
+        Request received = null;
         try {
-            Request received = gson.fromJson(request, Request.class);
+            received = gson.fromJson(request, Request.class);
 
             if(!validateRequest(received, Sender.BUYER)){
                 return "Message Has Been Tampered With!";
@@ -310,6 +317,9 @@ public class Client extends UnicastRemoteObject implements iClient {
             received.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(received)));
 
             return proxy.transferGood(gson.toJson(received));
+        } catch (ConnectException e) {
+            System.out.println("Could not connect to server on behalf of user " + received.getBuyerId());
+            return "Could not connect to server";
         } catch (Exception e) {
             System.out.println("Something Went Wrong During the Transfer");
             e.printStackTrace();

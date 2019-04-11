@@ -15,7 +15,7 @@ public class ServerTest {
         try {
             servidor = new Server("src\\main\\resources\\GoodsFile1.xml");
         } catch (Exception e) {
-            Assert.fail();
+            e.printStackTrace();
             System.out.println("Something Went Wrong In The System");
         }
     }
