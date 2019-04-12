@@ -50,7 +50,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
             out.flush();
             out.close();
 
-            for (int i = 0; i < 9; i++) {
+            for (int i = 1; i <= 9; i++) {
                 publicKeys.put(i, RSAKeyLoader.getPub(baseDirGenerator() + "\\src\\main\\resources\\User" + i + ".pub"));
             }
 
@@ -72,7 +72,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
             FileReader fileReader = new FileReader();
             goods = (Hashtable) fileReader.goodsListConstructor( baseDirGenerator() + "\\src\\main\\resources\\GoodsFile1.xml");
 
-            for (int i = 0; i < 9; i++) {
+            for (int i = 1; i <= 9; i++) {
                 publicKeys.put(i, RSAKeyLoader.getPub(baseDirGenerator() + "\\src\\main\\resources\\User" + i + ".pub"));
             }
 

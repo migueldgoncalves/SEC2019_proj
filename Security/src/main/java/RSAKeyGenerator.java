@@ -10,7 +10,7 @@ public class RSAKeyGenerator {
 
     public static void RSAStoreInFile(int NumberOfKeysToGenerate) {
         try {
-            for (int i = 0; i < NumberOfKeysToGenerate; i++) {
+            for (int i = 1; i <= NumberOfKeysToGenerate; i++) {
 
                 KeyPair pair = generateRSAKeyPair();
 

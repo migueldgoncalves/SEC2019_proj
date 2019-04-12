@@ -12,7 +12,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Random;
 
-public class Client extends UnicastRemoteObject implements iClient {
+public class TestClient extends UnicastRemoteObject implements iClient {
 
     private static iProxy proxy = null;
     private static PrivateKey privKey;
@@ -26,7 +26,7 @@ public class Client extends UnicastRemoteObject implements iClient {
             String jsonAnswer = proxy.sell(data);
             Request answer = gson.fromJson(jsonAnswer, Request.class);
 
-            if(!validateRequest(answer, Sender.NOTARY)){
+            if(!validateRequest(answer, Client.Sender.NOTARY)){
                 System.out.println("The Signature of The Message is Invalid. Message Has Been Tampered With");
             }else {
                 System.out.println(answer.getAnswer());
@@ -38,99 +38,42 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
-    private Client() throws RemoteException {
+    private TestClient(int port, int ID, String option) throws RemoteException {
         super();
-    }
-
-    public static void main(String[] args) {
         try {
-            //Prompt User For Input of Port To Register
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            iClient ClientProxy = new Client();
+            iClient ClientProxy = new TestClient(port, ID, option);
 
-            System.out.println("Is Server Running With CC? Introduce Option Number:");
-            System.out.println("1. YES");
-            System.out.println("2. NO");
-            System.out.print("Option Number:");
-            String option =reader.readLine();
-
-            while (!tryParseInt(option)){
-                System.out.println("Please Introduce only the Number of The Option You Select:");
-                System.out.print("Option Number:");
-                option = reader.readLine();
-            }
-
-            switch (Integer.parseInt(option)){
-                case 1:
-                    USING_CC = true;
-                    break;
-                case 2:
-                    USING_CC = false;
-                    break;
-            }
-
-            System.out.println("Please Introduce The Port You Want to Register:");
-            System.out.print("PORT Number: ");
-            String port = reader.readLine();
-
-            while (!tryParseInt(port)) {
-                System.out.println("Introduce a valid Port Number:");
-                System.out.print("Port Number: ");
-                port = reader.readLine();
-            }
-            int portNumber = Integer.parseInt(port);
-
-            LocateRegistry.createRegistry(portNumber);
-
+            LocateRegistry.createRegistry(port);
             //End Of Client Registration in RMI
 
             proxy = (iProxy) Naming.lookup("rmi://localhost:8086/Notary");
+            Naming.rebind("rmi://localhost:" + port + "/" + UserID, ClientProxy);
+            loadKeys();
 
-            System.out.println("Please Introduce User ID: ");
-            String ID = reader.readLine();
-
-            if (tryParseInt(ID)) {
-
-                UserID = Integer.parseInt(ID);
-                Naming.rebind("rmi://localhost:" + port + "/" + UserID, ClientProxy);
-                loadKeys();
-                printMenu();
-
-                String input = reader.readLine();
-                while (tryParseInt(input) && !input.equals("exit")) {
-
-                    switch (input) {
-                        case "1":
-                            String data = promptForGoodId();
-                            Runnable r = () -> sell(data);
-                            new Thread(r).start();
-                            break;
-                        case "2":
-                            int seller = promptForSellerId();
-                            int good = prompForGoodId();
-                            int clientPort = promptForPortNumber();
-                            Runnable r2 = () -> invokeSeller(seller, good, clientPort);
-                            new Thread(r2).start();
-                            break;
-                        case "3":
-                            String data3 = promptForGoodId();
-                            Runnable r3 = () -> getStateOfGood(data3);
-                            new Thread(r3).start();
-                            break;
-                        default:
-                            System.out.println("The Introduced Input is not a valid number, please try again or type 'exit' to exit program.");
-                            break;
-                    }
-
-                    printMenu();
-                    input = reader.readLine();
-                }
-                reader.close();
-                System.exit(1);
-            } else {
-                throw new Exception("The Introduced value is not convertible to an Integer type variable or user ID does not exist in the server. Exiting ...");
+            switch (option) {
+                case "0":
+                    while(true) {}
+                case "1":
+                    String data = promptForGoodId();
+                    Runnable r = () -> sell(data);
+                    new Thread(r).start();
+                    break;
+                case "2":
+                    int seller = promptForSellerId();
+                    int good = prompForGoodId();
+                    int clientPort = promptForPortNumber();
+                    Runnable r2 = () -> invokeSeller(seller, good, clientPort);
+                    new Thread(r2).start();
+                    break;
+                case "3":
+                    String data3 = promptForGoodId();
+                    Runnable r3 = () -> getStateOfGood(data3);
+                    new Thread(r3).start();
+                    break;
+                default:
+                    System.out.println("The Introduced Input is not a valid number, please try again or type 'exit' to exit program.");
+                    break;
             }
-
         }catch (ConnectException e){
             System.out.println("Could not connect to server. The server may be offline or unavailable due to network reasons.");
             System.exit(-1);
@@ -194,7 +137,7 @@ public class Client extends UnicastRemoteObject implements iClient {
             String jsonAnswer = proxy.getStateOfGood(data);
             Request answer = gson.fromJson(jsonAnswer, Request.class);
 
-            if(!validateRequest(answer, Sender.NOTARY)){
+            if(!validateRequest(answer, Client.Sender.NOTARY)){
                 System.out.println("The Signature of The Message is Invalid. Message Has Been Tampered With");
             }else {
                 System.out.println(answer.getAnswer());
@@ -230,7 +173,7 @@ public class Client extends UnicastRemoteObject implements iClient {
 
             jsonAnswer = clientProxy.Buy(request);
             Request answer = gson.fromJson(jsonAnswer, Request.class);
-            if(!validateRequest(answer, Sender.NOTARY)){
+            if(!validateRequest(answer, Client.Sender.NOTARY)){
                 System.out.println("Message Has Been Tampered With");
             }else {
                 System.out.println(answer.getAnswer());
@@ -292,8 +235,8 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     private static void loadKeys() {
         try {
-            privKey = RSAKeyLoader.getPriv( Client.baseDirGenerator() + "\\src\\main\\resources\\User" + UserID + ".key");
-            pubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\User" + UserID + ".pub");
+            privKey = RSAKeyLoader.getPriv( TestClient.baseDirGenerator() + "\\src\\main\\resources\\User" + UserID + ".key");
+            pubKey = RSAKeyLoader.getPub(TestClient.baseDirGenerator() + "\\src\\main\\resources\\User" + UserID + ".pub");
             System.out.println("Public and Private Keys Loaded");
         } catch (Exception e) {
             e.printStackTrace();
@@ -308,7 +251,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         try {
             received = gson.fromJson(request, Request.class);
 
-            if(!validateRequest(received, Sender.BUYER)){
+            if(!validateRequest(received, Client.Sender.BUYER)){
                 return "Message Has Been Tampered With!";
             }
 
@@ -327,7 +270,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
-    private static boolean validateRequest(Request pedido, Sender invoker) {
+    private static boolean validateRequest(Request pedido, Client.Sender invoker) {
 
         //Verify Signature withing Object
         byte[] signature = pedido.getSignature();
@@ -336,7 +279,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         switch (invoker){
             case BUYER:
                 try{
-                    PublicKey notaryPubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\User" + pedido.getUserId() + ".pub");
+                    PublicKey notaryPubKey = RSAKeyLoader.getPub(TestClient.baseDirGenerator() + "\\src\\main\\resources\\User" + pedido.getUserId() + ".pub");
                     return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
                 }catch (Exception e){
                     e.printStackTrace();
@@ -348,7 +291,7 @@ public class Client extends UnicastRemoteObject implements iClient {
                         PublicKey notaryPubKey = iCartaoCidadao.getPublicKeyFromCC();
                         return SignatureGenerator.verifySignatureCartaoCidadao(notaryPubKey, signature, gson.toJson(pedido));
                     }else {
-                        PublicKey notaryPubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\Notary.pub");
+                        PublicKey notaryPubKey = RSAKeyLoader.getPub(TestClient.baseDirGenerator() + "\\src\\main\\resources\\Notary.pub");
                         return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
                     }
                 }catch (Exception e){
@@ -361,7 +304,7 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     }
 
-    protected enum Sender {
+    private enum Sender {
         NOTARY, BUYER
     }
 
@@ -375,5 +318,4 @@ public class Client extends UnicastRemoteObject implements iClient {
             basePath+="\\Client";
         return basePath;
     }
-
 }
