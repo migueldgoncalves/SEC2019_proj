@@ -208,6 +208,13 @@ public class Server extends UnicastRemoteObject implements iProxy {
             return gson.toJson(answer);
         }
 
+        if (pedido.getBuyerId() < 1 || pedido.getBuyerId() > 9) {
+            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "The Good Id, Owner Id or New Owner ID is not present in the server!");
+            Request answer = new Request();
+            answer.setAnswer("The Good Id, Owner Id or New Owner ID is not present in the server!");
+            return gson.toJson(answer);
+        }
+
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
             ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
             for (Good i : temp) {
