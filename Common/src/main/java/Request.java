@@ -6,7 +6,9 @@ public class Request {
     private int buyerId;
     private int sellerId;
     private long nounce;
+    private long buyerNounce;
     private byte[] signature;
+    private byte[] buyerSignature;
     private String answer;
 
     public Request(){}
@@ -86,4 +88,19 @@ public class Request {
         this.answer = answer;
     }
 
+    public byte[] getBuyerSignature() {
+        return buyerSignature;
+    }
+
+    public void setBuyerSignature(byte[] buyerSignature) {
+        this.buyerSignature = buyerSignature;
+    }
+
+    public long getBuyerNounce() {
+        return buyerNounce;
+    }
+
+    public void setBuyerNounce(long buyerNounce) {
+        this.buyerNounce = buyerNounce;
+    }
 }

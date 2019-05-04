@@ -16,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Client extends UnicastRemoteObject implements iClient {
 
     private static PrivateKey privKey;
-    //private static PublicKey pubKey;
     private static Gson gson = new Gson();
     private static int UserID;
     private static boolean USING_CC = false;
@@ -317,6 +316,8 @@ public class Client extends UnicastRemoteObject implements iClient {
         try {
             received = gson.fromJson(request, Request.class);
 
+            byte[] buyerSig = received.getSignature();
+
             if(!validateRequest(received, Sender.BUYER)){
                 return "Message Has Been Tampered With!";
             }else if(!NonceVerifier.isNonceValid(received)) {
@@ -325,6 +326,9 @@ public class Client extends UnicastRemoteObject implements iClient {
 
             //Request To Transfer Item
             received.setUserId(UserID);
+            received.setBuyerSignature(buyerSig);
+            received.setBuyerNounce(received.getNounce());
+            received.setNounce(new Date().getTime());
             received.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(received)));
 
             ArrayList<String> answers = new ArrayList<>();

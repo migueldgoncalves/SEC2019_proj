@@ -12,10 +12,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
@@ -218,6 +215,21 @@ public class Server extends UnicastRemoteObject implements iProxy {
             return answerFactory("Invalid Authorization to Transfer Good!");
         }
 
+        //Alter Request So It Matches The One Sent By The Buyer
+        byte[] buyerSig = pedido.getBuyerSignature();
+
+        pedido.setUserId(pedido.getBuyerId());
+        pedido.setNounce(pedido.getBuyerNounce());
+        pedido.setBuyerNounce(0);
+        pedido.setSignature(null);
+        pedido.setBuyerSignature(null);
+        //######################################################
+
+        if(!(SignatureGenerator.verifySignature(publicKeys.get(pedido.getBuyerId()), buyerSig, gson.toJson(pedido)))){
+            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item");
+            return answerFactory("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item");
+        }
+
         if (pedido.getBuyerId() < 1 || pedido.getBuyerId() > 9) {
             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "The Good Id, Owner Id or New Owner ID is not present in the server!");
             return answerFactory("The Good Id, Owner Id or New Owner ID is not present in the server!");
@@ -352,6 +364,11 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
     //########################################## Auxiliary Methods ####################################################
 
+    /**
+     * This Method is responsible for generating the Request objects the server will send back to the clients. This Method was made to reduce the ammount of duplicate code.
+     * @param answerMessage The Answer will send back to the client as a field of the Request object
+     * @return A String corresponding to the Request object in JsonFormat
+     */
     private String answerFactory(String answerMessage){
         Gson gson = new Gson();
 
@@ -370,6 +387,9 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
     }
 
+    /**
+     * This Method is Responsible for the Server initial Setup of Ports, ID, and getting the network of servers from a well known one.
+     */
     private void initialSetup(){
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
@@ -422,6 +442,11 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
     }
 
+    /**
+     * Auxiliary method used to verify if the input introduced by the user is in fact an integer number
+     * @param value The value to be verified
+     * @return True if the value is actually an integer, false otherwise
+     */
     private boolean tryParseInt(String value) {
         try {
             Integer.parseInt(value);
@@ -432,10 +457,19 @@ public class Server extends UnicastRemoteObject implements iProxy {
         }
     }
 
+    /**
+     * Method user to retreive the current network of servers from other servers.
+     * @return The concurrent HashMap containing the IDs and Ports of the other servers in the Localhost Network
+     */
     public ConcurrentHashMap<Integer, Integer> getNetworkOfNotaries(){
         return serverPorts;
     }
 
+    /**
+     * Method that new servers invoke to join the network
+     * @param id The New Server ID
+     * @param port The New Server Port
+     */
     public void joinNetwork(Integer id, Integer port) {
         serverPorts.put(id, port);
         for(Integer i : serverPorts.values()){
@@ -469,7 +503,9 @@ public class Server extends UnicastRemoteObject implements iProxy {
                     writer.write("Operation: Get State of Good\n");
                     writer.write("Time of Operation Completion: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "\n");
                     writer.write("User ID of Method Caller: " + pedido.getUserId() + "\n");
+                    writer.write("User Signature of Method Caller: " + Arrays.toString(pedido.getSignature()) + "\n");
                     writer.write("Requested Good ID: " + pedido.getGoodId() + "\n");
+                    writer.write("Nounce: " + pedido.getNounce() + "\n");
                     writer.write("Operation Result: " + result + "\n");
                     writer.write("---------------------------------------------------------------------------------------------------------------\n");
                     writer.close();
@@ -478,7 +514,9 @@ public class Server extends UnicastRemoteObject implements iProxy {
                     writer.write("Operation: Sell Good\n");
                     writer.write("Time of Operation Completion: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "\n");
                     writer.write("User ID of Method Caller: " + pedido.getUserId() + "\n");
+                    writer.write("User Signature of Method Caller: " + Arrays.toString(pedido.getSignature()) + "\n");
                     writer.write("Requested Good ID: " + pedido.getGoodId() + "\n");
+                    writer.write("Nounce: " + pedido.getNounce() + "\n");
                     writer.write("Operation Result: " + result + "\n");
                     writer.write("---------------------------------------------------------------------------------------------------------------\n");
                     writer.close();
@@ -488,8 +526,11 @@ public class Server extends UnicastRemoteObject implements iProxy {
                     writer.write("Time of Operation Completion: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "\n");
                     writer.write("User ID of Method Caller: " + pedido.getUserId() + "\n");
                     writer.write("Seller ID: " + pedido.getSellerId() + "\n");
+                    writer.write("Seller Signature: " + Arrays.toString(pedido.getSignature()) + "\n");
                     writer.write("Buyer ID: " + pedido.getBuyerId() + "\n");
+                    writer.write("Buyer Signature: " + Arrays.toString(pedido.getBuyerSignature()) + "\n");
                     writer.write("Good ID: " + pedido.getGoodId() + "\n");
+                    writer.write("Nounce: " + pedido.getNounce() + "\n");
                     writer.write("Operation Result: " + result + "\n");
                     writer.write("---------------------------------------------------------------------------------------------------------------\n");
                     writer.close();

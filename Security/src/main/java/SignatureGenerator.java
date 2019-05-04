@@ -15,8 +15,6 @@ public class SignatureGenerator {
 
             byte[] signature = sign.sign();
 
-            //System.out.println("Digital Signature for given Message: " + new String(signature, StandardCharsets.UTF_8));
-
             return signature;
         } catch (Exception e) {
             e.printStackTrace();
