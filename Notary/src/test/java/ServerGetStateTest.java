@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.Random;
+import java.util.Date;
 
 public class ServerGetStateTest {
 
@@ -34,18 +34,18 @@ public class ServerGetStateTest {
             Request pedido = new Request();
             pedido.setUserId(1);
             pedido.setGoodId(1);
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             Request temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
             Assert.assertEquals("<1, Not-On-Sale>", temp.getAnswer());
 
             // Put good 1 to sell
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(null);
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             servidor.sell(gson.toJson(pedido));
 
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(null);
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             Request response = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
@@ -64,21 +64,21 @@ public class ServerGetStateTest {
 
             pedido.setGoodId(-1);
             pedido.setUserId(1);
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(null);
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             Request temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
             Assert.assertEquals("The GoodId -1 Is Not Present In The Server!", temp.getAnswer());
 
             pedido.setGoodId(0);
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(null);
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
             Assert.assertEquals("The GoodId 0 Is Not Present In The Server!", temp.getAnswer());
 
             pedido.setGoodId(10);
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(null);
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
@@ -86,7 +86,7 @@ public class ServerGetStateTest {
 
             // Ensure server is ok after attack
             pedido.setGoodId(1);
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(null);
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
@@ -105,27 +105,27 @@ public class ServerGetStateTest {
 
             pedido.setGoodId(1);
             pedido.setUserId(-1);
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             Request temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
             Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", temp.getAnswer());
 
             pedido.setUserId(0);
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(null);
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
             Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", temp.getAnswer());
 
             pedido.setUserId(2);
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(null);
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
             Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", temp.getAnswer());
 
             pedido.setUserId(10);
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(null);
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
@@ -133,7 +133,7 @@ public class ServerGetStateTest {
 
             // Ensure server is ok after attack
             pedido.setUserId(1);
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(null);
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
@@ -152,7 +152,7 @@ public class ServerGetStateTest {
 
             pedido.setUserId(1);
             pedido.setGoodId(1);
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             Request temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
             Assert.assertEquals("<1, Not-On-Sale>", temp.getAnswer());
@@ -162,7 +162,7 @@ public class ServerGetStateTest {
             Assert.assertEquals("This message has already been processed!", temp.getAnswer());
 
             // Ensure server is ok after the attack
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(null); //This line is needed before setting signature
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
@@ -181,16 +181,16 @@ public class ServerGetStateTest {
 
             pedido.setUserId(1);
             pedido.setGoodId(1);
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             Request temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
             Assert.assertEquals("<1, Not-On-Sale>", temp.getAnswer());
 
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             temp = gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
             Assert.assertEquals("Invalid Authorization To Invoke Method Sell on Server!", temp.getAnswer());
 
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(null);
             temp = gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
             Assert.assertEquals("Invalid Authorization To Invoke Method Sell on Server!", temp.getAnswer());
@@ -198,7 +198,7 @@ public class ServerGetStateTest {
             // Ensure server is ok after the attack
             pedido.setUserId(1);
             pedido.setGoodId(1);
-            pedido.setNounce(new Random().nextInt());
+            pedido.setNounce(new Date().getTime());
             pedido.setSignature(null); //This line is needed before setting signature
             pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
             temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);

@@ -1202,3 +1202,21 @@ User ID of Method Caller: 1
 Requested Good ID: 1
 Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
 ---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 03/05/2019 22:30:54
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 03/05/2019 22:52:33
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 03/05/2019 22:52:58
+User ID of Method Caller: 1
+Requested Good ID: 1
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------

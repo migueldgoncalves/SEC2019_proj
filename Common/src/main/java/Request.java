@@ -1,18 +1,40 @@
 public class Request {
 
+    private int notaryId;
     private int userId;
     private int goodId;
-    private byte[] signature;
     private int buyerId;
     private int sellerId;
-    private int nounce;
+    private long nounce;
+    private byte[] signature;
     private String answer;
 
-    public int getNounce() {
+    public Request(){}
+
+    public Request(int notaryId, int userId, int goodId, int buyerId, int sellerId, long nounce, byte[] signature, String answer){
+        this.notaryId = notaryId;
+        this.userId = userId;
+        this.goodId = goodId;
+        this.buyerId = buyerId;
+        this.sellerId = sellerId;
+        this.nounce = nounce;
+        this.signature = signature;
+        this.answer = answer;
+    }
+
+    public int getNotaryId(){
+        return notaryId;
+    }
+
+    public void setNotaryId(int notaryId){
+        this.notaryId = notaryId;
+    }
+
+    public long getNounce() {
         return nounce;
     }
 
-    public void setNounce(int nounce) {
+    public void setNounce(long nounce) {
         this.nounce = nounce;
     }
 

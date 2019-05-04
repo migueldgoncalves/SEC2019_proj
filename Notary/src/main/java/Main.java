@@ -12,11 +12,11 @@ public class Main {
             servidor.getSystemState();
             iProxy proxy = servidor;
 
-            LocateRegistry.createRegistry(8086);
+            LocateRegistry.createRegistry(servidor.PORT);
 
-            Naming.rebind("rmi://localhost:8086/Notary", proxy);
+            Naming.rebind("rmi://localhost:" + servidor.PORT + "/Notary", proxy);
 
-            System.out.println("Server is Running on port 8086 with the name of Notary");
+            System.out.println("Server is Running on port " + servidor.PORT + " with the name of Notary");
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             System.out.println("Press Any Key To exit");
