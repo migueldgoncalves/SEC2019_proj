@@ -257,7 +257,7 @@ public class CartaoCidadao {
      * @return Byte array with the authentication public key certificate,
      * which can be passed to getCertFromByteArray() to convert to X509 cert.
      */
-    private static byte[] getCertificateInBytes() {
+    protected static byte[] getCertificateInBytes() {
         byte[] certificate_bytes = null;
         try {
             PTEID_Certif[] certs = pteid.GetCertificates();
@@ -276,7 +276,7 @@ public class CartaoCidadao {
      * @return Same certificate in X509 standard.
      * @throws CertificateException
      */
-    private static X509Certificate getCertFromByteArray(byte[] certificateEncoded) throws CertificateException {
+    protected static X509Certificate getCertFromByteArray(byte[] certificateEncoded) throws CertificateException {
         CertificateFactory f = CertificateFactory.getInstance("X.509");
         InputStream in = new ByteArrayInputStream(certificateEncoded);
         X509Certificate cert = (X509Certificate) f.generateCertificate(in);
