@@ -1,5 +1,4 @@
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -10,33 +9,18 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Client extends UnicastRemoteObject implements iClient {
 
-    private static iProxy proxy = null;
     private static PrivateKey privKey;
-    private static PublicKey pubKey;
     private static Gson gson = new Gson();
     private static int UserID;
     private static boolean USING_CC = false;
 
-    private static void sell(String data) {
-        try {
-            String jsonAnswer = proxy.sell(data);
-            Request answer = gson.fromJson(jsonAnswer, Request.class);
-
-            if(!validateRequest(answer, Sender.NOTARY)){
-                System.out.println("The Signature of The Message is Invalid. Message Has Been Tampered With");
-            }else {
-                System.out.println(answer.getAnswer());
-            }
-        } catch (ConnectException e) {
-            System.out.println("Could not connect to server");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    private static ConcurrentHashMap<Integer, Integer> serverPorts = new ConcurrentHashMap<>();
 
     private Client() throws RemoteException {
         super();
@@ -80,11 +64,27 @@ public class Client extends UnicastRemoteObject implements iClient {
             }
             int portNumber = Integer.parseInt(port);
 
+            //TODO: Tratar excecao de porta ocupada e voltar a pedir porta para tentar novamente numa outra em vez de se rebentar com o cliente
             LocateRegistry.createRegistry(portNumber);
 
             //End Of Client Registration in RMI
+            System.out.println("Please Introduce The Port of a Well Known Server:");
+            System.out.print("Port Number:");
+            String serverPort = reader.readLine();
 
-            proxy = (iProxy) Naming.lookup("rmi://localhost:8086/Notary");
+            while (!tryParseInt(serverPort)){
+                System.out.println("Introduce a valid Port Number:");
+                System.out.print("Port Number: ");
+                serverPort = reader.readLine();
+            }
+            int wellKnownPort = Integer.parseInt(serverPort);
+
+            iProxy proxy = (iProxy) Naming.lookup("rmi://localhost:" + wellKnownPort + "/Notary");
+
+            System.out.println("Acquiring Network of Notaries...");
+            serverPorts = proxy.getNetworkOfNotaries();
+            proxy = null;
+            System.out.println("Acquired Network of Notaries!");
 
             System.out.println("Please Introduce User ID: ");
             String ID = reader.readLine();
@@ -173,32 +173,31 @@ public class Client extends UnicastRemoteObject implements iClient {
                 input = reader.readLine();
             }
 
-            Request pedido = new Request();
-            pedido.setGoodId(Integer.parseInt(input));
-            pedido.setUserId(UserID);
-            pedido.setNounce(new Random().nextInt());
-            String jsonToString = gson.toJson(pedido);
-            byte[] sig = SignatureGenerator.generateSignature(privKey, jsonToString);
-            pedido.setSignature(sig);
+            Request pedido = new Request(0, UserID, Integer.parseInt(input), 0, 0, new Date().getTime(), null, null);
+            pedido.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(pedido)));
 
             return gson.toJson(pedido);
 
         } catch (Exception e) {
             System.out.println("Something went wrong during prompting for Good ID");
+            e.printStackTrace();
             return null;
         }
     }
 
     private static void getStateOfGood(String data) {
         try {
-            String jsonAnswer = proxy.getStateOfGood(data);
-            Request answer = gson.fromJson(jsonAnswer, Request.class);
 
-            if(!validateRequest(answer, Sender.NOTARY)){
-                System.out.println("The Signature of The Message is Invalid. Message Has Been Tampered With");
-            }else {
-                System.out.println(answer.getAnswer());
+            ArrayList<String> answers = new ArrayList<>();
+            for(Integer i : serverPorts.values()){
+                iProxy proxy = (iProxy) Naming.lookup("rmi://localhost:" + i + "/Notary");
+                answers.add(proxy.getStateOfGood(data));
             }
+
+            for(String jsonAnswer : answers){
+                securityValidator(jsonAnswer);
+            }
+
         } catch (ConnectException e) {
             System.out.println("Could not connect to server");
         } catch (Exception e) {
@@ -207,36 +206,33 @@ public class Client extends UnicastRemoteObject implements iClient {
     }
 
     private static void invokeSeller(int sellerId, int goodId, int portNumber) {
-        String jsonAnswer = null;
         try {
             iClient clientProxy = (iClient) Naming.lookup("rmi://localhost:" + portNumber + "/" + sellerId);
 
-            Request pedido = new Request();
+            Request pedido = new Request(0, UserID, goodId, UserID, sellerId, new Date().getTime(), null, null);
+            pedido.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(pedido)));
 
-            pedido.setUserId(UserID);
-            pedido.setBuyerId(UserID);
-            pedido.setSellerId(sellerId);
-            pedido.setGoodId(goodId);
-            pedido.setSignature(null);
-            pedido.setNounce(new Random().nextInt());
+            securityValidator(clientProxy.Buy(gson.toJson(pedido)));
 
-            String jsonInString = gson.toJson(pedido);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-            pedido.setSignature(SignatureGenerator.generateSignature(privKey, jsonInString));
-
-            String request = gson.toJson(pedido);
-
-            System.out.println("This is the Jason Object: " + jsonInString);
-
-            jsonAnswer = clientProxy.Buy(request);
-            Request answer = gson.fromJson(jsonAnswer, Request.class);
-            if(!validateRequest(answer, Sender.NOTARY)){
-                System.out.println("Message Has Been Tampered With");
-            }else {
-                System.out.println(answer.getAnswer());
+    private static void sell(String data) {
+        try {
+            ArrayList<String> answers = new ArrayList<>();
+            for(Integer i : serverPorts.values()){
+                iProxy proxy = (iProxy) Naming.lookup("rmi://localhost:" + i + "/Notary");
+                answers.add(proxy.sell(data));
             }
-        } catch (JsonSyntaxException e) {
-            System.out.println(jsonAnswer);
+
+            for(String jsonAnswer : answers) {
+                securityValidator(jsonAnswer);
+            }
+
+        } catch (ConnectException e) {
+            System.out.println("Could not connect to server");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -293,7 +289,7 @@ public class Client extends UnicastRemoteObject implements iClient {
     private static void loadKeys() {
         try {
             privKey = RSAKeyLoader.getPriv( Client.baseDirGenerator() + "\\src\\main\\resources\\User" + UserID + ".key");
-            pubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\User" + UserID + ".pub");
+            //pubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\User" + UserID + ".pub");
             System.out.println("Public and Private Keys Loaded");
         } catch (Exception e) {
             e.printStackTrace();
@@ -303,20 +299,47 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     //########################################## Auxiliary Methods ####################################################
 
+    private static void securityValidator(String jsonAnswer){
+        Request answer = gson.fromJson(jsonAnswer, Request.class);
+
+        if (!validateRequest(answer, Sender.NOTARY)) {
+            System.out.println("The Signature of The Message is Invalid. Message Has Been Tampered With");
+        } else if (!NonceVerifier.isNonceValid(answer)) {
+            System.out.println("The Nounce Returned By The Server is Invalid! You Might Be Suffering From Replay Attack!");
+        } else {
+            System.out.println(answer.getAnswer());
+        }
+    }
+
     public String Buy(String request) {
         Request received = null;
         try {
             received = gson.fromJson(request, Request.class);
 
+            byte[] buyerSig = received.getSignature();
+
             if(!validateRequest(received, Sender.BUYER)){
                 return "Message Has Been Tampered With!";
+            }else if(!NonceVerifier.isNonceValid(received)) {
+                return "The Nounce Returned By The Client is Invalid! You Might Be Suffering From Replay Attack!";
             }
 
             //Request To Transfer Item
             received.setUserId(UserID);
+            received.setBuyerSignature(buyerSig);
+            received.setBuyerNounce(received.getNounce());
+            received.setNounce(new Date().getTime());
             received.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(received)));
 
-            return proxy.transferGood(gson.toJson(received));
+            ArrayList<String> answers = new ArrayList<>();
+
+            for(Integer i : serverPorts.values()) {
+                iProxy proxy = (iProxy) Naming.lookup("rmi://localhost:" + i + "/Notary");
+                answers.add(proxy.transferGood(gson.toJson(received)));
+            }
+            //ISTO TEM MESMO DE SER VISTO E ALTERADO
+            return answers.get(0);
+
         } catch (ConnectException e) {
             System.out.println("Could not connect to server on behalf of user " + received.getBuyerId());
             return "Could not connect to server";
