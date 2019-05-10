@@ -1263,3 +1263,35 @@ Good ID: 1
 Nounce: 1556942694179
 Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
 ---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 10/05/2019 00:38:30
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557445110068
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 10/05/2019 00:38:50
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557445110068
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 10/05/2019 01:27:27
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557448047782
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------
+Operation: Get State of Good
+Time of Operation Completion: 10/05/2019 01:27:36
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557448047782
+Operation Result: <1, Not-On-Sale>
+---------------------------------------------------------------------------------------------------------------

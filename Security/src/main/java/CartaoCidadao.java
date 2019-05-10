@@ -68,7 +68,7 @@ public class CartaoCidadao {
     public static void setUp() {
 
         try {
-            System.out.println("            //Load the PTEidlibj");
+            //System.out.println("            //Load the PTEidlibj");
 
             System.loadLibrary("pteidlibj"); //This line is needed, loads CC library into the system
             pteid.Init(""); // Initializes the eID Lib, requires card reader AND card inserted
@@ -232,8 +232,8 @@ public class CartaoCidadao {
 
             return signature;
         } catch (Throwable e) {
-            System.out.println("There was a problem signing the message");
-            e.printStackTrace();
+            System.out.println("There was a problem signing the message. User Canceled The Signature");
+            //e.printStackTrace();
             return null;
         }
     }

@@ -133,17 +133,20 @@ public class Server extends UnicastRemoteObject implements iProxy {
                     }
                     break;
                 case "4":
+                    USING_CC = false;
                     System.out.println("Is It The First Node? \n 1. Yes \n 2. No");
                     System.out.print("Option Number:");
                     switch (reader.readLine()){
                         case "1":
                             this.PORT = 8086;
                             this.ID = 1;
+                            serverPorts.put(ID, PORT);
                             break;
                         case "2":
                             initialSetup();
                             break;
                     }
+                    privKey = RSAKeyLoader.getPriv( baseDirGenerator() + "\\src\\main\\resources\\Notary.key");
                     break;
                 default:
                     System.out.println("Invalid Option. Exiting...");
@@ -241,6 +244,13 @@ public class Server extends UnicastRemoteObject implements iProxy {
                 if (i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getSellerId() && i.isOnSale()) {
                     synchronized (i) {
                         if (i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getSellerId() && i.isOnSale()){
+                            //#####################################################
+                            try{
+                                Thread.sleep(5000);
+                            }catch (Exception p){
+                                p.printStackTrace();
+                            }
+                            //#####################################################
                             Good newOwner = new Good(pedido.getBuyerId(), i.getGoodId(), i.getName(), !i.isOnSale());
                             temp.set(temp.indexOf(i), newOwner);
                             saveServerState();
@@ -424,6 +434,15 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
             serverPorts = proxy.getNetworkOfNotaries();
             proxy.joinNetwork(ID, PORT);
+
+            for(int port : serverPorts.values()){
+                if(port != Integer.parseInt(WellKnownServerPort)){
+                    iProxy notary = (iProxy) Naming.lookup("rmi://localhost:" + port + "/Notary");
+                    notary.joinNetwork(ID, PORT);
+                    notary = null;
+                }
+            }
+
             serverPorts.put(ID, PORT);
             proxy=null; //This is here just to call garbage collector sooner but will delete if prooven to work without this
 
