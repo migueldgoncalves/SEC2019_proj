@@ -10,6 +10,7 @@ public class Request {
     private byte[] signature;
     private byte[] buyerSignature;
     private String answer;
+    private int writeTimeStamp;
 
     public Request(){}
 
@@ -102,5 +103,13 @@ public class Request {
 
     public void setBuyerNounce(long buyerNounce) {
         this.buyerNounce = buyerNounce;
+    }
+
+    public int getWriteTimeStamp() {
+        return writeTimeStamp;
+    }
+
+    public void setWriteTimeStamp(int writeTimeStamp) {
+        this.writeTimeStamp = writeTimeStamp;
     }
 }

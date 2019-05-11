@@ -13,4 +13,7 @@ public interface iProxy extends Remote {
     ConcurrentHashMap<Integer, Integer> getNetworkOfNotaries() throws RemoteException;
 
     void joinNetwork(Integer ID, Integer PORT) throws RemoteException;
+
+    String getServerStatus() throws RemoteException;
+
 }

@@ -2,6 +2,7 @@ import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.BindException;
 import java.rmi.ConnectException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client extends UnicastRemoteObject implements iClient {
 
@@ -20,6 +22,8 @@ public class Client extends UnicastRemoteObject implements iClient {
     private static Gson gson = new Gson();
     private static int UserID;
     private static boolean USING_CC = false;
+
+    private static AtomicInteger writeTimeStamp = new AtomicInteger(0);
 
     private static ConcurrentHashMap<Integer, Integer> serverPorts = new ConcurrentHashMap<>();
 
@@ -65,7 +69,6 @@ public class Client extends UnicastRemoteObject implements iClient {
             }
             int portNumber = Integer.parseInt(port);
 
-            //TODO: Tratar excecao de porta ocupada e voltar a pedir porta para tentar novamente numa outra em vez de se rebentar com o cliente
             LocateRegistry.createRegistry(portNumber);
 
             //End Of Client Registration in RMI
@@ -99,23 +102,26 @@ public class Client extends UnicastRemoteObject implements iClient {
 
                 String input = reader.readLine();
                 while (tryParseInt(input) && !input.equals("exit")) {
-
+                    int writeTimeStampToSend;
                     switch (input) {
                         case "1":
-                            String data = promptForGoodId();
-                            Runnable r = () -> sell(data);
+                            writeTimeStampToSend = writeTimeStamp.getAndIncrement();
+                            String data = promptForGoodId(writeTimeStampToSend);
+                            Runnable r = () -> sell(data, writeTimeStampToSend);
                             new Thread(r).start();
                             break;
                         case "2":
+                            writeTimeStampToSend = writeTimeStamp.getAndIncrement();
                             int seller = promptForSellerId();
                             int good = prompForGoodId();
                             int clientPort = promptForPortNumber();
-                            Runnable r2 = () -> invokeSeller(seller, good, clientPort);
+                            Runnable r2 = () -> invokeSeller(seller, good, clientPort, writeTimeStampToSend);
                             new Thread(r2).start();
                             break;
                         case "3":
-                            String data3 = promptForGoodId();
-                            Runnable r3 = () -> getStateOfGood(data3);
+                            writeTimeStampToSend = writeTimeStamp.getAndIncrement();
+                            String data3 = promptForGoodId(writeTimeStampToSend);
+                            Runnable r3 = () -> getStateOfGood(data3, writeTimeStampToSend);
                             new Thread(r3).start();
                             break;
                         default:
@@ -132,6 +138,9 @@ public class Client extends UnicastRemoteObject implements iClient {
                 throw new Exception("The Introduced value is not convertible to an Integer type variable or user ID does not exist in the server. Exiting ...");
             }
 
+        }catch (BindException e){
+            System.out.println("The Door You Tried Registering To Is Occupied By Another Process. Please Restart And Try Another Port");
+            System.exit(-1);
         }catch (ConnectException e){
             System.out.println("Could not connect to server. The server may be offline or unavailable due to network reasons.");
             System.exit(-1);
@@ -161,7 +170,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
-    private static String promptForGoodId() {
+    private static String promptForGoodId(int writeTimeStampToSend) {
         try {
             System.out.println("Please Introduce the Good ID:");
             System.out.print("Good ID: ");
@@ -175,6 +184,7 @@ public class Client extends UnicastRemoteObject implements iClient {
             }
 
             Request pedido = new Request(0, UserID, Integer.parseInt(input), 0, 0, new Date().getTime(), null, null);
+            pedido.setWriteTimeStamp(writeTimeStampToSend);
             pedido.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(pedido)));
 
             return gson.toJson(pedido);
@@ -186,7 +196,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
-    private static void getStateOfGood(String data) {
+    private static void getStateOfGood(String data, int writeTimeStamp) {
         try {
 
             ArrayList<String> answers = new ArrayList<>();
@@ -218,8 +228,7 @@ public class Client extends UnicastRemoteObject implements iClient {
                 }
             }
 
-            securityValidator(answers);
-
+            securityValidator(answers, writeTimeStamp);
 
         } catch (ConnectException e) {
             System.out.println("Could not connect to server");
@@ -228,18 +237,19 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
-    private static void invokeSeller(int sellerId, int goodId, int portNumber) {
+    private static void invokeSeller(int sellerId, int goodId, int portNumber, int writeTimeStamp) {
         try {
             iClient clientProxy = (iClient) Naming.lookup("rmi://localhost:" + portNumber + "/" + sellerId);
 
             Request pedido = new Request(0, UserID, goodId, UserID, sellerId, new Date().getTime(), null, null);
+            pedido.setWriteTimeStamp(writeTimeStamp);
             pedido.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(pedido)));
 
             ExecutorService executor = Executors.newCachedThreadPool();
             Callable<Void> task = () -> {
                 try{
                     ArrayList<String> answers  = clientProxy.Buy(gson.toJson(pedido));
-                    securityValidator(answers);
+                    securityValidator(answers, writeTimeStamp);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -264,7 +274,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
-    private static void sell(String data) {
+    private static void sell(String data, int writeTimeStamp) {
         try {
             ArrayList<String> answers = new ArrayList<>();
 
@@ -296,7 +306,7 @@ public class Client extends UnicastRemoteObject implements iClient {
                 }
             }
 
-            securityValidator(answers);
+            securityValidator(answers, writeTimeStamp);
 
 
         } catch (ConnectException e) {
@@ -367,7 +377,7 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     //########################################## Auxiliary Methods ####################################################
 
-    private static void securityValidator(ArrayList<String> jsonAnswer){
+    private static void securityValidator(ArrayList<String> jsonAnswer, int writeTimeStamp){
         HashMap<String, Integer> qorum = new HashMap<>();
         boolean hasQorum = false;
         for (String i : jsonAnswer){
@@ -378,6 +388,8 @@ public class Client extends UnicastRemoteObject implements iClient {
                     System.out.println("The Signature of The Message is Invalid. Message Has Been Tampered With");
                 } else if (!NonceVerifier.isNonceValid(answer)) {
                     System.out.println("The Nounce Returned By The Server is Invalid! You Might Be Suffering From Replay Attack!");
+                }else if(answer.getWriteTimeStamp() != writeTimeStamp){
+                    System.out.println("The WriteTimeStamp Returned From The Notary Does Not Correspond To The WriteTimeStamp Expected. Byzantine Notary.");
                 } else {
                     if (qorum.containsKey(answer.getAnswer())) {
                         int newValue = qorum.get(answer.getAnswer()) + 1;
@@ -388,18 +400,14 @@ public class Client extends UnicastRemoteObject implements iClient {
                 }
 
                 for (String p : qorum.keySet()) {
-                    if (qorum.get(p) >= ((serverPorts.size() / 2) + 1)) {
+                    if (qorum.get(p) > (serverPorts.size() / 2)) {
                         System.out.println("WE HAVE A QORUM LADIES AND GENTS!!!!!");
                         System.out.println(p);
                         hasQorum = true;
                     }
                 }
             }
-
         }
-
-
-
     }
 
     public ArrayList<String> Buy(String request) {

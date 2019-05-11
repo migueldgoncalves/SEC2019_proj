@@ -19,14 +19,22 @@ import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
 public class Server extends UnicastRemoteObject implements iProxy {
 
+    //The Hash Table mapping each user ID to their owned Goods
     private Hashtable<Integer, ArrayList<Good>> goods = new Hashtable<>();
+    //The Hash Table mapping each user ID to their public keys
     private Hashtable<Integer, PublicKey> publicKeys = new Hashtable<>();
     int PORT;
     private PrivateKey privKey;
     private boolean USING_CC = false;
+    //The Concurrent HashMap containing the IDs of each notary and corresponding ports in the system
     private ConcurrentHashMap<Integer, Integer> serverPorts = new ConcurrentHashMap<>();
+    //The Concurrent Hashmap containing the writeTimeStamps for every user
+    private ConcurrentHashMap<Integer, Integer> usersWriteTimeStamps = new ConcurrentHashMap<>();
     private int ID;
 
+    /**
+     * Enum used for the Log Update Operations
+     */
     private enum OPCODE {
         TRANSFERGOOD, SELLGOOD, GETSTATEOFGOOD
     }
@@ -179,12 +187,17 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
         if (!NonceVerifier.isNonceValid(pedido)){
             updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "This message has already been processed!");
-            return answerFactory("This message has already been processed!");
+            return answerFactory("This message has already been processed!", pedido.getWriteTimeStamp());
         }
 
         if (!validateRequest(pedido)) {
             updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "Invalid Authorization to Invoke Method Get State Of Good in Server!");
-            return answerFactory("Invalid Authorization to Invoke Method Get State Of Good in Server!");
+            return answerFactory("Invalid Authorization to Invoke Method Get State Of Good in Server!", pedido.getWriteTimeStamp());
+        }
+
+        if(!validateWriteTimeStamp(pedido)){
+            updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "Invalid WriteTimeStamp to Invoke Method Get State Of Good in Server!");
+            return answerFactory("Invalid WriteTimeStamp to Invoke Method Get State Of Good in Server!", pedido.getWriteTimeStamp());
         }
 
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
@@ -192,12 +205,12 @@ public class Server extends UnicastRemoteObject implements iProxy {
             for (Good i : temp) {
                 if (i.getGoodId() == pedido.getGoodId()) {
                     updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "<" + i.getOwnerId() + ", " + (i.isOnSale() ? "On-Sale>" : "Not-On-Sale>"));
-                    return answerFactory("<" + i.getOwnerId() + ", " + (i.isOnSale() ? "On-Sale>" : "Not-On-Sale>"));
+                    return answerFactory("<" + i.getOwnerId() + ", " + (i.isOnSale() ? "On-Sale>" : "Not-On-Sale>"), pedido.getWriteTimeStamp());
                 }
             }
         }
         updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "The GoodId " + pedido.getGoodId() + " Is Not Present In The Server!");
-        return answerFactory("The GoodId " + pedido.getGoodId() + " Is Not Present In The Server!");
+        return answerFactory("The GoodId " + pedido.getGoodId() + " Is Not Present In The Server!", pedido.getWriteTimeStamp());
     }
 
     /**
@@ -210,12 +223,17 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
         if (!NonceVerifier.isNonceValid(pedido)){
             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "This message has already been processed");
-            return answerFactory("This message has already been processed");
+            return answerFactory("This message has already been processed", pedido.getWriteTimeStamp());
         }
 
         if (!validateRequest(pedido)) {
             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "Invalid Authorization to Transfer Good!");
-            return answerFactory("Invalid Authorization to Transfer Good!");
+            return answerFactory("Invalid Authorization to Transfer Good!", pedido.getWriteTimeStamp());
+        }
+
+        if(!validateWriteTimeStamp(pedido)){
+            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "Invalid WriteTimeStamp to Transfer Good!");
+            return answerFactory("Invalid WriteTimeStamp to Transfer Good!", pedido.getWriteTimeStamp());
         }
 
         //Alter Request So It Matches The One Sent By The Buyer
@@ -230,12 +248,12 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
         if(!(SignatureGenerator.verifySignature(publicKeys.get(pedido.getBuyerId()), buyerSig, gson.toJson(pedido)))){
             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item");
-            return answerFactory("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item");
+            return answerFactory("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", pedido.getWriteTimeStamp());
         }
 
         if (pedido.getBuyerId() < 1 || pedido.getBuyerId() > 9) {
             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "The Good Id, Owner Id or New Owner ID is not present in the server!");
-            return answerFactory("The Good Id, Owner Id or New Owner ID is not present in the server!");
+            return answerFactory("The Good Id, Owner Id or New Owner ID is not present in the server!", pedido.getWriteTimeStamp());
         }
 
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
@@ -255,17 +273,17 @@ public class Server extends UnicastRemoteObject implements iProxy {
                             temp.set(temp.indexOf(i), newOwner);
                             saveServerState();
                             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId());
-                            return answerFactory("The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId());
+                            return answerFactory("The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId(), pedido.getWriteTimeStamp());
                         }else {
                             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "The Item was already Sold, Does not Exist or Is not On Sale");
-                            return answerFactory("The Item was already Sold, Does not Exist or Is not On Sale");
+                            return answerFactory("The Item was already Sold, Does not Exist or Is not On Sale", pedido.getWriteTimeStamp());
                         }
                     }
                 }
             }
         }
         updateServerLog(OPCODE.TRANSFERGOOD, pedido, "The Good Id, Owner Id or New Owner ID is not present in the server!");
-        return answerFactory("The Good Id, Owner Id or New Owner ID is not present in the server!");
+        return answerFactory("The Good Id, Owner Id or New Owner ID is not present in the server!", pedido.getWriteTimeStamp());
     }
 
     /**
@@ -280,13 +298,18 @@ public class Server extends UnicastRemoteObject implements iProxy {
         //Replay Attack Prevention
         if (!NonceVerifier.isNonceValid(pedido)){
             updateServerLog(OPCODE.SELLGOOD, pedido, "This message has already been processed by The Server!");
-            return answerFactory("This message has already been processed by The Server!");
+            return answerFactory("This message has already been processed by The Server!", pedido.getWriteTimeStamp());
         }
 
         //Verify Signature withing Object
         if (!validateRequest(pedido)) {
             updateServerLog(OPCODE.SELLGOOD, pedido, "Invalid Authorization To Invoke Method Sell on Server!");
-            return answerFactory("Invalid Authorization To Invoke Method Sell on Server!");
+            return answerFactory("Invalid Authorization To Invoke Method Sell on Server!", pedido.getWriteTimeStamp());
+        }
+
+        if(!validateWriteTimeStamp(pedido)){
+            updateServerLog(OPCODE.SELLGOOD, pedido, "Invalid WriteTimeStamp To Invoke Method Sell on Server!");
+            return answerFactory("Invalid WriteTimeStamp To Invoke Method Sell on Server!", pedido.getWriteTimeStamp());
         }
 
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
@@ -297,16 +320,16 @@ public class Server extends UnicastRemoteObject implements iProxy {
                         i.setOnSale(true);
                         saveServerState();
                         updateServerLog(OPCODE.SELLGOOD, pedido, "The Item is Now on Sale");
-                        return answerFactory("The Item is Now on Sale");
+                        return answerFactory("The Item is Now on Sale", pedido.getWriteTimeStamp());
                     } else {
                         updateServerLog(OPCODE.SELLGOOD, pedido, "The Item was Already On Sale");
-                        return answerFactory("The Item was Already On Sale");
+                        return answerFactory("The Item was Already On Sale", pedido.getWriteTimeStamp());
                     }
                 }
             }
         }
         updateServerLog(OPCODE.SELLGOOD, pedido, "The Requested Item To Be Put on Sell Is Not Available In The System");
-        return answerFactory("The Requested Item To Be Put on Sell Is Not Available In The System");
+        return answerFactory("The Requested Item To Be Put on Sell Is Not Available In The System", pedido.getWriteTimeStamp());
     }
 
     //####################################### Server State Methods #####################################################
@@ -340,7 +363,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
     /**
      * Method That Atomically Saves The Server State to a given path
      */
-    private synchronized boolean saveServerState() {
+    private synchronized void saveServerState() {
         Gson gson = new Gson();
         String finalBackupPath = getBackupPaths()[0];
         String temporaryBackupPath = getBackupPaths()[1];
@@ -355,37 +378,96 @@ public class Server extends UnicastRemoteObject implements iProxy {
         } catch (Exception e) {
             System.out.println("A Crash Occurred During System Save State.");
             e.printStackTrace();
-            return false;
+            return;
         }
 
         try {
             Files.move(Paths.get(temporaryBackupPath), Paths.get(finalBackupPath), ATOMIC_MOVE);
-            return true;
         } catch (AccessDeniedException e) {
             System.out.println("Run as Administrator!");
-            return false;
         } catch (Exception e) {
             System.out.println("An error occurred during system save!");
             e.printStackTrace();
-            return false;
         }
 
     }
 
     //########################################## Auxiliary Methods ####################################################
 
+    private synchronized boolean synchronizeServerStatus(int userId, int writeTimeStamp){
+        try{
+            if(!(usersWriteTimeStamps.get(userId) >= writeTimeStamp) || !(writeTimeStamp == (usersWriteTimeStamps.get(userId) + 1))){
+
+                ArrayList<String> answers = new ArrayList<>();
+
+                for(int port : serverPorts.values()){
+                    if(port != PORT){
+                        iProxy notary = (iProxy) Naming.lookup("rmi://localhost:" + port + "/Notary");
+
+                        //TODO: IMPLEMNENTAR TIME OUT AQUI
+                        answers.add(notary.getServerStatus());
+
+                    }
+                }
+
+                HashMap<String, Integer> qorum = new HashMap<>();
+                Gson gson  = new Gson();
+                for(String answer : answers){
+                        UpdateRequest updateRequest = gson.fromJson(answer, UpdateRequest.class);
+                        //HashMap Containing WriteTimeStamp and Arraylist of Goods of a certain user
+                        HashMap<Integer, ArrayList<Good>> wtss = updateRequest.getPairs();
+                        String jsonString = gson.toJson(wtss);
+                        if (qorum.containsKey(jsonString)) {
+                            qorum.replace(jsonString, qorum.get(jsonString) + 1);
+                        } else {
+                            qorum.put(jsonString, 1);
+                        }
+
+                        for (String p : qorum.keySet()) {
+                            if (qorum.get(p) > (serverPorts.size() / 2)) {
+                                System.out.println("WE HAVE A QORUM LADIES AND GENTS!!!!!");
+                                HashMap<Integer, ArrayList<Good>> qorumWinner = gson.fromJson(p, HashMap.class);
+                                for(Integer i : qorumWinner.keySet()){
+                                    usersWriteTimeStamps.replace(userId, i);
+                                    goods.replace(userId, qorumWinner.get(i));
+                                    break;
+                                }
+                                return true;
+                            }
+                        }
+                }
+
+
+
+                return false;
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return false;
+
+    }
+
+
+    public String getServerStatus() throws RemoteException {
+        return null;
+    }
+
     /**
      * This Method is responsible for generating the Request objects the server will send back to the clients. This Method was made to reduce the ammount of duplicate code.
      * @param answerMessage The Answer will send back to the client as a field of the Request object
      * @return A String corresponding to the Request object in JsonFormat
      */
-    private String answerFactory(String answerMessage){
+    private String answerFactory(String answerMessage, int writeTimeStamp){
         Gson gson = new Gson();
 
         Request answer = new Request();
         answer.setAnswer(answerMessage);
         answer.setNotaryId(ID);
         answer.setNounce(new Date().getTime());
+        answer.setWriteTimeStamp(writeTimeStamp);
 
         if(USING_CC){
             answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
@@ -508,6 +590,21 @@ public class Server extends UnicastRemoteObject implements iProxy {
         return SignatureGenerator.verifySignature(publicKeys.get(pedido.getUserId()), signature, gson.toJson(pedido));
     }
 
+    private boolean validateWriteTimeStamp(Request pedido){
+        int userId = pedido.getUserId();
+        int writeTimeStampToValidate = pedido.getWriteTimeStamp();
+        int currentTimeStamp = usersWriteTimeStamps.get(userId);
+
+        if(writeTimeStampToValidate == (currentTimeStamp + 1)){
+            usersWriteTimeStamps.replace(userId, writeTimeStampToValidate);
+            return true;
+        }else if(writeTimeStampToValidate > (currentTimeStamp)){
+            return synchronizeServerStatus(pedido.getUserId(), writeTimeStampToValidate);
+        }else{
+            return false;
+        }
+    }
+
     /**
      * Method That updates the logs of the Server
      * @param operation The operation executed
@@ -561,6 +658,10 @@ public class Server extends UnicastRemoteObject implements iProxy {
         }
     }
 
+    /**
+     * Mehtod used to check if the backup file of the Server State is created and it is not empty
+     * @return True if the file is created and not empty, false otherwise.
+     */
     private synchronized boolean isBackupFileCreatedAndNotEmpty() {
         String finalBackupPath = getBackupPaths()[0];
         File f = new File(finalBackupPath);
@@ -582,6 +683,10 @@ public class Server extends UnicastRemoteObject implements iProxy {
         return false;
     }
 
+    /**
+     * Auxiliary Method to Get The Paths of The Files Used For Backup Purposes
+     * @return The Paths Of The Backup Files
+     */
     private String[] getBackupPaths() {
         String[] paths = new String[2];
         String basePath = System.getProperty("user.dir");
@@ -592,6 +697,10 @@ public class Server extends UnicastRemoteObject implements iProxy {
         return paths;
     }
 
+    /**
+     * Method That Gets The Base Directory of The Program
+     * @return The Path for The Base Directory
+     */
     private String baseDirGenerator() {
         String basePath = System.getProperty("user.dir");
         if(!basePath.contains("\\Notary"))
