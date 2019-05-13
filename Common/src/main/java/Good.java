@@ -3,7 +3,8 @@ public class Good {
     private int GoodId;
     private String Name;
     private boolean OnSale;
-    private byte[] byzantineSignature;
+    private byte[] NotaryByzantineSignature;
+    private byte[] ClientByzantineSignature;
     private int writeTimeStampOfGood;
 
     public Good(int owner, int goodId, String Name, boolean isOnSale) {
@@ -45,12 +46,20 @@ public class Good {
         OnSale = onSale;
     }
 
-    public byte[] getByzantineSignature() {
-        return byzantineSignature;
+    public byte[] getNotaryByzantineSignature() {
+        return NotaryByzantineSignature;
     }
 
-    public void setByzantineSignature(byte[] byzantineSignature) {
-        this.byzantineSignature = byzantineSignature;
+    public void setNotaryByzantineSignature(byte[] notaryByzantineSignature) {
+        NotaryByzantineSignature = notaryByzantineSignature;
+    }
+
+    public byte[] getClientByzantineSignature() {
+        return ClientByzantineSignature;
+    }
+
+    public void setClientByzantineSignature(byte[] clientByzantineSignature) {
+        ClientByzantineSignature = clientByzantineSignature;
     }
 
     public int getWriteTimeStampOfGood() {

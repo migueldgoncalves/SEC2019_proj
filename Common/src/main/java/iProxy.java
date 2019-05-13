@@ -16,4 +16,7 @@ public interface iProxy extends Remote {
 
     String getServerStatus(int userId) throws RemoteException;
 
+    String prepare_sell(String request) throws RemoteException;
+
+    String prepare_transferGood(String request) throws RemoteException;
 }
