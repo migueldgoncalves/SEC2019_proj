@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Request {
 
     private int notaryId;
@@ -5,11 +7,17 @@ public class Request {
     private int goodId;
     private int buyerId;
     private int sellerId;
+
     private long nounce;
     private long buyerNounce;
+
     private byte[] signature;
     private byte[] buyerSignature;
+
     private String answer;
+    private Good good;
+
+    private ArrayList<Request> answersFromNotaries = new ArrayList<>();
 
     public Request(){}
 
@@ -102,5 +110,21 @@ public class Request {
 
     public void setBuyerNounce(long buyerNounce) {
         this.buyerNounce = buyerNounce;
+    }
+
+    public Good getGood() {
+        return good;
+    }
+
+    public void setGood(Good good) {
+        this.good = good;
+    }
+
+    public ArrayList<Request> getAnswersFromNotaries() {
+        return answersFromNotaries;
+    }
+
+    public void setAnswersFromNotaries(ArrayList<Request> answersFromNotaries) {
+        this.answersFromNotaries = answersFromNotaries;
     }
 }
