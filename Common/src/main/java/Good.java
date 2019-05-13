@@ -3,7 +3,6 @@ public class Good {
     private int GoodId;
     private String Name;
     private boolean OnSale;
-    private byte[] NotaryByzantineSignature;
     private byte[] ClientByzantineSignature;
     private int writeTimeStampOfGood;
 
@@ -44,14 +43,6 @@ public class Good {
 
     public void setOnSale(boolean onSale) {
         OnSale = onSale;
-    }
-
-    public byte[] getNotaryByzantineSignature() {
-        return NotaryByzantineSignature;
-    }
-
-    public void setNotaryByzantineSignature(byte[] notaryByzantineSignature) {
-        NotaryByzantineSignature = notaryByzantineSignature;
     }
 
     public byte[] getClientByzantineSignature() {

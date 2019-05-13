@@ -1295,3 +1295,619 @@ Requested Good ID: 1
 Nounce: 1557448047782
 Operation Result: <1, Not-On-Sale>
 ---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 06:59:40
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557727164808
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 06:59:46
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557727164808
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 06:59:49
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557727164808
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:04:06
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557727354128
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:04:06
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557727354128
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:04:06
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557727354128
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:07:31
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557727635924
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:07:34
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557727635924
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:07:37
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557727635924
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:11:17
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557727877658
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:11:17
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557727877658
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:11:17
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557727877658
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:14:40
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557728080842
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:14:40
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557728080842
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:14:40
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557728080842
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:18:24
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557728233926
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:18:24
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557728233926
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:18:24
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557728233926
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:22:10
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557728472136
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:30:04
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557728783211
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:30:58
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557728783211
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:31:12
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557728783211
+Operation Result: The Requested Item To Be Put on Sell Is Not Available In The System
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:35:28
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557729172754
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:35:39
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557729172754
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:35:46
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557729172754
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:40:12
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557729604892
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:40:12
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557729604892
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:40:12
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557729604892
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:49:44
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557730184700
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:49:44
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557730184700
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:49:44
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557730184700
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:57:15
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557730635827
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:57:15
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557730635827
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 07:57:15
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557730635827
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:04:06
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557731046500
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:04:06
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557731046500
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:04:06
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557731046500
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:05:57
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557731156960
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:05:57
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557731156960
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:05:57
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557731156960
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:13:17
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557731592268
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:13:26
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557731592268
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:13:33
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557731592268
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:18:39
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557731772329
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:20:29
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732016549
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:20:35
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732016549
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:20:36
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732016549
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:21:21
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732075537
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:21:21
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732075537
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:21:21
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732075537
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:21:28
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732088089
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:21:28
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732088089
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:21:28
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732088089
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:21:33
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732093924
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:21:33
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732093924
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:21:34
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732093924
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:21:35
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732095923
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:21:35
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732095923
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:21:35
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732095923
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:08
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732187785
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:08
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732187785
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:08
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732187785
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:12
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732192134
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:12
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732192134
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:12
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732192134
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:14
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732194818
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:14
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732194818
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:14
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732194818
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:28
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732207980
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:28
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732207980
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:28
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732207980
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:29
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732209279
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:29
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732209279
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:29
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732209279
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:30
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732210380
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:30
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732210380
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Sell Good
+Time of Operation Completion: 13/05/2019 08:23:30
+User ID of Method Caller: 1
+User Signature of Method Caller: null
+Requested Good ID: 1
+Nounce: 1557732210380
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------

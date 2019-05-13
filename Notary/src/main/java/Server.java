@@ -13,7 +13,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
@@ -85,6 +85,15 @@ public class Server extends UnicastRemoteObject implements iProxy {
         try {
             FileReader fileReader = new FileReader();
             goods = (Hashtable) fileReader.goodsListConstructor( baseDirGenerator() + "\\src\\main\\resources\\GoodsFile1.xml");
+
+            Gson gson = new Gson();
+            for(Integer uid : goods.keySet()){
+                for(Good i : goods.get(uid)){
+                    i.setWriteTimeStampOfGood(0);
+                    i.setClientByzantineSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(baseDirGenerator().replace("\\Notary", "\\Client") + "\\src\\main\\resources\\User" + uid + ".key"), gson.toJson(i)));
+                    usersWriteTimeStamps.put(uid, 0);
+                }
+            }
 
             for (int i = 1; i <= 9; i++) {
                 publicKeys.put(i, RSAKeyLoader.getPub(baseDirGenerator() + "\\src\\main\\resources\\User" + i + ".pub"));
@@ -187,17 +196,17 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
         if (!NonceVerifier.isNonceValid(pedido)){
             updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "This message has already been processed!");
-            return answerFactory("This message has already been processed!", pedido.getWriteTimeStamp());
+            return answerFactory("This message has already been processed!", pedido.getGood().getWriteTimeStampOfGood());
         }
 
         if (!validateRequest(pedido)) {
             updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "Invalid Authorization to Invoke Method Get State Of Good in Server!");
-            return answerFactory("Invalid Authorization to Invoke Method Get State Of Good in Server!", pedido.getWriteTimeStamp());
+            return answerFactory("Invalid Authorization to Invoke Method Get State Of Good in Server!", pedido.getGood().getWriteTimeStampOfGood());
         }
 
         if(!validateWriteTimeStamp(pedido)){
             updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "Invalid WriteTimeStamp to Invoke Method Get State Of Good in Server!");
-            return answerFactory("Invalid WriteTimeStamp to Invoke Method Get State Of Good in Server!", pedido.getWriteTimeStamp());
+            return answerFactory("Invalid WriteTimeStamp to Invoke Method Get State Of Good in Server!", pedido.getGood().getWriteTimeStampOfGood());
         }
 
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
@@ -205,12 +214,12 @@ public class Server extends UnicastRemoteObject implements iProxy {
             for (Good i : temp) {
                 if (i.getGoodId() == pedido.getGoodId()) {
                     updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "<" + i.getOwnerId() + ", " + (i.isOnSale() ? "On-Sale>" : "Not-On-Sale>"));
-                    return answerFactory("<" + i.getOwnerId() + ", " + (i.isOnSale() ? "On-Sale>" : "Not-On-Sale>"), pedido.getWriteTimeStamp());
+                    return answerFactory("<" + i.getOwnerId() + ", " + (i.isOnSale() ? "On-Sale>" : "Not-On-Sale>"), pedido.getGood().getWriteTimeStampOfGood());
                 }
             }
         }
         updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "The GoodId " + pedido.getGoodId() + " Is Not Present In The Server!");
-        return answerFactory("The GoodId " + pedido.getGoodId() + " Is Not Present In The Server!", pedido.getWriteTimeStamp());
+        return answerFactory("The GoodId " + pedido.getGoodId() + " Is Not Present In The Server!", pedido.getGood().getWriteTimeStampOfGood());
     }
 
     /**
@@ -223,17 +232,17 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
         if (!NonceVerifier.isNonceValid(pedido)){
             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "This message has already been processed");
-            return answerFactory("This message has already been processed", pedido.getWriteTimeStamp());
+            return answerFactory("This message has already been processed", pedido.getGood().getWriteTimeStampOfGood());
         }
 
         if (!validateRequest(pedido)) {
             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "Invalid Authorization to Transfer Good!");
-            return answerFactory("Invalid Authorization to Transfer Good!", pedido.getWriteTimeStamp());
+            return answerFactory("Invalid Authorization to Transfer Good!", pedido.getGood().getWriteTimeStampOfGood());
         }
 
         if(!validateWriteTimeStamp(pedido)){
             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "Invalid WriteTimeStamp to Transfer Good!");
-            return answerFactory("Invalid WriteTimeStamp to Transfer Good!", pedido.getWriteTimeStamp());
+            return answerFactory("Invalid WriteTimeStamp to Transfer Good!", pedido.getGood().getWriteTimeStampOfGood());
         }
 
         //Alter Request So It Matches The One Sent By The Buyer
@@ -248,12 +257,12 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
         if(!(SignatureGenerator.verifySignature(publicKeys.get(pedido.getBuyerId()), buyerSig, gson.toJson(pedido)))){
             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item");
-            return answerFactory("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", pedido.getWriteTimeStamp());
+            return answerFactory("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", pedido.getGood().getWriteTimeStampOfGood());
         }
 
         if (pedido.getBuyerId() < 1 || pedido.getBuyerId() > 9) {
             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "The Good Id, Owner Id or New Owner ID is not present in the server!");
-            return answerFactory("The Good Id, Owner Id or New Owner ID is not present in the server!", pedido.getWriteTimeStamp());
+            return answerFactory("The Good Id, Owner Id or New Owner ID is not present in the server!", pedido.getGood().getWriteTimeStampOfGood());
         }
 
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
@@ -266,17 +275,17 @@ public class Server extends UnicastRemoteObject implements iProxy {
                             temp.set(temp.indexOf(i), newOwner);
                             saveServerState();
                             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId());
-                            return answerFactory("The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId(), pedido.getWriteTimeStamp());
+                            return answerFactory("The Good with Good ID " + i.getGoodId() + " Has now Been transfered to the new Owner with Owner ID " + pedido.getBuyerId(), pedido.getGood().getWriteTimeStampOfGood());
                         }else {
                             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "The Item was already Sold, Does not Exist or Is not On Sale");
-                            return answerFactory("The Item was already Sold, Does not Exist or Is not On Sale", pedido.getWriteTimeStamp());
+                            return answerFactory("The Item was already Sold, Does not Exist or Is not On Sale", pedido.getGood().getWriteTimeStampOfGood());
                         }
                     }
                 }
             }
         }
         updateServerLog(OPCODE.TRANSFERGOOD, pedido, "The Good Id, Owner Id or New Owner ID is not present in the server!");
-        return answerFactory("The Good Id, Owner Id or New Owner ID is not present in the server!", pedido.getWriteTimeStamp());
+        return answerFactory("The Good Id, Owner Id or New Owner ID is not present in the server!", pedido.getGood().getWriteTimeStampOfGood());
     }
 
     /**
@@ -291,38 +300,93 @@ public class Server extends UnicastRemoteObject implements iProxy {
         //Replay Attack Prevention
         if (!NonceVerifier.isNonceValid(pedido)){
             updateServerLog(OPCODE.SELLGOOD, pedido, "This message has already been processed by The Server!");
-            return answerFactory("This message has already been processed by The Server!", pedido.getWriteTimeStamp());
+            return answerFactory("This message has already been processed by The Server!", pedido.getAnswersFromNotaries().get(0).getGood().getWriteTimeStampOfGood());
         }
 
         //Verify Signature withing Object
         if (!validateRequest(pedido)) {
             updateServerLog(OPCODE.SELLGOOD, pedido, "Invalid Authorization To Invoke Method Sell on Server!");
-            return answerFactory("Invalid Authorization To Invoke Method Sell on Server!", pedido.getWriteTimeStamp());
+            return answerFactory("Invalid Authorization To Invoke Method Sell on Server!", pedido.getAnswersFromNotaries().get(0).getGood().getWriteTimeStampOfGood());
         }
 
         if(!validateWriteTimeStamp(pedido)){
             updateServerLog(OPCODE.SELLGOOD, pedido, "Invalid WriteTimeStamp To Invoke Method Sell on Server!");
-            return answerFactory("Invalid WriteTimeStamp To Invoke Method Sell on Server!", pedido.getWriteTimeStamp());
+            return answerFactory("Invalid WriteTimeStamp To Invoke Method Sell on Server!", pedido.getAnswersFromNotaries().get(0).getGood().getWriteTimeStampOfGood());
         }
 
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
             ArrayList<Good> temp = (ArrayList<Good>) e.nextElement();
             for (Good i : temp) {
-                if (i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getUserId()) {
+                if (i.getGoodId() == pedido.getAnswersFromNotaries().get(0).getGood().getGoodId() && i.getOwnerId() == pedido.getUserId()) {
                     if (!i.isOnSale()) {
                         i.setOnSale(true);
+                        i.setWriteTimeStampOfGood(pedido.getAnswersFromNotaries().get(0).getGood().getWriteTimeStampOfGood());
                         saveServerState();
                         updateServerLog(OPCODE.SELLGOOD, pedido, "The Item is Now on Sale");
-                        return answerFactory("The Item is Now on Sale", pedido.getWriteTimeStamp());
+                        return answerFactory("The Item is Now on Sale", pedido.getAnswersFromNotaries().get(0).getGood().getWriteTimeStampOfGood());
                     } else {
                         updateServerLog(OPCODE.SELLGOOD, pedido, "The Item was Already On Sale");
-                        return answerFactory("The Item was Already On Sale", pedido.getWriteTimeStamp());
+                        i.setWriteTimeStampOfGood(pedido.getAnswersFromNotaries().get(0).getGood().getWriteTimeStampOfGood());
+                        return answerFactory("The Item was Already On Sale", pedido.getAnswersFromNotaries().get(0).getGood().getWriteTimeStampOfGood());
                     }
                 }
             }
         }
         updateServerLog(OPCODE.SELLGOOD, pedido, "The Requested Item To Be Put on Sell Is Not Available In The System");
-        return answerFactory("The Requested Item To Be Put on Sell Is Not Available In The System", pedido.getWriteTimeStamp());
+        return answerFactory("The Requested Item To Be Put on Sell Is Not Available In The System", pedido.getAnswersFromNotaries().get(0).getGood().getWriteTimeStampOfGood());
+    }
+
+    public String prepare_sell(String request) throws RemoteException {
+        Gson gson = new Gson();
+        //Convert to Request Object
+        Request pedido = gson.fromJson(request, Request.class);
+
+        //Replay Attack Prevention
+        if (!NonceVerifier.isNonceValid(pedido)){
+            updateServerLog(OPCODE.SELLGOOD, pedido, "This message has already been processed by The Server!");
+            return answerFactory("This message has already been processed by The Server!", pedido.getGood().getWriteTimeStampOfGood());
+        }
+
+        //Verify Signature withing Object
+        if (!validateRequest(pedido)) {
+            updateServerLog(OPCODE.SELLGOOD, pedido, "Invalid Authorization To Invoke Method Sell on Server!");
+            return answerFactory("Invalid Authorization To Invoke Method Sell on Server!", pedido.getGood().getWriteTimeStampOfGood());
+        }
+
+        //TODO: VALIDATE READ ID INSTEAD OF WRITE TIME STAMP
+//        if(!validateWriteTimeStamp(pedido)){
+//            updateServerLog(OPCODE.SELLGOOD, pedido, "Invalid WriteTimeStamp To Invoke Method Sell on Server!");
+//            return answerFactory("Invalid WriteTimeStamp To Invoke Method Sell on Server!", pedido.getGood().getWriteTimeStampOfGood());
+//        }
+
+        for(Good i : goods.get(pedido.getUserId())){
+            if(i.getGoodId() == pedido.getGoodId()){
+                Good modifiedGood = new Good(i.getOwnerId(), i.getGoodId(), i.getName(), true);
+                modifiedGood.setClientByzantineSignature(i.getClientByzantineSignature());
+                modifiedGood.setWriteTimeStampOfGood(i.getWriteTimeStampOfGood());
+
+                Request answer = new Request();
+                answer.setNotaryId(ID);
+                answer.setNounce(new Date().getTime());
+                answer.setGood(modifiedGood);
+
+                if(USING_CC){
+                    answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
+                }else {
+                    answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
+                }
+
+                return gson.toJson(answer);
+
+            }
+        }
+
+        return null;
+
+    }
+
+    public String prepare_transferGood(String request) throws RemoteException {
+        return null;
     }
 
     //####################################### Server State Methods #####################################################
@@ -397,9 +461,29 @@ public class Server extends UnicastRemoteObject implements iProxy {
                     if(port != PORT){
                         iProxy notary = (iProxy) Naming.lookup("rmi://localhost:" + port + "/Notary");
 
-                        //TODO: IMPLEMNENTAR TIME OUT AQUI
-                        answers.add(notary.getServerStatus(userId));
-
+                        ExecutorService executor = Executors.newCachedThreadPool();
+                        Callable<Boolean> task = () -> {
+                            try{
+                                return answers.add(notary.getServerStatus(userId));
+                            }catch (Exception e){
+                                e.printStackTrace();
+                                return null;
+                            }
+                        };
+                        Future<Boolean> future = executor.submit(task);
+                        try {
+                            Object result = future.get(20, TimeUnit.SECONDS);
+                        } catch (TimeoutException ex) {
+                            System.out.println("The Server Took Too Long To Answer! TimeOut Exception");
+                        } catch (InterruptedException e) {
+                            System.out.println("Interrupted Exception Found.");
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            System.out.println("Execution Exception Found.");
+                            e.printStackTrace();
+                        } finally {
+                            future.cancel(true); // may or may not desire this
+                        }
                     }
                 }
 
@@ -469,7 +553,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
         answer.setAnswer(answerMessage);
         answer.setNotaryId(ID);
         answer.setNounce(new Date().getTime());
-        answer.setWriteTimeStamp(writeTimeStamp);
+        //answer.setWriteTimeStamp(writeTimeStamp);
 
         if(USING_CC){
             answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
@@ -594,7 +678,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
     private boolean validateWriteTimeStamp(Request pedido){
         int userId = pedido.getUserId();
-        int writeTimeStampToValidate = pedido.getWriteTimeStamp();
+        int writeTimeStampToValidate = pedido.getAnswersFromNotaries().get(0).getGood().getWriteTimeStampOfGood();
         int currentTimeStamp = usersWriteTimeStamps.get(userId);
 
         if(writeTimeStampToValidate == (currentTimeStamp + 1)){
@@ -707,6 +791,15 @@ public class Server extends UnicastRemoteObject implements iProxy {
         String basePath = System.getProperty("user.dir");
         if(!basePath.contains("\\Notary"))
             basePath+="\\Notary";
+        return basePath;
+    }
+
+    private static String baseClientDirGenerator() {
+        String basePath = System.getProperty("user.dir");
+        if(basePath.contains("\\Notary")){
+            //basePath = basePath.replaceAll("\\Notary", "\\Client");
+        }
+
         return basePath;
     }
 }

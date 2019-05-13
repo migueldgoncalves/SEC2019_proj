@@ -18,6 +18,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client extends UnicastRemoteObject implements iClient {
 
+    protected enum Sender {
+        NOTARY, BUYER
+    }
+
     private static PrivateKey privKey;
     private static Gson gson = new Gson();
     private static int UserID;
@@ -105,13 +109,13 @@ public class Client extends UnicastRemoteObject implements iClient {
                     int writeTimeStampToSend;
                     switch (input) {
                         case "1":
-                            writeTimeStampToSend = writeTimeStamp.getAndIncrement();
+                            writeTimeStampToSend = writeTimeStamp.incrementAndGet();
                             String data = promptForGoodId(writeTimeStampToSend);
                             Runnable r = () -> sell(data, writeTimeStampToSend);
                             new Thread(r).start();
                             break;
                         case "2":
-                            writeTimeStampToSend = writeTimeStamp.getAndIncrement();
+                            writeTimeStampToSend = writeTimeStamp.incrementAndGet();
                             int seller = promptForSellerId();
                             int good = prompForGoodId();
                             int clientPort = promptForPortNumber();
@@ -119,7 +123,7 @@ public class Client extends UnicastRemoteObject implements iClient {
                             new Thread(r2).start();
                             break;
                         case "3":
-                            writeTimeStampToSend = writeTimeStamp.getAndIncrement();
+                            writeTimeStampToSend = writeTimeStamp.incrementAndGet();
                             String data3 = promptForGoodId(writeTimeStampToSend);
                             Runnable r3 = () -> getStateOfGood(data3, writeTimeStampToSend);
                             new Thread(r3).start();
@@ -184,7 +188,6 @@ public class Client extends UnicastRemoteObject implements iClient {
             }
 
             Request pedido = new Request(0, UserID, Integer.parseInt(input), 0, 0, new Date().getTime(), null, null);
-            pedido.setWriteTimeStamp(writeTimeStampToSend);
             pedido.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(pedido)));
 
             return gson.toJson(pedido);
@@ -242,7 +245,6 @@ public class Client extends UnicastRemoteObject implements iClient {
             iClient clientProxy = (iClient) Naming.lookup("rmi://localhost:" + portNumber + "/" + sellerId);
 
             Request pedido = new Request(0, UserID, goodId, UserID, sellerId, new Date().getTime(), null, null);
-            pedido.setWriteTimeStamp(writeTimeStamp);
             pedido.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(pedido)));
 
             ExecutorService executor = Executors.newCachedThreadPool();
@@ -274,17 +276,38 @@ public class Client extends UnicastRemoteObject implements iClient {
         }
     }
 
-    private static void sell(String data, int writeTimeStamp) {
+    public ArrayList<String> Buy(String request) {
+        Request received = null;
         try {
+            received = gson.fromJson(request, Request.class);
+
+            byte[] buyerSig = received.getSignature();
+
+            if(!validateRequest(received, Sender.BUYER)){
+                System.out.println("Message Has Been Tampered With!");
+                return null;
+            }else if(!NonceVerifier.isNonceValid(received)) {
+                System.out.println("The Nounce Returned By The Client is Invalid! You Might Be Suffering From Replay Attack!");
+                return null;
+            }
+
+            //Request To Transfer Item
+            received.setUserId(UserID);
+            received.setBuyerSignature(buyerSig);
+            received.setBuyerNounce(received.getNounce());
+            received.setNounce(new Date().getTime());
+            received.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(received)));
+
             ArrayList<String> answers = new ArrayList<>();
 
-            for (Integer i : serverPorts.values()) {
+            for(Integer i : serverPorts.values()) {
                 iProxy proxy = (iProxy) Naming.lookup("rmi://localhost:" + i + "/Notary");
 
                 ExecutorService executor = Executors.newCachedThreadPool();
+                Request finalReceived = received;
                 Callable<Boolean> task = () -> {
                     try{
-                        return answers.add(proxy.sell(data));
+                        return answers.add(proxy.transferGood(gson.toJson(finalReceived)));
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -293,6 +316,142 @@ public class Client extends UnicastRemoteObject implements iClient {
                 Future<Boolean> future = executor.submit(task);
                 try {
                     Object result = future.get(20, TimeUnit.SECONDS);
+                } catch (TimeoutException ex) {
+                    System.out.println("The Server Took Too Long To Answer! TimeOut Exception");
+                } catch (InterruptedException e) {
+                    System.out.println("Interrupted Exception Found.");
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    System.out.println("Execution Exception Found.");
+                    e.printStackTrace();
+                } finally {
+                    future.cancel(true); // may or may not desire this
+                }
+            }
+            return answers;
+
+        } catch (ConnectException e) {
+            System.out.println("Could not connect to server on behalf of user " + received.getBuyerId());
+            System.out.println("Could not connect to server");
+            return null;
+        } catch (Exception e) {
+            System.out.println("Something Went Wrong During the Transfer");
+            e.printStackTrace();
+            System.out.println("The Good Transfer Has Failed. Please Try Again.");
+        }
+
+        return null;
+
+    }
+
+    private static void sell(String data, int writeTimeStamp) {
+        try {
+            ArrayList<String> answers = new ArrayList<>();
+            Request proposition = gson.fromJson(data, Request.class);
+
+            for (Integer i : serverPorts.values()) {
+                iProxy proxy = (iProxy) Naming.lookup("rmi://localhost:" + i + "/Notary");
+
+                ExecutorService executor = Executors.newCachedThreadPool();
+                Callable<Boolean> task = () -> {
+                    try{
+                        return answers.add(proxy.prepare_sell(data));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        return null;
+                    }
+                };
+                Future<Boolean> future = executor.submit(task);
+                try {
+                    Object result = future.get(20, TimeUnit.SECONDS);
+                } catch (TimeoutException ex) {
+                    System.out.println("The Server Took Too Long To Answer! TimeOut Exception");
+                } catch (InterruptedException e) {
+                    System.out.println("Interrupted Exception Found.");
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    System.out.println("Execution Exception Found.");
+                    e.printStackTrace();
+                } finally {
+                    future.cancel(true); // may or may not desire this
+                }
+            }
+
+            //A partir deste momento temos todas as repostas do servidor no melhor caso possivel e podemos fazer qorum delas a ver se realmente temos um concenso
+
+            HashMap<String, Integer> qorum = new HashMap<>();
+            boolean hasQorum = false;
+            String qorumWinner = null;
+
+            for (String i : answers){
+                if(!hasQorum) {
+                    Request answer = gson.fromJson(i, Request.class);
+                    if (!validateRequest(answer, Sender.NOTARY)) {
+                        System.out.println("The Signature of The Message is Invalid. Message Has Been Tampered With");
+                    } else if (!NonceVerifier.isNonceValid(answer)) {
+                        System.out.println("The Nounce Returned By The Server is Invalid! You Might Be Suffering From Replay Attack!");
+                        //TODO: Alterar o else if abaixo para verificar o Read ID e nao o write time stamp
+                    } else if (answer.getGood().getWriteTimeStampOfGood() != writeTimeStamp - 1) {
+                        System.out.println("The WriteTimeStamp Returned From The Notary Does Not Correspond To The WriteTimeStamp Expected. Byzantine Notary.");
+                    } else {
+                        Good goodSentFromServer = answer.getGood();
+                        if (goodSentFromServer.getGoodId() == proposition.getGoodId() && goodSentFromServer.isOnSale() && answer.getNotaryId() != 0) {
+
+                            if (qorum.get(gson.toJson(goodSentFromServer)) != null) {
+                                int newValue = qorum.get(gson.toJson(goodSentFromServer)) + 1;
+                                qorum.replace(gson.toJson(goodSentFromServer), newValue);
+                            } else {
+                                qorum.put(gson.toJson(goodSentFromServer), 1);
+                            }
+
+                            for (String x : qorum.keySet()) {
+                                if (qorum.get(x) > (serverPorts.size() / 2)) {
+                                    System.out.println("Qorum Achieved on Good in Method Sell");
+                                    qorumWinner = x;
+                                    hasQorum = true;
+                                }
+                            }
+
+                        } else {
+                            System.out.println("Invalid Answer Sent From The Server. One of the Expected Parameters (GoodId, isOnSale or Notary ID) has failed verification. Byzantine Attack Detected!");
+                        }
+                    }
+                }
+            }
+
+            ArrayList<Request> qorumWinningAnswers = new ArrayList<>();
+            Request pedido = new Request(0, UserID, proposition.getGoodId(), 0, 0, new Date().getTime(), null, null);
+
+            for(String i : answers){
+                Request answer = gson.fromJson(i, Request.class);
+                if(gson.toJson(answer.getGood()).equals(qorumWinner)){
+                    Good temp = answer.getGood();
+                    temp.setWriteTimeStampOfGood(writeTimeStamp);
+                    temp.setClientByzantineSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer.getGood())));
+                    answer.setGood(temp);
+                    qorumWinningAnswers.add(answer);
+                }
+            }
+
+            pedido.setAnswersFromNotaries(qorumWinningAnswers);
+            pedido.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(pedido)));
+            answers.clear();
+
+            for(Integer i : serverPorts.values()){
+                iProxy proxy = (iProxy) Naming.lookup("rmi://localhost:" + i + "/Notary");
+
+                ExecutorService executor = Executors.newCachedThreadPool();
+                Callable<Boolean> task = () -> {
+                    try{
+                        return answers.add(proxy.sell(gson.toJson(pedido)));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        return null;
+                    }
+                };
+                Future<Boolean> future = executor.submit(task);
+                try {
+                    Object result = future.get(80000, TimeUnit.SECONDS);
                 } catch (TimeoutException ex) {
                     System.out.println("The Server Took Too Long To Answer! TimeOut Exception");
                 } catch (InterruptedException e) {
@@ -388,12 +547,12 @@ public class Client extends UnicastRemoteObject implements iClient {
                     System.out.println("The Signature of The Message is Invalid. Message Has Been Tampered With");
                 } else if (!NonceVerifier.isNonceValid(answer)) {
                     System.out.println("The Nounce Returned By The Server is Invalid! You Might Be Suffering From Replay Attack!");
-                }else if(answer.getWriteTimeStamp() != writeTimeStamp){
+                    //TODO: Problema aqui porque quando a resposta ao Sell e retornada o Good vem a null o que pode acontecer em varias situacoes
+                }else if(answer.getGood() != null && answer.getGood().getWriteTimeStampOfGood() != writeTimeStamp){
                     System.out.println("The WriteTimeStamp Returned From The Notary Does Not Correspond To The WriteTimeStamp Expected. Byzantine Notary.");
                 } else {
                     if (qorum.containsKey(answer.getAnswer())) {
-                        int newValue = qorum.get(answer.getAnswer()) + 1;
-                        qorum.replace(answer.getAnswer(), newValue);
+                        qorum.replace(answer.getAnswer(), qorum.get(answer.getAnswer()) + 1);
                     } else {
                         qorum.put(answer.getAnswer(), 1);
                     }
@@ -401,81 +560,13 @@ public class Client extends UnicastRemoteObject implements iClient {
 
                 for (String p : qorum.keySet()) {
                     if (qorum.get(p) > (serverPorts.size() / 2)) {
-                        System.out.println("WE HAVE A QORUM LADIES AND GENTS!!!!!");
+                        System.out.println("Qorum Achieved On Security Validator!");
                         System.out.println(p);
                         hasQorum = true;
                     }
                 }
             }
         }
-    }
-
-    public ArrayList<String> Buy(String request) {
-        Request received = null;
-        try {
-            received = gson.fromJson(request, Request.class);
-
-            byte[] buyerSig = received.getSignature();
-
-            if(!validateRequest(received, Sender.BUYER)){
-                System.out.println("Message Has Been Tampered With!");
-                return null;
-            }else if(!NonceVerifier.isNonceValid(received)) {
-                System.out.println("The Nounce Returned By The Client is Invalid! You Might Be Suffering From Replay Attack!");
-                return null;
-            }
-
-            //Request To Transfer Item
-            received.setUserId(UserID);
-            received.setBuyerSignature(buyerSig);
-            received.setBuyerNounce(received.getNounce());
-            received.setNounce(new Date().getTime());
-            received.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(received)));
-
-            ArrayList<String> answers = new ArrayList<>();
-
-            for(Integer i : serverPorts.values()) {
-                iProxy proxy = (iProxy) Naming.lookup("rmi://localhost:" + i + "/Notary");
-
-                ExecutorService executor = Executors.newCachedThreadPool();
-                Request finalReceived = received;
-                Callable<Boolean> task = () -> {
-                    try{
-                        return answers.add(proxy.transferGood(gson.toJson(finalReceived)));
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    return null;
-                };
-                Future<Boolean> future = executor.submit(task);
-                try {
-                    Object result = future.get(20, TimeUnit.SECONDS);
-                } catch (TimeoutException ex) {
-                    System.out.println("The Server Took Too Long To Answer! TimeOut Exception");
-                } catch (InterruptedException e) {
-                    System.out.println("Interrupted Exception Found.");
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    System.out.println("Execution Exception Found.");
-                    e.printStackTrace();
-                } finally {
-                    future.cancel(true); // may or may not desire this
-                }
-            }
-            return answers;
-
-        } catch (ConnectException e) {
-            System.out.println("Could not connect to server on behalf of user " + received.getBuyerId());
-            System.out.println("Could not connect to server");
-            return null;
-        } catch (Exception e) {
-            System.out.println("Something Went Wrong During the Transfer");
-            e.printStackTrace();
-            System.out.println("The Good Transfer Has Failed. Please Try Again.");
-        }
-
-        return null;
-
     }
 
     private static boolean validateRequest(Request pedido, Sender invoker) {
@@ -510,10 +601,6 @@ public class Client extends UnicastRemoteObject implements iClient {
 
         return false;
 
-    }
-
-    protected enum Sender {
-        NOTARY, BUYER
     }
 
     private static void printMenu() {
