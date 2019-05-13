@@ -1,4 +1,3 @@
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -76,7 +75,7 @@ public class KeyStoreInterface {
             Certificate certificate = certificateFactory.generateCertificate(inputStream);
             return certificate.getPublicKey();
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             System.out.println("Could not get public " + alias + id);
             return null;
         }

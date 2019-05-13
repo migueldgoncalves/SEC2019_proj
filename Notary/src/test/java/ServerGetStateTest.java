@@ -7,10 +7,13 @@ import org.junit.Test;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.Objects;
 
 public class ServerGetStateTest {
 
     private Server servidor;
+
+    private Request state = null;
 
     @Before
     public void setUp() {
@@ -30,26 +33,18 @@ public class ServerGetStateTest {
     @Test
     public void methodGetStateOfGoodSuccessful() {
         try {
-            Gson gson = new Gson();
-            Request pedido = new Request();
-            pedido.setUserId(1);
-            pedido.setGoodId(1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Request temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("<1, Not-On-Sale>", temp.getAnswer());
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("<1, Not-On-Sale>", Objects.requireNonNull(state).getAnswer());
 
-            // Put good 1 to sell
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            servidor.sell(gson.toJson(pedido));
+            sellGoodRequestGenerator(1, 1);
 
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Request response = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("<1, On-Sale>", response.getAnswer());
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("<1, On-Sale>", Objects.requireNonNull(state).getAnswer());
+
+            transferGoodRequestGenerator(1, 1, 2);
+
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("<2, Not-On-Sale>", Objects.requireNonNull(state).getAnswer());
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -59,38 +54,16 @@ public class ServerGetStateTest {
     @Test
     public void methodGetStateOfGoodInvalidGood() {
         try {
-            Gson gson = new Gson();
-            Request pedido = new Request();
+            state = getGoodStateRequestGenerator(-1, 1, 0, 0, 0, 0, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("The GoodId -1 Is Not Present In The Server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setGoodId(-1);
-            pedido.setUserId(1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Request temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The GoodId -1 Is Not Present In The Server!", temp.getAnswer());
+            state = getGoodStateRequestGenerator(0, 1, 0, 0, 0, 0, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("The GoodId 0 Is Not Present In The Server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setGoodId(0);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The GoodId 0 Is Not Present In The Server!", temp.getAnswer());
+            state = getGoodStateRequestGenerator(10, 1, 0, 0, 0, 0, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("The GoodId 10 Is Not Present In The Server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setGoodId(10);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The GoodId 10 Is Not Present In The Server!", temp.getAnswer());
-
-            // Ensure server is ok after attack
-            pedido.setGoodId(1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("<1, Not-On-Sale>", temp.getAnswer());
+            ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -100,44 +73,154 @@ public class ServerGetStateTest {
     @Test
     public void methodGetStateOfGoodInvalidUser() {
         try {
-            Gson gson = new Gson();
-            Request pedido = new Request();
+            state = getGoodStateRequestGenerator(1, -1, 0, 0, 0, 0, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setGoodId(1);
-            pedido.setUserId(-1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Request temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", temp.getAnswer());
+            state = getGoodStateRequestGenerator(1, 0, 0, 0, 0, 0, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setUserId(0);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", temp.getAnswer());
+            state = getGoodStateRequestGenerator(1, 2, 0, 0, 0, 0, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setUserId(2);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", temp.getAnswer());
+            state = getGoodStateRequestGenerator(1, 10, 0, 0, 0, 0, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setUserId(10);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", temp.getAnswer());
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
 
-            // Ensure server is ok after attack
-            pedido.setUserId(1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("<1, Not-On-Sale>", temp.getAnswer());
+    @Test
+    public void methodGetStateOfGoodWithSellerId() {
+        try {
+            state = getGoodStateRequestGenerator(1, 1, -1, 0, 0, 0, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("<1, Not-On-Sale>", Objects.requireNonNull(state).getAnswer());
+
+            state = getGoodStateRequestGenerator(1, 1, 1, 0, 0, 0, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("<1, Not-On-Sale>", Objects.requireNonNull(state).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodGetStateOfGoodWithBuyerId() {
+        try {
+            state = getGoodStateRequestGenerator(1, 1, 0, -1, 0, 0, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("<1, Not-On-Sale>", Objects.requireNonNull(state).getAnswer());
+
+            state = getGoodStateRequestGenerator(1, 1, 0, 1, 0, 0, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("<1, Not-On-Sale>", Objects.requireNonNull(state).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodGetStateOfGoodWithBuyerNonce() {
+        try {
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, -1, 0, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("<1, Not-On-Sale>", Objects.requireNonNull(state).getAnswer());
+
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 1, 0, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("<1, Not-On-Sale>", Objects.requireNonNull(state).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodGetStateOfGoodWithBuyerKey() {
+        try {
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, -1, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("<1, Not-On-Sale>", Objects.requireNonNull(state).getAnswer());
+
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 1, new Date().getTime(), 1, 0, null);
+            Assert.assertEquals("<1, Not-On-Sale>", Objects.requireNonNull(state).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodGetStateOfGoodInvalidNonce() {
+        try {
+            long nounce = new Date().getTime();
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, nounce, 1, 0, null);
+            Assert.assertEquals("<1, Not-On-Sale>", Objects.requireNonNull(state).getAnswer());
+
+            nounce++;
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, nounce, 1, 0, null);
+            Assert.assertEquals("<1, Not-On-Sale>", Objects.requireNonNull(state).getAnswer());
+
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, nounce, 1, 0, null);
+            Assert.assertEquals("This message has already been processed!", Objects.requireNonNull(state).getAnswer());
+
+            nounce--;
+            nounce--;
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, nounce, 1, 0, null);
+            Assert.assertEquals("This message has already been processed!", Objects.requireNonNull(state).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodGetStateOfGoodInvalidUserKey() {
+        try {
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, new Date().getTime(), 2, 0, null);
+            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", Objects.requireNonNull(state).getAnswer());
+
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, new Date().getTime(), 3, 0, null);
+            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", Objects.requireNonNull(state).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodGetStateOfGoodWithNotaryId() {
+        try {
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, new Date().getTime(), 1, -1, null);
+            Assert.assertEquals("As a Notary, you cannot invoke this method!", Objects.requireNonNull(state).getAnswer());
+
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, new Date().getTime(), 1, 1, null);
+            Assert.assertEquals("As a Notary, you cannot invoke this method!", Objects.requireNonNull(state).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodGetStateOfGoodWithAnswer() {
+        try {
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, new Date().getTime(), 1, 0, "answer");
+            Assert.assertEquals("<1, Not-On-Sale>", Objects.requireNonNull(state).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -147,26 +230,15 @@ public class ServerGetStateTest {
     @Test
     public void methodGetStateOfGoodReplayAttack() {
         try {
-            Gson gson = new Gson();
-            Request pedido = new Request();
-
-            pedido.setUserId(1);
-            pedido.setGoodId(1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Request temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("<1, Not-On-Sale>", temp.getAnswer());
+            long nounce = new Date().getTime();
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, nounce, 1, 0, null);
+            Assert.assertEquals("<1, Not-On-Sale>", Objects.requireNonNull(state).getAnswer());
 
             // Same request
-            temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("This message has already been processed!", temp.getAnswer());
+            state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, nounce, 1, 0, null);
+            Assert.assertEquals("This message has already been processed!", Objects.requireNonNull(state).getAnswer());
 
-            // Ensure server is ok after the attack
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null); //This line is needed before setting signature
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("<1, Not-On-Sale>", temp.getAnswer());
+            ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -195,14 +267,7 @@ public class ServerGetStateTest {
             temp = gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
             Assert.assertEquals("Invalid Authorization To Invoke Method Sell on Server!", temp.getAnswer());
 
-            // Ensure server is ok after the attack
-            pedido.setUserId(1);
-            pedido.setGoodId(1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null); //This line is needed before setting signature
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("<1, Not-On-Sale>", temp.getAnswer());
+            ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -218,6 +283,89 @@ public class ServerGetStateTest {
             writer.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private Request getGoodStateRequestGenerator(int goodId, int userId, int sellerId, int buyerId, long buyerNonce, long buyerKeyId, long nounce, long keyId, int notaryId, String answer) {
+        try {
+            Gson gson = new Gson();
+            Request pedido = new Request();
+
+            pedido.setGoodId(goodId);
+            pedido.setUserId(userId);
+            pedido.setSellerId(sellerId);
+            pedido.setBuyerId(buyerId);
+            pedido.setBuyerNounce(buyerNonce);
+            if(buyerKeyId >= 1 && buyerKeyId <= 9)
+                pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User" + buyerKeyId + ".key"), gson.toJson(pedido)));
+            else
+                pedido.setBuyerSignature(null);
+            pedido.setNounce(nounce);
+            pedido.setNotaryId(notaryId);
+            pedido.setAnswer(answer);
+            if(keyId >= 1 && keyId <= 9)
+                pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User" + keyId + ".key"), gson.toJson(pedido)));
+            else
+                pedido.setSignature(null);
+
+            return gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private Request sellGoodRequestGenerator(int userId, int goodId) {
+        try {
+            Gson gson = new Gson();
+            Request pedido = new Request();
+
+            pedido.setUserId(userId);
+            pedido.setGoodId(goodId);
+            pedido.setNounce(new Date().getTime());
+            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User" + userId + ".key"), gson.toJson(pedido)));
+
+            return gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private Request transferGoodRequestGenerator(int goodId, int sellerId, int buyerId) {
+        try {
+            Gson gson = new Gson();
+            Request pedido = new Request();
+            long buyerNonce = new Date().getTime();
+
+            pedido.setGoodId(goodId);
+            pedido.setUserId(buyerId);
+            pedido.setSellerId(sellerId);
+            pedido.setBuyerId(buyerId);
+            pedido.setNounce(buyerNonce);
+            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User" + buyerId + ".key"), gson.toJson(pedido)));
+            pedido.setUserId(sellerId);
+            pedido.setNounce(new Date().getTime());
+            pedido.setBuyerNounce(buyerNonce);
+            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User" + sellerId + ".key"), gson.toJson(pedido)));
+
+            return gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void ensureServerIsOkAfterAttack(boolean goodOnSale) {
+        try {
+            if(!goodOnSale) {
+                Assert.assertEquals("<1, Not-On-Sale>", Objects.requireNonNull(getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, new Date().getTime(), 1, 0, null)).getAnswer());
+            } else {
+                Assert.assertEquals("<1, On-Sale>", Objects.requireNonNull(getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, new Date().getTime(), 1, 0, null)).getAnswer());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
         }
     }
 }
