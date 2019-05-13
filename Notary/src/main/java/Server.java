@@ -25,6 +25,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
     private Hashtable<Integer, PublicKey> publicKeys = new Hashtable<>();
     int PORT;
     private PrivateKey privKey;
+    private PublicKey pubKey;
     private boolean USING_CC = false;
     //The Concurrent HashMap containing the IDs of each notary and corresponding ports in the system
     private ConcurrentHashMap<Integer, Integer> serverPorts = new ConcurrentHashMap<>();
@@ -67,6 +68,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
             }
 
             privKey = RSAKeyLoader.getPriv(baseDirGenerator() + "\\src\\main\\resources\\Notary.key");
+            pubKey = RSAKeyLoader.getPub(baseDirGenerator() + "\\src\\main\\resources\\Notary.pub");
 
             ID = 1;
 
@@ -125,6 +127,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                 case "2":
                     ID = 1;
                     privKey = RSAKeyLoader.getPriv( baseDirGenerator() + "\\src\\main\\resources\\Notary.key");
+                    pubKey = RSAKeyLoader.getPub(baseDirGenerator() + "\\src\\main\\resources\\Notary.pub");
                     break;
                 case "3":
                     USING_CC = true;
@@ -164,6 +167,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                             break;
                     }
                     privKey = RSAKeyLoader.getPriv( baseDirGenerator() + "\\src\\main\\resources\\Notary.key");
+                    pubKey = RSAKeyLoader.getPub(baseDirGenerator() + "\\src\\main\\resources\\Notary.pub");
                     break;
                 default:
                     System.out.println("Invalid Option. Exiting...");
@@ -297,6 +301,8 @@ public class Server extends UnicastRemoteObject implements iProxy {
         //Convert to Request Object
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
+        //TODO: VALIDAR CADA REQUEST NO ARRAY DE REQUESTS RECEBIDOS DO CLIENTE AO INVOCAR ESTE METODO
+
         //Replay Attack Prevention
         if (!NonceVerifier.isNonceValid(pedido)){
             updateServerLog(OPCODE.SELLGOOD, pedido, "This message has already been processed by The Server!");
@@ -304,11 +310,13 @@ public class Server extends UnicastRemoteObject implements iProxy {
         }
 
         //Verify Signature withing Object
+        //TODO: REFATORIZAR O VALIDATE REQUEST DADO QUE A VERIFICACAO DE ASSINATURA TEM DE SER DINAMICA CONSOANTE O ID DO NOTARIO
         if (!validateRequest(pedido)) {
             updateServerLog(OPCODE.SELLGOOD, pedido, "Invalid Authorization To Invoke Method Sell on Server!");
             return answerFactory("Invalid Authorization To Invoke Method Sell on Server!", pedido.getAnswersFromNotaries().get(0).getGood().getWriteTimeStampOfGood());
         }
 
+        //TODO: VERIFICAR ISTO EM TODO O ESPETRO DO METODO SELL E PREPARE TO SELL
         if(!validateWriteTimeStamp(pedido)){
             updateServerLog(OPCODE.SELLGOOD, pedido, "Invalid WriteTimeStamp To Invoke Method Sell on Server!");
             return answerFactory("Invalid WriteTimeStamp To Invoke Method Sell on Server!", pedido.getAnswersFromNotaries().get(0).getGood().getWriteTimeStampOfGood());
@@ -360,7 +368,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
 //        }
 
         for(Good i : goods.get(pedido.getUserId())){
-            if(i.getGoodId() == pedido.getGoodId()){
+            if(i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getUserId()){
                 Good modifiedGood = new Good(i.getOwnerId(), i.getGoodId(), i.getName(), true);
                 modifiedGood.setClientByzantineSignature(i.getClientByzantineSignature());
                 modifiedGood.setWriteTimeStampOfGood(i.getWriteTimeStampOfGood());
@@ -378,6 +386,8 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
                 return gson.toJson(answer);
 
+            }else {
+                return null;
             }
         }
 
@@ -512,7 +522,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
                                 return true;
                             }
                         }
-
                 }
 
                 return false;
@@ -674,6 +683,23 @@ public class Server extends UnicastRemoteObject implements iProxy {
         pedido.setSignature(null);
 
         return SignatureGenerator.verifySignature(publicKeys.get(pedido.getUserId()), signature, gson.toJson(pedido));
+    }
+
+    private boolean validateNotaryRequests(ArrayList<Request> notaryAnswers){
+        //TODO: Dar clear do good antes de verificar o request e da signature obviamente
+        Gson gson = new Gson();
+        for(Request i : notaryAnswers){
+            byte[] signature = i.getSignature();
+            Good good = i.getGood();
+            i.setSignature(null);
+            i.setGood(null);
+
+            if(!SignatureGenerator.verifySignature(pubKey, signature, gson.toJson(i))){
+                return false;
+            }
+
+        }
+        return true;
     }
 
     private boolean validateWriteTimeStamp(Request pedido){

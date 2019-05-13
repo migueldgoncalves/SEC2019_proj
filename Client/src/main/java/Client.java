@@ -28,6 +28,7 @@ public class Client extends UnicastRemoteObject implements iClient {
     private static boolean USING_CC = false;
 
     private static AtomicInteger writeTimeStamp = new AtomicInteger(0);
+    private static AtomicInteger readTimeStamp = new AtomicInteger(0);
 
     private static ConcurrentHashMap<Integer, Integer> serverPorts = new ConcurrentHashMap<>();
 
@@ -346,6 +347,9 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     private static void sell(String data, int writeTimeStamp) {
         try {
+
+            //############################################### THIS BLOCK IS WORKING ######################################################
+
             ArrayList<String> answers = new ArrayList<>();
             Request proposition = gson.fromJson(data, Request.class);
 
@@ -383,8 +387,12 @@ public class Client extends UnicastRemoteObject implements iClient {
             boolean hasQorum = false;
             String qorumWinner = null;
 
+            //#############################################################################################################################
+
+            //############################################### THE QORUM WORKS #############################################################
+
             for (String i : answers){
-                if(!hasQorum) {
+                if(!hasQorum && i != null) {
                     Request answer = gson.fromJson(i, Request.class);
                     if (!validateRequest(answer, Sender.NOTARY)) {
                         System.out.println("The Signature of The Message is Invalid. Message Has Been Tampered With");
@@ -411,7 +419,6 @@ public class Client extends UnicastRemoteObject implements iClient {
                                     hasQorum = true;
                                 }
                             }
-
                         } else {
                             System.out.println("Invalid Answer Sent From The Server. One of the Expected Parameters (GoodId, isOnSale or Notary ID) has failed verification. Byzantine Attack Detected!");
                         }
@@ -419,54 +426,57 @@ public class Client extends UnicastRemoteObject implements iClient {
                 }
             }
 
-            ArrayList<Request> qorumWinningAnswers = new ArrayList<>();
-            Request pedido = new Request(0, UserID, proposition.getGoodId(), 0, 0, new Date().getTime(), null, null);
+            //#############################################################################################################################
 
-            for(String i : answers){
-                Request answer = gson.fromJson(i, Request.class);
-                if(gson.toJson(answer.getGood()).equals(qorumWinner)){
-                    Good temp = answer.getGood();
-                    temp.setWriteTimeStampOfGood(writeTimeStamp);
-                    temp.setClientByzantineSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer.getGood())));
-                    answer.setGood(temp);
-                    qorumWinningAnswers.add(answer);
-                }
-            }
+            if(qorumWinner != null) {
+                ArrayList<Request> qorumWinningAnswers = new ArrayList<>();
+                Request pedido = new Request(0, UserID, proposition.getGoodId(), 0, 0, new Date().getTime(), null, null);
 
-            pedido.setAnswersFromNotaries(qorumWinningAnswers);
-            pedido.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(pedido)));
-            answers.clear();
-
-            for(Integer i : serverPorts.values()){
-                iProxy proxy = (iProxy) Naming.lookup("rmi://localhost:" + i + "/Notary");
-
-                ExecutorService executor = Executors.newCachedThreadPool();
-                Callable<Boolean> task = () -> {
-                    try{
-                        return answers.add(proxy.sell(gson.toJson(pedido)));
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        return null;
+                for (String i : answers) {
+                    Request answer = gson.fromJson(i, Request.class);
+                    if (gson.toJson(answer.getGood()).equals(qorumWinner)) {
+                        Good temp = answer.getGood();
+                        temp.setWriteTimeStampOfGood(writeTimeStamp);
+                        temp.setClientByzantineSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer.getGood())));
+                        answer.setGood(temp);
+                        qorumWinningAnswers.add(answer);
                     }
-                };
-                Future<Boolean> future = executor.submit(task);
-                try {
-                    Object result = future.get(80000, TimeUnit.SECONDS);
-                } catch (TimeoutException ex) {
-                    System.out.println("The Server Took Too Long To Answer! TimeOut Exception");
-                } catch (InterruptedException e) {
-                    System.out.println("Interrupted Exception Found.");
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    System.out.println("Execution Exception Found.");
-                    e.printStackTrace();
-                } finally {
-                    future.cancel(true); // may or may not desire this
                 }
+
+                pedido.setAnswersFromNotaries(qorumWinningAnswers);
+                pedido.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(pedido)));
+                answers.clear();
+
+                for (Integer i : serverPorts.values()) {
+                    iProxy proxy = (iProxy) Naming.lookup("rmi://localhost:" + i + "/Notary");
+
+                    ExecutorService executor = Executors.newCachedThreadPool();
+                    Callable<Boolean> task = () -> {
+                        try {
+                            return answers.add(proxy.sell(gson.toJson(pedido)));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+                    };
+                    Future<Boolean> future = executor.submit(task);
+                    try {
+                        Object result = future.get(20, TimeUnit.SECONDS);
+                    } catch (TimeoutException ex) {
+                        System.out.println("The Server Took Too Long To Answer! TimeOut Exception");
+                    } catch (InterruptedException e) {
+                        System.out.println("Interrupted Exception Found.");
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        System.out.println("Execution Exception Found.");
+                        e.printStackTrace();
+                    } finally {
+                        future.cancel(true); // may or may not desire this
+                    }
+                }
+
+                securityValidator(answers, writeTimeStamp);
             }
-
-            securityValidator(answers, writeTimeStamp);
-
 
         } catch (ConnectException e) {
             System.out.println("Could not connect to server");
