@@ -262,13 +262,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
                 if (i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getSellerId() && i.isOnSale()) {
                     synchronized (i) {
                         if (i.getGoodId() == pedido.getGoodId() && i.getOwnerId() == pedido.getSellerId() && i.isOnSale()){
-                            //#####################################################
-                            try{
-                                Thread.sleep(5000);
-                            }catch (Exception p){
-                                p.printStackTrace();
-                            }
-                            //#####################################################
                             Good newOwner = new Good(pedido.getBuyerId(), i.getGoodId(), i.getName(), !i.isOnSale());
                             temp.set(temp.indexOf(i), newOwner);
                             saveServerState();
@@ -292,7 +285,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
      */
     public String sell(String jsonRequest) throws RemoteException {
         Gson gson = new Gson();
-        //Transform to Request Object
+        //Convert to Request Object
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
         //Replay Attack Prevention
@@ -405,7 +398,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                         iProxy notary = (iProxy) Naming.lookup("rmi://localhost:" + port + "/Notary");
 
                         //TODO: IMPLEMNENTAR TIME OUT AQUI
-                        answers.add(notary.getServerStatus());
+                        answers.add(notary.getServerStatus(userId));
 
                     }
                 }
@@ -435,14 +428,14 @@ public class Server extends UnicastRemoteObject implements iProxy {
                                 return true;
                             }
                         }
+
                 }
-
-
 
                 return false;
 
             }
         }catch (Exception e){
+            System.out.println("We Have A Problem In The Qorum System.");
             e.printStackTrace();
         }
 
@@ -451,8 +444,17 @@ public class Server extends UnicastRemoteObject implements iProxy {
     }
 
 
-    public String getServerStatus() throws RemoteException {
-        return null;
+    public String getServerStatus(int userId) throws RemoteException {
+        try{
+            HashMap<Integer, ArrayList<Good>> stateHashMap = new HashMap<>();
+            Gson gson = new Gson();
+            stateHashMap.put(usersWriteTimeStamps.get(userId), goods.get(userId));
+            return gson.toJson(stateHashMap);
+        }catch (Exception e){
+            System.out.println("Exception In Acquiring Server Status");
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**

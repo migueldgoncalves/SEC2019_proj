@@ -14,6 +14,6 @@ public interface iProxy extends Remote {
 
     void joinNetwork(Integer ID, Integer PORT) throws RemoteException;
 
-    String getServerStatus() throws RemoteException;
+    String getServerStatus(int userId) throws RemoteException;
 
 }
