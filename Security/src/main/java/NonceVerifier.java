@@ -7,7 +7,7 @@ public class NonceVerifier {
 
     public static boolean isNonceValid(Request request) {
 
-        if(request.getNotaryId() != 0){
+        if(request.getNotaryId() != 0 && request.getUserId() == 0){
             if (notaryNonceMap.get(request.getNotaryId()) == null) {
                 notaryNonceMap.put(request.getNotaryId(), request.getNounce());
                 return true;

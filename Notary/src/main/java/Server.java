@@ -174,14 +174,19 @@ public class Server extends UnicastRemoteObject implements iProxy {
         Gson gson = new Gson();
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
-        if (!NonceVerifier.isNonceValid(pedido)){
-            updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "This message has already been processed!");
-            return answerFactory("This message has already been processed!");
+        if (pedido.getNotaryId()!=0) {
+            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "As a Notary, you cannot invoke this method!");
+            return answerFactory("As a Notary, you cannot invoke this method!");
         }
 
         if (!validateRequest(pedido)) {
             updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "Invalid Authorization to Invoke Method Get State Of Good in Server!");
             return answerFactory("Invalid Authorization to Invoke Method Get State Of Good in Server!");
+        }
+
+        if (!NonceVerifier.isNonceValid(pedido)){
+            updateServerLog(OPCODE.GETSTATEOFGOOD, pedido, "This message has already been processed!");
+            return answerFactory("This message has already been processed!");
         }
 
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
@@ -205,9 +210,12 @@ public class Server extends UnicastRemoteObject implements iProxy {
         Gson gson = new Gson();
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
-        if (!NonceVerifier.isNonceValid(pedido)){
-            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "This message has already been processed");
-            return answerFactory("This message has already been processed");
+        byte[] buyerSig = pedido.getBuyerSignature();
+        byte[] sellerSig = pedido.getSignature();
+
+        if (pedido.getNotaryId()!=0) {
+            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "As a Notary, you cannot invoke this method!");
+            return answerFactory("As a Notary, you cannot invoke this method!");
         }
 
         if (!validateRequest(pedido)) {
@@ -215,9 +223,12 @@ public class Server extends UnicastRemoteObject implements iProxy {
             return answerFactory("Invalid Authorization to Transfer Good!");
         }
 
-        //Alter Request So It Matches The One Sent By The Buyer
-        byte[] buyerSig = pedido.getBuyerSignature();
+        if (!NonceVerifier.isNonceValid(pedido)){
+            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "This message from Seller has already been processed");
+            return answerFactory("This message from Seller has already been processed");
+        }
 
+        //Alter Request So It Matches The One Sent By The Buyer
         pedido.setUserId(pedido.getBuyerId());
         pedido.setNounce(pedido.getBuyerNounce());
         pedido.setBuyerNounce(0);
@@ -226,8 +237,18 @@ public class Server extends UnicastRemoteObject implements iProxy {
         //######################################################
 
         if(!(SignatureGenerator.verifySignature(publicKeys.get(pedido.getBuyerId()), buyerSig, gson.toJson(pedido)))){
+            pedido.setSignature(sellerSig);
+            pedido.setBuyerSignature(buyerSig);
             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item");
             return answerFactory("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item");
+        }
+
+        pedido.setSignature(sellerSig);
+        pedido.setBuyerSignature(buyerSig);
+
+        if (!NonceVerifier.isNonceValid(pedido)){
+            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "This message from Buyer has already been processed");
+            return answerFactory("This message from Buyer has already been processed");
         }
 
         if (pedido.getBuyerId() < 1 || pedido.getBuyerId() > 9) {
@@ -267,16 +288,21 @@ public class Server extends UnicastRemoteObject implements iProxy {
         //Transform to Request Object
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
-        //Replay Attack Prevention
-        if (!NonceVerifier.isNonceValid(pedido)){
-            updateServerLog(OPCODE.SELLGOOD, pedido, "This message has already been processed by The Server!");
-            return answerFactory("This message has already been processed by The Server!");
+        if (pedido.getNotaryId()!=0) {
+            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "As a Notary, you cannot invoke this method!");
+            return answerFactory("As a Notary, you cannot invoke this method!");
         }
 
         //Verify Signature withing Object
         if (!validateRequest(pedido)) {
             updateServerLog(OPCODE.SELLGOOD, pedido, "Invalid Authorization To Invoke Method Sell on Server!");
             return answerFactory("Invalid Authorization To Invoke Method Sell on Server!");
+        }
+
+        //Replay Attack Prevention
+        if (!NonceVerifier.isNonceValid(pedido)){
+            updateServerLog(OPCODE.SELLGOOD, pedido, "This message has already been processed by The Server!");
+            return answerFactory("This message has already been processed by The Server!");
         }
 
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
@@ -485,8 +511,10 @@ public class Server extends UnicastRemoteObject implements iProxy {
         Gson gson = new Gson();
         byte[] signature = pedido.getSignature();
         pedido.setSignature(null);
+        boolean result = SignatureGenerator.verifySignature(publicKeys.get(pedido.getUserId()), signature, gson.toJson(pedido));
+        pedido.setSignature(signature);
 
-        return SignatureGenerator.verifySignature(publicKeys.get(pedido.getUserId()), signature, gson.toJson(pedido));
+        return result;
     }
 
     /**
