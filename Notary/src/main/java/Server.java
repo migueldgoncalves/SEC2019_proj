@@ -282,7 +282,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
         if (!NonceVerifier.isNonceValid(pedido)){
             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "This message from Buyer has already been processed");
-            return answerFactory("This message from Buyer has already been processed");
+            return answerFactory("This message from Buyer has already been processed", pedido.getGood().getWriteTimeStampOfGood());
         }
 
         if (pedido.getBuyerId() < 1 || pedido.getBuyerId() > 9) {
@@ -324,7 +324,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
         if (pedido.getNotaryId()!=0) {
             updateServerLog(OPCODE.TRANSFERGOOD, pedido, "As a Notary, you cannot invoke this method!");
-            return answerFactory("As a Notary, you cannot invoke this method!");
+            return answerFactory("As a Notary, you cannot invoke this method!", pedido.getGood().getWriteTimeStampOfGood());
         }
 
         //TODO: VALIDAR CADA REQUEST NO ARRAY DE REQUESTS RECEBIDOS DO CLIENTE AO INVOCAR ESTE METODO
