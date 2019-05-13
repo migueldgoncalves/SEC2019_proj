@@ -3,6 +3,8 @@ public class Good {
     private int GoodId;
     private String Name;
     private boolean OnSale;
+    private byte[] byzantineSignature;
+    private int writeTimeStampOfGood;
 
     public Good(int owner, int goodId, String Name, boolean isOnSale) {
         this.OwnerId = owner;
@@ -41,6 +43,22 @@ public class Good {
 
     public void setOnSale(boolean onSale) {
         OnSale = onSale;
+    }
+
+    public byte[] getByzantineSignature() {
+        return byzantineSignature;
+    }
+
+    public void setByzantineSignature(byte[] byzantineSignature) {
+        this.byzantineSignature = byzantineSignature;
+    }
+
+    public int getWriteTimeStampOfGood() {
+        return writeTimeStampOfGood;
+    }
+
+    public void setWriteTimeStampOfGood(int writeTimeStampOfGood) {
+        this.writeTimeStampOfGood = writeTimeStampOfGood;
     }
 
     @Override
