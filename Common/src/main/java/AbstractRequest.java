@@ -1,8 +1,9 @@
 public abstract class AbstractRequest {
 
-    private long Nounce;
+    long Nounce;
     private byte[] Signature;
-    private int UserId;
+    int UserId;
+    private String answer;
 
     public long getNounce() {
         return Nounce;
@@ -26,6 +27,14 @@ public abstract class AbstractRequest {
 
     public void setUserId(int userId) {
         UserId = userId;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
     }
 
 }

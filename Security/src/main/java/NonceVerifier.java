@@ -33,4 +33,73 @@ public class NonceVerifier {
             }
         }
     }
+
+    public static boolean isNonceValid(PrepareSellRequest request) {
+
+        if (nonceMap.get(request.getUserId()) == null) {
+            nonceMap.put(request.getUserId(), request.getNounce());
+            return true;
+        } else{
+            if(nonceMap.get(request.getUserId()) < request.getNounce()){
+                nonceMap.put(request.getUserId(), request.getNounce());
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+
+    public static boolean isNonceValid(PrepareSellAnswer request) {
+
+        if(request.getNotaryId() != 0){
+            if (notaryNonceMap.get(request.getNotaryId()) == null) {
+                notaryNonceMap.put(request.getNotaryId(), request.getNounce());
+                return true;
+            } else{
+                if(notaryNonceMap.get(request.getNotaryId()) <= request.getNounce()){
+                    notaryNonceMap.put(request.getNotaryId(), request.getNounce());
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }
+
+        return false;
+
+    }
+
+    public static boolean isNonceValid(SellAnswer request) {
+
+        if(request.getNotaryId() != 0){
+            if (notaryNonceMap.get(request.getNotaryId()) == null) {
+                notaryNonceMap.put(request.getNotaryId(), request.getNounce());
+                return true;
+            } else{
+                if(notaryNonceMap.get(request.getNotaryId()) <= request.getNounce()){
+                    notaryNonceMap.put(request.getNotaryId(), request.getNounce());
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }
+
+        return false;
+
+    }
+
+    public static boolean isNonceValid(SellRequest request) {
+        if (nonceMap.get(request.getUserId()) == null) {
+            nonceMap.put(request.getUserId(), request.getNounce());
+            return true;
+        } else{
+            if(nonceMap.get(request.getUserId()) < request.getNounce()){
+                nonceMap.put(request.getUserId(), request.getNounce());
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
 }

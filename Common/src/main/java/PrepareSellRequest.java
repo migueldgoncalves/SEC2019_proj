@@ -3,6 +3,13 @@ public class PrepareSellRequest extends AbstractRequest {
     private int GoodId;
     private int ReadId;
 
+    PrepareSellRequest(int GoodId, long Nounce, int UserId, int ReadId){
+        this.GoodId = GoodId;
+        this.ReadId = ReadId;
+        this.Nounce = Nounce;
+        this.UserId = UserId;
+    }
+
     public int getGoodId() {
         return GoodId;
     }

@@ -2,13 +2,13 @@ import java.util.ArrayList;
 
 public class SellRequest extends AbstractRequest {
 
-    ArrayList<Request> requests;
+    ArrayList<PrepareSellAnswer> requests;
 
-    public ArrayList<Request> getRequests() {
+    public ArrayList<PrepareSellAnswer> getRequests() {
         return requests;
     }
 
-    public void setRequests(ArrayList<Request> requests) {
+    public void setRequests(ArrayList<PrepareSellAnswer> requests) {
         this.requests = requests;
     }
 

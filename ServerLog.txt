@@ -1983,3 +1983,609 @@ Requested Good ID: 1
 Nounce: 1557735489932
 Operation Result: The Item was Already On Sale
 ---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 04:03:05
+User ID of Method Caller: 0
+Good ID: 0
+Nounce: 0
+Read ID: 0
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 04:03:07
+User ID of Method Caller: 0
+Good ID: 0
+Nounce: 0
+Read ID: 0
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 04:03:07
+User ID of Method Caller: 0
+Good ID: 0
+Nounce: 0
+Read ID: 0
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 04:09:40
+User ID of Method Caller: 0
+Good ID: 0
+Nounce: 0
+Read ID: 0
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 04:09:40
+User ID of Method Caller: 0
+Good ID: 0
+Nounce: 0
+Read ID: 0
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 04:09:40
+User ID of Method Caller: 0
+Good ID: 0
+Nounce: 0
+Read ID: 0
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 04:13:25
+User ID of Method Caller: 0
+Good ID: 0
+Nounce: 0
+Read ID: 0
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 04:13:25
+User ID of Method Caller: 0
+Good ID: 0
+Nounce: 0
+Read ID: 0
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 04:13:25
+User ID of Method Caller: 0
+Good ID: 0
+Nounce: 0
+Read ID: 0
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:00:27
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557806427272
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:00:27
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557806427272
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:00:27
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557806427272
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:03:46
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557806581546
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:03:46
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557806581546
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:03:47
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557806581546
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:06:09
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557806731351
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:06:41
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557806731351
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:10:18
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557806731351
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: Invalid Authorization To Invoke Method Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:11:04
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807064264
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:11:04
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807064264
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:11:04
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807064264
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:15:50
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807350880
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:15:50
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807350880
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:15:51
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807350880
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:17:31
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807451661
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:17:31
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807451661
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:17:31
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807451661
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:17:35
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807454991
+Read ID: 2
+User Signature of Method Caller: null
+Operation Result: Invalid WriteTimeStamp To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:17:35
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807454991
+Read ID: 2
+User Signature of Method Caller: null
+Operation Result: Invalid WriteTimeStamp To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:17:35
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807454991
+Read ID: 2
+User Signature of Method Caller: null
+Operation Result: Invalid WriteTimeStamp To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:20:57
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807657310
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:20:57
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807657310
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:20:57
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807657310
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:22:22
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807742291
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:22:22
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807742291
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:22:22
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807742291
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:22:30
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807750567
+Read ID: 2
+User Signature of Method Caller: null
+Operation Result: Invalid WriteTimeStamp To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:22:30
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807750567
+Read ID: 2
+User Signature of Method Caller: null
+Operation Result: Invalid WriteTimeStamp To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:22:30
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807750567
+Read ID: 2
+User Signature of Method Caller: null
+Operation Result: Invalid WriteTimeStamp To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:25:22
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807922054
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:25:22
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807922054
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:25:22
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807922054
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:25:29
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807929712
+Read ID: 2
+User Signature of Method Caller: null
+Operation Result: Invalid WriteTimeStamp To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:25:29
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807929712
+Read ID: 2
+User Signature of Method Caller: null
+Operation Result: Invalid WriteTimeStamp To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:25:29
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557807929712
+Read ID: 2
+User Signature of Method Caller: null
+Operation Result: Invalid WriteTimeStamp To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:27:52
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808070878
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:27:52
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808070878
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:27:52
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808070878
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:27:58
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808078024
+Read ID: 2
+User Signature of Method Caller: null
+Operation Result: Invalid WriteTimeStamp To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:27:58
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808078024
+Read ID: 2
+User Signature of Method Caller: null
+Operation Result: Invalid WriteTimeStamp To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:27:58
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808078024
+Read ID: 2
+User Signature of Method Caller: null
+Operation Result: Invalid WriteTimeStamp To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:32:20
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808340053
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:32:20
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808340053
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:32:20
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808340053
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:33:25
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808348606
+Read ID: 2
+User Signature of Method Caller: null
+Operation Result: Invalid Read ID To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:45
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808484775
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:45
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808484775
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:45
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808484775
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:51
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808491538
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:51
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808491538
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:51
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808491538
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:55
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808495478
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:55
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808495478
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:55
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808495478
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:56
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808496716
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:56
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808496716
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:56
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808496716
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:57
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808497684
+Write Time Stamp: 5User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:57
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808497684
+Write Time Stamp: 5User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:57
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808497684
+Write Time Stamp: 5User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:58
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808498288
+Write Time Stamp: 6User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:58
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808498288
+Write Time Stamp: 6User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 14/05/2019 05:34:58
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557808498288
+Write Time Stamp: 6User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
