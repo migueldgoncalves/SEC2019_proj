@@ -535,8 +535,8 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     private static void loadKeys() {
         try {
-            privKey = RSAKeyLoader.getPriv( Client.baseDirGenerator() + "\\src\\main\\resources\\User" + UserID + ".key");
-            //pubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\User" + UserID + ".pub");
+            privKey = (PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, UserID);
+            //pubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.CLIENT, UserID);
             System.out.println("Public and Private Keys Loaded");
         } catch (Exception e) {
             e.printStackTrace();
@@ -588,7 +588,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         switch (invoker){
             case BUYER:
                 try{
-                    PublicKey notaryPubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\User" + pedido.getUserId() + ".pub");
+                    PublicKey notaryPubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.CLIENT, pedido.getUserId());
                     return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
                 }catch (Exception e){
                     e.printStackTrace();
@@ -596,13 +596,8 @@ public class Client extends UnicastRemoteObject implements iClient {
                 }
             case NOTARY:
                 try{
-                    if(USING_CC){
-                        PublicKey notaryPubKey = iCartaoCidadao.getPublicKeyFromCC();
-                        return SignatureGenerator.verifySignatureCartaoCidadao(notaryPubKey, signature, gson.toJson(pedido));
-                    }else {
-                        PublicKey notaryPubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\Notary.pub");
-                        return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
-                    }
+                    PublicKey notaryPubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.NOTARY, pedido.getNotaryId());
+                    return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
                 }catch (Exception e){
                     e.printStackTrace();
                     return false;

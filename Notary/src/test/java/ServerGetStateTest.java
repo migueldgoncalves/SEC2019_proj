@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.security.PrivateKey;
 import java.util.Date;
 import java.util.Objects;
 
@@ -18,12 +19,12 @@ public class ServerGetStateTest {
     @Before
     public void setUp() {
         try {
-            servidor = new Server("src\\main\\resources\\GoodsFile1.xml");
-
             //Cleans server backup file
             PrintWriter writer = new PrintWriter(new File(System.getProperty("user.dir") + "\\Backups\\ServerState.old"));
             writer.println("");
             writer.close();
+
+            servidor = new Server("src\\main\\resources\\GoodsFile1.xml");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Something Went Wrong In The System");
@@ -254,7 +255,7 @@ public class ServerGetStateTest {
             pedido.setUserId(1);
             pedido.setGoodId(1);
             pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
             Request temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
             Assert.assertEquals("<1, Not-On-Sale>", temp.getAnswer());
 
@@ -281,12 +282,14 @@ public class ServerGetStateTest {
             PrintWriter writer = new PrintWriter(new File(System.getProperty("user.dir") + "\\Backups\\ServerState.old"));
             writer.println("");
             writer.close();
+
+            KeyStoreInterface.deleteKeystore();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private Request getGoodStateRequestGenerator(int goodId, int userId, int sellerId, int buyerId, long buyerNonce, long buyerKeyId, long nounce, long keyId, int notaryId, String answer) {
+    private Request getGoodStateRequestGenerator(int goodId, int userId, int sellerId, int buyerId, long buyerNonce, int buyerKeyId, long nounce, int keyId, int notaryId, String answer) {
         try {
             Gson gson = new Gson();
             Request pedido = new Request();
@@ -297,14 +300,14 @@ public class ServerGetStateTest {
             pedido.setBuyerId(buyerId);
             pedido.setBuyerNounce(buyerNonce);
             if(buyerKeyId >= 1 && buyerKeyId <= 9)
-                pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User" + buyerKeyId + ".key"), gson.toJson(pedido)));
+                pedido.setBuyerSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, buyerKeyId), gson.toJson(pedido)));
             else
                 pedido.setBuyerSignature(null);
             pedido.setNounce(nounce);
             pedido.setNotaryId(notaryId);
             pedido.setAnswer(answer);
             if(keyId >= 1 && keyId <= 9)
-                pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User" + keyId + ".key"), gson.toJson(pedido)));
+                pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, keyId), gson.toJson(pedido)));
             else
                 pedido.setSignature(null);
 
@@ -323,7 +326,7 @@ public class ServerGetStateTest {
             pedido.setUserId(userId);
             pedido.setGoodId(goodId);
             pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User" + userId + ".key"), gson.toJson(pedido)));
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, userId), gson.toJson(pedido)));
 
             return gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
         } catch (Exception e) {
@@ -343,11 +346,11 @@ public class ServerGetStateTest {
             pedido.setSellerId(sellerId);
             pedido.setBuyerId(buyerId);
             pedido.setNounce(buyerNonce);
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User" + buyerId + ".key"), gson.toJson(pedido)));
+            pedido.setBuyerSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, buyerId), gson.toJson(pedido)));
             pedido.setUserId(sellerId);
             pedido.setNounce(new Date().getTime());
             pedido.setBuyerNounce(buyerNonce);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User" + sellerId + ".key"), gson.toJson(pedido)));
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, sellerId), gson.toJson(pedido)));
 
             return gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
         } catch (Exception e) {

@@ -1,12 +1,8 @@
 import com.google.gson.Gson;
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.PrintWriter;
 
 public class iCartaoCidadaoTest {
 
@@ -51,41 +47,6 @@ public class iCartaoCidadaoTest {
             byte[] signature = iCartaoCidadao.sign(jsonToString);
             Assert.assertTrue(iCartaoCidadao.verify(jsonToString, signature));
             Assert.assertFalse(iCartaoCidadao.verify(jsonToString2, signature));
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    @Test
-    public void writeCCPublicKeyToFileTest() {
-        try {
-            String baseDir = System.getProperty("user.dir").replace("\\Notary", "");
-
-            new File(baseDir + "\\Client\\src\\main\\resources\\Notary_CC.pub");
-            new File(baseDir + "\\Notary\\src\\main\\resources\\Notary_CC.pub");
-            PrintWriter writer = new PrintWriter(baseDir + "\\Client\\src\\main\\resources\\Notary_CC.pub");
-            PrintWriter writer2 = new PrintWriter(baseDir + "\\Notary\\src\\main\\resources\\Notary_CC.pub");
-            writer.println("Empty key file");
-            writer2.println("Empty key file");
-            writer.close();
-            writer2.close();
-
-            iCartaoCidadao.writeCCPublicKeyToFile();
-
-            String jsonString = FileUtils.readFileToString(new File(baseDir + "\\Client\\src\\main\\resources\\Notary_CC.pub"), "UTF-8");
-            jsonString = jsonString.replace("\n", "").replace("\r", "");
-            String jsonString2 = FileUtils.readFileToString(new File(baseDir + "\\Notary\\src\\main\\resources\\Notary_CC.pub"), "UTF-8");
-            jsonString = jsonString.replace("\n", "").replace("\r", "");
-
-            Assert.assertTrue(jsonString.contains("-----BEGIN RSA PUBLIC KEY-----"));
-            Assert.assertTrue(jsonString.length() > 100); //Slightly more than the combined length of these strings
-            Assert.assertTrue(jsonString.length() < 500); //Expected file size is in range 200-500
-            Assert.assertTrue(jsonString.contains("-----END RSA PUBLIC KEY-----"));
-            Assert.assertTrue(jsonString2.contains("-----BEGIN RSA PUBLIC KEY-----"));
-            Assert.assertTrue(jsonString2.length() > 100); //Slightly more than the combined length of these strings
-            Assert.assertTrue(jsonString2.length() < 500); //Expected file size is in range 200-500
-            Assert.assertTrue(jsonString2.contains("-----END RSA PUBLIC KEY-----"));
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();

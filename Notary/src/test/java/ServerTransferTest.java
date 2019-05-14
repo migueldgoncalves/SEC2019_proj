@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.security.PrivateKey;
 import java.util.Date;
 import java.util.Objects;
 
@@ -18,12 +19,12 @@ public class ServerTransferTest {
     @Before
     public void setUp() {
         try {
-            servidor = new Server("src\\main\\resources\\GoodsFile1.xml");
-
             //Cleans server backup file
             PrintWriter writer = new PrintWriter(new File(System.getProperty("user.dir") + "\\Backups\\ServerState.old"));
             writer.println("");
             writer.close();
+
+            servidor = new Server("src\\main\\resources\\GoodsFile1.xml");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Something Went Wrong In The System");
@@ -460,12 +461,12 @@ public class ServerTransferTest {
             pedido.setNounce(buyerNonce);
             pedido.setNotaryId(0);
             pedido.setAnswer(null);
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User2.key"), gson.toJson(pedido)));
+            pedido.setBuyerSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 2), gson.toJson(pedido)));
             pedido.setAnswer("answer"); //Tampering
             pedido.setUserId(1);
             pedido.setNounce(new Date().getTime());
             pedido.setBuyerNounce(buyerNonce);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
             Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
 
             pedido = new Request();
@@ -477,12 +478,12 @@ public class ServerTransferTest {
             pedido.setNounce(buyerNonce);
             pedido.setNotaryId(0);
             pedido.setAnswer(null);
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User2.key"), gson.toJson(pedido)));
+            pedido.setBuyerSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 2), gson.toJson(pedido)));
             pedido.setBuyerSignature(null); //Tampering
             pedido.setUserId(1);
             pedido.setNounce(new Date().getTime());
             pedido.setBuyerNounce(buyerNonce);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
             Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
 
             pedido = new Request();
@@ -494,12 +495,12 @@ public class ServerTransferTest {
             pedido.setNounce(buyerNonce);
             pedido.setNotaryId(0);
             pedido.setAnswer(null);
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User2.key"), gson.toJson(pedido)));
+            pedido.setBuyerSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 2), gson.toJson(pedido)));
             pedido.setNounce(0); //Tampering
             pedido.setUserId(1);
             pedido.setNounce(new Date().getTime());
             pedido.setBuyerNounce(0); //The value received in the tampered message
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
             Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
 
             ensureServerIsOkAfterAttack(false);
@@ -523,11 +524,11 @@ public class ServerTransferTest {
             pedido.setNounce(buyerNonce);
             pedido.setNotaryId(0);
             pedido.setAnswer(null);
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User2.key"), gson.toJson(pedido)));
+            pedido.setBuyerSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 2), gson.toJson(pedido)));
             pedido.setUserId(1);
             pedido.setNounce(new Date().getTime());
             pedido.setBuyerNounce(buyerNonce);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
             pedido.setAnswer("answer"); // Tampering
             Assert.assertEquals("Invalid Authorization to Transfer Good!", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
 
@@ -540,11 +541,11 @@ public class ServerTransferTest {
             pedido.setNounce(buyerNonce);
             pedido.setNotaryId(0);
             pedido.setAnswer(null);
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User2.key"), gson.toJson(pedido)));
+            pedido.setBuyerSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 2), gson.toJson(pedido)));
             pedido.setUserId(1);
             pedido.setNounce(new Date().getTime());
             pedido.setBuyerNounce(buyerNonce);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
             pedido.setSignature(null); //Tampering
             Assert.assertEquals("Invalid Authorization to Transfer Good!", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
 
@@ -557,11 +558,11 @@ public class ServerTransferTest {
             pedido.setNounce(buyerNonce);
             pedido.setNotaryId(0);
             pedido.setAnswer(null);
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User2.key"), gson.toJson(pedido)));
+            pedido.setBuyerSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 2), gson.toJson(pedido)));
             pedido.setUserId(1);
             pedido.setNounce(new Date().getTime());
             pedido.setBuyerNounce(0); //The value received in the tampered message
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
             pedido.setNounce(0); //Tampering
             Assert.assertEquals("Invalid Authorization to Transfer Good!", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
 
@@ -579,6 +580,8 @@ public class ServerTransferTest {
             PrintWriter writer = new PrintWriter(new File(System.getProperty("user.dir") + "\\Backups\\ServerState.old"));
             writer.println("");
             writer.close();
+
+            KeyStoreInterface.deleteKeystore();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -593,7 +596,7 @@ public class ServerTransferTest {
             pedido.setUserId(userId);
             pedido.setGoodId(goodId);
             pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User" + userId + ".key"), gson.toJson(pedido)));
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, userId), gson.toJson(pedido)));
 
             return gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
         } catch (Exception e) {
@@ -610,7 +613,7 @@ public class ServerTransferTest {
             pedido.setUserId(userId);
             pedido.setGoodId(goodId);
             pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User" + userId + ".key"), gson.toJson(pedido)));
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, userId), gson.toJson(pedido)));
 
             return gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
         } catch (Exception e) {
@@ -632,11 +635,11 @@ public class ServerTransferTest {
             pedido.setNounce(buyerNonce);
             pedido.setNotaryId(notaryId);
             pedido.setAnswer(answer);
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User" + buyerKeyId + ".key"), gson.toJson(pedido)));
+            pedido.setBuyerSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, buyerKeyId), gson.toJson(pedido)));
             pedido.setUserId(sellerUserId);
             pedido.setNounce(sellerNonce);
             pedido.setBuyerNounce(buyerNonceFromSeller);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User" + sellerKeyId + ".key"), gson.toJson(pedido)));
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, sellerKeyId), gson.toJson(pedido)));
 
             return gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
         } catch (Exception e) {

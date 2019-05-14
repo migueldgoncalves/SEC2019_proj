@@ -3,7 +3,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
@@ -12,14 +11,10 @@ public class KeyStoreInterfaceWithoutCCTest {
     @Before
     public void setUp() {
         try {
-            String keyStorePath = System.getProperty("user.dir");
-            if (!keyStorePath.contains("\\Security"))
-                keyStorePath += "\\Security";
+            KeyStoreInterface.deleteKeystore();
 
-            File keyStore = new File(keyStorePath + "\\src\\main\\resources\\KeyStore.jks");
-            keyStore.delete();
-
-            KeyStoreInterface.createBaseKeyStore(false);
+            KeyStoreInterface.createBaseKeyStore();
+            KeyStoreInterface.addNotaryKeysToKeyStore(1, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -156,6 +151,6 @@ public class KeyStoreInterfaceWithoutCCTest {
 
     @After
     public void tearDown() {
-
+        KeyStoreInterface.deleteKeystore();
     }
 }

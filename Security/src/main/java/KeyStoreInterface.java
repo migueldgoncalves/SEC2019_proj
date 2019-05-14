@@ -1,3 +1,6 @@
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -24,18 +27,28 @@ public class KeyStoreInterface {
     public static final int NOTARY = 1;
     public static final int CLIENT = 2;
 
-    public static void createBaseKeyStore(boolean usingCC) {
-        try {
-            // Create the keystore
-            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(null, KEYSTORE_PASSWORD.toCharArray());
-            FileOutputStream stream = new FileOutputStream(securityBaseDirGenerator() + "\\src\\main\\resources\\KeyStore.jks");
-            keyStore.store(stream, KEYSTORE_PASSWORD.toCharArray());
+    private static boolean isKeyStoreCreated = false;
 
-            // Populate the keystore
-            addKeyPairToKeyStore(NOTARY, 1, usingCC); //Create key pair for initial server, there will always be at least one
-            for(int i=1; i<=CLIENT_MAX_NUMBER; i++) {
-                addKeyPairToKeyStore(CLIENT, i, usingCC);
+    public static void createBaseKeyStore() {
+        try {
+            if (!isKeyStoreCreated) { //Server needs to have a keystore created before even knowing if it is first or not
+                File baseKeyStore = new File(securityBaseDirGenerator() + "\\src\\main\\resources\\BaseKeyStore.jks");
+                if(!baseKeyStore.exists()) {
+                    // Create the keystore
+                    KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+                    keyStore.load(null, KEYSTORE_PASSWORD.toCharArray());
+                    FileOutputStream stream = new FileOutputStream(securityBaseDirGenerator() + "\\src\\main\\resources\\BaseKeyStore.jks");
+                    keyStore.store(stream, KEYSTORE_PASSWORD.toCharArray());
+
+                    // Populate the keystore with the clients
+                    for (int i = 1; i <= CLIENT_MAX_NUMBER; i++) {
+                        addKeyPairToKeyStore(CLIENT, i, false); //"usingCC" parameter is only relevant for notaries
+                        System.out.println("Keypair for Client " + i + " was added");
+                    }
+                }
+                File finalKeyStore = new File(securityBaseDirGenerator() + "\\src\\main\\resources\\KeyStore.jks");
+                FileUtils.copyFile(baseKeyStore, finalKeyStore);
+                isKeyStoreCreated = true;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,6 +60,7 @@ public class KeyStoreInterface {
         try {
             if(id > 0) {
                 addKeyPairToKeyStore(NOTARY, id, usingCC);
+                System.out.println("Keypair for Notary " + id + " was added");
             }
         } catch (Exception e) {
             System.out.println("Could not add notary keys to keystore");
@@ -138,13 +152,21 @@ public class KeyStoreInterface {
     }
 
     private static String securityBaseDirGenerator() {
-        String basePath = System.getProperty("user.dir");
-        if(!basePath.contains("\\Security"))
-            basePath+="\\Security";
-        return basePath;
+        String keyStorePath = System.getProperty("user.dir");
+        keyStorePath = keyStorePath.replace("\\Client", "\\Security");
+        keyStorePath = keyStorePath.replace("\\Notary", "\\Security");
+        if (!keyStorePath.contains("\\Security"))
+            keyStorePath += "\\Security";
+        return keyStorePath;
     }
 
     private static String addKeyPairCommandGenerator(String keyAlias, int id, String keyPassword) {
+        String keyStoreFile = null;
+        if(keyAlias==NOTARY_KEY_ALIAS)
+            keyStoreFile = "KeyStore";
+        else if (keyAlias==CLIENT_KEY_ALIAS)
+            keyStoreFile = "BaseKeyStore";
+
         String command = "keytool -genkeypair " +
                 "-alias " + keyAlias + id + " " +
                 "-keyalg RSA " +
@@ -153,7 +175,7 @@ public class KeyStoreInterface {
                 "-keypass " + keyPassword + id + " " +
                 "-validity " + CERTIFICATE_VALIDITY + " " +
                 "-storetype JKS " +
-                "-keystore " + securityBaseDirGenerator() + "\\src\\main\\resources\\KeyStore.jks" + " " +
+                "-keystore " + securityBaseDirGenerator() + "\\src\\main\\resources\\" + keyStoreFile + ".jks" + " " +
                 "-storepass " + KEYSTORE_PASSWORD;
         return command;
     }
@@ -163,5 +185,21 @@ public class KeyStoreInterface {
                 "-alias " + keyAlias + id + " " + "-file " + securityBaseDirGenerator() + "\\src\\main\\resources\\Temp.cert" + " " +
                 "-storepass " + KEYSTORE_PASSWORD;
         return command;
+    }
+
+    protected static void deleteKeystore() {
+        try {
+            File keyStore = new File(securityBaseDirGenerator() + "\\src\\main\\resources\\KeyStore.jks");
+            if(keyStore.exists()) {
+                if (keyStore.delete()) {
+                    System.out.println("Keystore successfully deleted");
+                } else {
+                    System.out.println("Error while deleting keystore");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        isKeyStoreCreated = false;
     }
 }
