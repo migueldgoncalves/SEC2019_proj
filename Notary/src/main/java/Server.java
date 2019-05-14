@@ -285,6 +285,10 @@ public class Server extends UnicastRemoteObject implements iProxy {
         return answerFactory("The Good Id, Owner Id or New Owner ID is not present in the server!", pedido.getGood().getWriteTimeStampOfGood());
     }
 
+    public String prepare_transferGood(String request) throws RemoteException {
+        return null;
+    }
+
     /**
      * Method Sell that is responsible for putting a given Good on sale
      * @param jsonRequest The Request Object that contains the Good ID to be put on sell
@@ -384,10 +388,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
 
         return null;
 
-    }
-
-    public String prepare_transferGood(String request) throws RemoteException {
-        return null;
     }
 
     //####################################### Server State Methods #####################################################
@@ -682,23 +682,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
         pedido.setSignature(null);
 
         return SignatureGenerator.verifySignature(publicKeys.get(pedido.getUserId()), signature, gson.toJson(pedido));
-    }
-
-    private boolean validateNotaryRequests(ArrayList<Request> notaryAnswers){
-        //TODO: Dar clear do good antes de verificar o request e da signature obviamente
-        Gson gson = new Gson();
-        for(Request i : notaryAnswers){
-            byte[] signature = i.getSignature();
-            Good good = i.getGood();
-            i.setSignature(null);
-            i.setGood(null);
-
-            if(!SignatureGenerator.verifySignature(pubKey, signature, gson.toJson(i))){
-                return false;
-            }
-
-        }
-        return true;
     }
 
     private boolean validateWriteTimeStamp(Request pedido){
