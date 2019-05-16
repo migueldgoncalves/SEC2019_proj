@@ -102,9 +102,28 @@ public class ServerLogger {
         }
     }
 
+    synchronized void updateServerLogPrepareTransfer(PrepareTransferRequest pedido, String result) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("ServerLog.txt", true));
+            writer.write("Operation: Prepare Sell\n");
+            writer.write("Time of Operation Completion: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "\n");
+            writer.write("User ID of Method Caller: " + pedido.getUserId() + "\n");
+            writer.write("Good ID: " + pedido.getBuyerRequest().getGoodId() + "\n");
+            writer.write("Nounce: " + pedido.getNounce() + "\n");
+            writer.write("Read ID: " + pedido.getReadId() + "\n");
+            writer.write("User Signature of Method Caller: " + Arrays.toString(pedido.getSignature()) + "\n");
+            writer.write("Operation Result: " + result + "\n");
+            writer.write("---------------------------------------------------------------------------------------------------------------\n");
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Something Went Wrong During Server Log Update");
+        }
+    }
+
     /**
      * Method That updates the logs of the Server
-     * @param pedido The PrepareSellRequest Object Sent By The Client
+     * @param pedido The SellRequest Object Sent By The Client
      * @param result The JsonString of The Modified Good Returned By The Server or The String of Error
      */
     synchronized void updateServerLogSell(SellRequest pedido, String result) {
@@ -116,6 +135,30 @@ public class ServerLogger {
             writer.write("Good ID: " + pedido.getRequests().get(0).getGood().getGoodId() + "\n");
             writer.write("Nounce: " + pedido.getNounce() + "\n");
             writer.write("Write Time Stamp: " + pedido.getRequests().get(0).getGood().getWriteTimeStampOfGood());
+            writer.write("User Signature of Method Caller: " + Arrays.toString(pedido.getSignature()) + "\n");
+            writer.write("Operation Result: " + result + "\n");
+            writer.write("---------------------------------------------------------------------------------------------------------------\n");
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Something Went Wrong During Server Log Update");
+        }
+    }
+
+    /**
+     * Method That updates the logs of the Server
+     * @param pedido The SellRequest Object Sent By The Client
+     * @param result The JsonString of The Modified Good Returned By The Server or The String of Error
+     */
+    synchronized void updateServerLogTransferGood(TransferGoodRequest pedido, String result) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("ServerLog.txt", true));
+            writer.write("Operation: Prepare Sell\n");
+            writer.write("Time of Operation Completion: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "\n");
+            writer.write("User ID of Method Caller: " + pedido.getUserId() + "\n");
+            writer.write("Good ID: " + pedido.getBuyerAnswer().getNotaryAnswers().get(0).getGood().getGoodId() + "\n");
+            writer.write("Nounce: " + pedido.getNounce() + "\n");
+            writer.write("Write Time Stamp: " + pedido.getWriteTimeStamp());
             writer.write("User Signature of Method Caller: " + Arrays.toString(pedido.getSignature()) + "\n");
             writer.write("Operation Result: " + result + "\n");
             writer.write("---------------------------------------------------------------------------------------------------------------\n");

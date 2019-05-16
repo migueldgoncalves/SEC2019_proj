@@ -1,24 +1,7 @@
 public class PrepareTransferRequest extends AbstractRequest {
 
-    private int GoodId;
-    private int BuyerId;
     private int ReadId;
-
-    public int getGoodId() {
-        return GoodId;
-    }
-
-    public void setGoodId(int goodId) {
-        GoodId = goodId;
-    }
-
-    public int getBuyerId() {
-        return BuyerId;
-    }
-
-    public void setBuyerId(int buyerId) {
-        BuyerId = buyerId;
-    }
+    private BuyerRequest buyerRequest;
 
     public int getReadId() {
         return ReadId;
@@ -26,5 +9,13 @@ public class PrepareTransferRequest extends AbstractRequest {
 
     public void setReadId(int readId) {
         ReadId = readId;
+    }
+
+    public BuyerRequest getBuyerRequest() {
+        return buyerRequest;
+    }
+
+    public void setBuyerRequest(BuyerRequest buyerRequest) {
+        this.buyerRequest = buyerRequest;
     }
 }

@@ -16,4 +16,19 @@ public class SecurityValidator {
         return SignatureGenerator.verifySignature(publicKey, signature, gson.toJson(pedido));
     }
 
+    static boolean validateRequest(PrepareTransferRequest pedido, PublicKey publicKey) {
+        Gson gson = new Gson();
+        byte[] signature = pedido.getSignature();
+        pedido.setSignature(null);
+
+        return SignatureGenerator.verifySignature(publicKey, signature, gson.toJson(pedido));
+    }
+
+    public static boolean validateRequestFromBuyer(BuyerRequest buyerRequest, PublicKey publicKey) {
+        Gson gson = new Gson();
+        byte[] signature = buyerRequest.getSignature();
+        buyerRequest.setSignature(null);
+
+        return SignatureGenerator.verifySignature(publicKey, signature, gson.toJson(buyerRequest));
+    }
 }

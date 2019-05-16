@@ -2589,3 +2589,1374 @@ Nounce: 1557808498288
 Write Time Stamp: 6User Signature of Method Caller: null
 Operation Result: The Item was Already On Sale
 ---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 16:58:05
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557935885157
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 16:58:05
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557935885157
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 16:58:05
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557935885157
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 16:58:08
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557935888451
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 16:58:08
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557935888451
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 16:58:08
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557935888451
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 16:58:28
+User ID of Method Caller: 1
+Good ID: 0
+Nounce: 1557935908589
+Read ID: 3
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization From Buyer To Invoke Method Prepare To Sell on Server! Buyer Signature Is Not Valid
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 16:58:28
+User ID of Method Caller: 1
+Good ID: 0
+Nounce: 1557935908589
+Read ID: 3
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization From Buyer To Invoke Method Prepare To Sell on Server! Buyer Signature Is Not Valid
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 16:58:28
+User ID of Method Caller: 1
+Good ID: 0
+Nounce: 1557935908589
+Read ID: 3
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization From Buyer To Invoke Method Prepare To Sell on Server! Buyer Signature Is Not Valid
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:04:54
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557936294055
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:04:54
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557936294055
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:04:54
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557936294055
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:09:37
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557936577899
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:09:38
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557936577899
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:09:38
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557936577899
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:09:41
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557936581479
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:09:41
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557936581479
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:09:41
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557936581479
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:09:57
+User ID of Method Caller: 1
+Good ID: 0
+Nounce: 1557936597051
+Read ID: 3
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization From Buyer To Invoke Method Prepare To Sell on Server! Buyer Signature Is Not Valid
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:09:57
+User ID of Method Caller: 1
+Good ID: 0
+Nounce: 1557936597051
+Read ID: 3
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization From Buyer To Invoke Method Prepare To Sell on Server! Buyer Signature Is Not Valid
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:09:57
+User ID of Method Caller: 1
+Good ID: 0
+Nounce: 1557936597051
+Read ID: 3
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization From Buyer To Invoke Method Prepare To Sell on Server! Buyer Signature Is Not Valid
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:29:28
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557937768185
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:29:28
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557937768185
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:29:28
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557937768185
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:33:55
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938035238
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:33:55
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938035238
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:33:55
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938035238
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:33:58
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938037986
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:33:58
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938037986
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:33:58
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938037986
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:34:05
+User ID of Method Caller: 1
+Good ID: 0
+Nounce: 1557938045672
+Read ID: 3
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization From Buyer To Invoke Method Prepare To Sell on Server! Buyer Signature Is Not Valid
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:34:05
+User ID of Method Caller: 1
+Good ID: 0
+Nounce: 1557938045672
+Read ID: 3
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization From Buyer To Invoke Method Prepare To Sell on Server! Buyer Signature Is Not Valid
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:34:05
+User ID of Method Caller: 1
+Good ID: 0
+Nounce: 1557938045672
+Read ID: 3
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization From Buyer To Invoke Method Prepare To Sell on Server! Buyer Signature Is Not Valid
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:41:13
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938473238
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:41:13
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938473238
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:41:13
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938473238
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:41:15
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938475441
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:41:15
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938475441
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:41:15
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938475441
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:41:17
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938477364
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:41:17
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938477364
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:41:17
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938477364
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:41:19
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938479572
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:41:19
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938479572
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:41:19
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557938479572
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:42:09
+User ID of Method Caller: 1
+Good ID: 0
+Nounce: 1557938497237
+Read ID: 5
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization From Buyer To Invoke Method Prepare To Sell on Server! Buyer Signature Is Not Valid
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 17:42:09
+User ID of Method Caller: 1
+Good ID: 0
+Nounce: 1557938497237
+Read ID: 5
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization From Buyer To Invoke Method Prepare To Sell on Server! Buyer Signature Is Not Valid
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:31:34
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557941494062
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:31:34
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557941494062
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:31:34
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557941494062
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:31:44
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557941504325
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:31:44
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557941504325
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:31:44
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557941504325
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:31:52
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557941512390
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:31:52
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557941512390
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:31:52
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557941512390
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:31:54
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557941514739
+Write Time Stamp: 5User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:31:54
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557941514739
+Write Time Stamp: 5User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:31:54
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557941514739
+Write Time Stamp: 5User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:37:34
+User ID of Method Caller: 1
+Good ID: 0
+Nounce: 1557941526875
+Read ID: 5
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization From Buyer To Invoke Method Prepare To Sell on Server! Buyer Signature Is Not Valid
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:40:40
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942040733
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:40:40
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942040733
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:40:40
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942040733
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:40:42
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942042387
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:40:42
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942042387
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:40:42
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942042387
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:40:45
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942045381
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:40:45
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942045381
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:40:45
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942045381
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:40:52
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942052965
+Write Time Stamp: 5User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:40:53
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942052965
+Write Time Stamp: 5User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:40:53
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942052965
+Write Time Stamp: 5User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:40:55
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942055261
+Write Time Stamp: 6User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:40:55
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942055261
+Write Time Stamp: 6User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:40:55
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942055261
+Write Time Stamp: 6User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:49:10
+User ID of Method Caller: 1
+Good ID: 0
+Nounce: 1557942135638
+Read ID: 6
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization From Buyer To Invoke Method Prepare To Sell on Server! Buyer Signature Is Not Valid
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:50:44
+User ID of Method Caller: 1
+Good ID: 0
+Nounce: 1557942135638
+Read ID: 6
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization From Buyer To Invoke Method Prepare To Sell on Server! Buyer Signature Is Not Valid
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:51:35
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942695633
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:51:35
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942695633
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:51:35
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942695633
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:51:49
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942709879
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:51:49
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942709879
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:51:50
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942709879
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:52:01
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942721089
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:52:01
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942721089
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:52:01
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942721089
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:52:02
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942722968
+Write Time Stamp: 5User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:52:03
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942722968
+Write Time Stamp: 5User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:52:03
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942722968
+Write Time Stamp: 5User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:52:04
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942724574
+Write Time Stamp: 6User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:52:04
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942724574
+Write Time Stamp: 6User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:52:04
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942724574
+Write Time Stamp: 6User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:52:06
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942726330
+Write Time Stamp: 7User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:52:06
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942726330
+Write Time Stamp: 7User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:52:06
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557942726330
+Write Time Stamp: 7User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:56:04
+User ID of Method Caller: 1
+Good ID: 0
+Nounce: 1557942781206
+Read ID: 7
+User Signature of Method Caller: null
+Operation Result: Invalid Authorization From Buyer To Invoke Method Prepare To Sell on Server! Buyer Signature Is Not Valid
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:59:21
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557943161057
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:59:21
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557943161057
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:59:21
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557943161057
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:59:30
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557943170828
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:59:30
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557943170828
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:59:31
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557943170828
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:59:32
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557943172702
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:59:32
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557943172702
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 18:59:32
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557943172702
+Write Time Stamp: 4User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 19:00:02
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557943202915
+Write Time Stamp: 5User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 19:00:02
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557943202915
+Write Time Stamp: 5User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 19:00:02
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557943202915
+Write Time Stamp: 5User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 19:16:21
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557944181174
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 19:16:21
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557944181174
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 19:16:21
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557944181174
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 19:16:29
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557944188982
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 19:16:29
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557944188982
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 19:16:29
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557944188982
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 19:29:11
+User ID of Method Caller: 1
+Good ID: 0
+Nounce: 1557944791022
+Read ID: 4
+User Signature of Method Caller: null
+Operation Result: Invalid Read ID To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 19:47:49
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557946069809
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 19:47:50
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557946069809
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 19:47:50
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557946069809
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 19:47:54
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557946074085
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 19:47:54
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557946074085
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 19:47:54
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557946074085
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 20:13:47
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557947627340
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 20:13:47
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557947627340
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 20:13:47
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557947627340
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 20:23:04
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557948184415
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 20:23:04
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557948184415
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 20:23:04
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557948184415
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 20:54:39
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557950079720
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 20:54:39
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557950079720
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 20:54:39
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557950079720
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 21:05:34
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557950734604
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 21:05:34
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557950734604
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 15/05/2019 21:05:34
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557950734604
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 00:54:20
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557964458496
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 00:54:22
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557964458496
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 00:54:26
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557964458496
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 00:55:25
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557964519684
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 00:55:29
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557964519684
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 00:55:31
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1557964519684
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 15:54:50
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558018487286
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 15:55:03
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558018487286
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 15:55:05
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558018487286
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 16:00:45
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558018844259
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 16:00:46
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558018844259
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 16:00:47
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558018844259
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 17:59:15
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558025955872
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 17:59:16
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558025955872
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 17:59:16
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558025955872
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:02:14
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044134583
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:02:14
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044134583
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:02:14
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044134583
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:02:22
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044142694
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:02:22
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044142694
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:02:22
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044142694
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:02:34
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044154832
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:02:34
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044154832
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:02:34
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044154832
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:05:01
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044301029
+Read ID: 5
+User Signature of Method Caller: null
+Operation Result: Invalid Read ID To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:05:01
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044301029
+Read ID: 5
+User Signature of Method Caller: null
+Operation Result: Invalid Read ID To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:05:01
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044301029
+Read ID: 5
+User Signature of Method Caller: null
+Operation Result: Invalid Read ID To Invoke Method Prepare To Sell on Server!
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:08:46
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044524661
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:08:46
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044524661
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:08:46
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044524661
+Write Time Stamp: 1User Signature of Method Caller: null
+Operation Result: The Item is Now on Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:08:51
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044531134
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:08:51
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044531134
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:08:51
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044531134
+Write Time Stamp: 2User Signature of Method Caller: null
+Operation Result: The Item was Already On Sale
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:09:04
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044544602
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:09:04
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044544602
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------
+Operation: Prepare Sell
+Time of Operation Completion: 16/05/2019 23:09:04
+User ID of Method Caller: 1
+Good ID: 1
+Nounce: 1558044544602
+Write Time Stamp: 3User Signature of Method Caller: null
+Operation Result: Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item
+---------------------------------------------------------------------------------------------------------------

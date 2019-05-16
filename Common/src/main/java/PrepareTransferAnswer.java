@@ -2,6 +2,7 @@ public class PrepareTransferAnswer extends AbstractAnswer{
 
     private Good good;
     private int ReadId;
+    private PrepareTransferRequest sellerRequest;
 
     public Good getGood() {
         return good;
