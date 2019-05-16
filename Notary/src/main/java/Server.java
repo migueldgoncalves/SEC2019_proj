@@ -186,7 +186,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
         Request pedido = gson.fromJson(jsonRequest, Request.class);
 
         if (pedido.getNotaryId()!=0) {
-            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "As a Notary, you cannot invoke this method!");
+            logger.updateServerLog(ServerLogger.OPCODE.TRANSFERGOOD, pedido, "As a Notary, you cannot invoke this method!");
             return answerFactory("As a Notary, you cannot invoke this method!", pedido.getGood().getWriteTimeStampOfGood());
         }
 
@@ -227,13 +227,8 @@ public class Server extends UnicastRemoteObject implements iProxy {
         Gson gson = new Gson();
         TransferGoodRequest pedido = gson.fromJson(jsonRequest, TransferGoodRequest.class);
 
-        byte[] buyerSig = pedido.getBuyerSignature();
+        byte[] buyerSig = pedido.getBuyerAnswer().getSignature();
         byte[] sellerSig = pedido.getSignature();
-
-        if (pedido.getNotaryId()!=0) {
-            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "As a Notary, you cannot invoke this method!");
-            return answerFactory("As a Notary, you cannot invoke this method!", pedido.getGood().getWriteTimeStampOfGood());
-        }
 
         if (!NonceVerifier.isNonceValid(pedido)){
             logger.updateServerLogTransferGood(pedido, "This message has already been processed");
@@ -250,26 +245,26 @@ public class Server extends UnicastRemoteObject implements iProxy {
             return AnswerFactory.TransferGoodAnswerFactory("Invalid WriteTimeStamp to Transfer Good!", pedido.getBuyerAnswer().getNotaryAnswers().get(0).getGood(), ID, USING_CC, privKey);
         }
 
-        pedido.setUserId(pedido.getBuyerId());
-        pedido.setNounce(pedido.getBuyerNounce());
-        pedido.setBuyerNounce(0);
+        pedido.setUserId(pedido.getBuyerAnswer().getUserId());
+        pedido.setNounce(pedido.getBuyerAnswer().getNounce());
+        pedido.getBuyerAnswer().setNounce(0);
         pedido.setSignature(null);
-        pedido.setBuyerSignature(null);
+        pedido.getBuyerAnswer().setSignature(null);
         //######################################################
 
-        if(!(SignatureGenerator.verifySignature(publicKeys.get(pedido.getBuyerId()), buyerSig, gson.toJson(pedido)))){
+        if(!(SignatureGenerator.verifySignature(publicKeys.get(pedido.getBuyerAnswer().getUserId()), buyerSig, gson.toJson(pedido)))){
             pedido.setSignature(sellerSig);
-            pedido.setBuyerSignature(buyerSig);
-            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item");
-            return answerFactory("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", pedido.getGood().getWriteTimeStampOfGood());
+            pedido.getBuyerAnswer().setSignature(buyerSig);
+            logger.updateServerLogTransferGood(pedido, "Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item");
+            return AnswerFactory.TransferGoodAnswerFactory("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", pedido.getBuyerAnswer().getNotaryAnswers().get(0).getGood(), ID, USING_CC, privKey);
         }
 
         pedido.setSignature(sellerSig);
-        pedido.setBuyerSignature(buyerSig);
+        pedido.getBuyerAnswer().setSignature(buyerSig);
 
-        if (pedido.getBuyerId() < 1 || pedido.getBuyerId() > 9) {
-            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "The Good Id, Owner Id or New Owner ID is not present in the server!");
-            return answerFactory("The Good Id, Owner Id or New Owner ID is not present in the server!", pedido.getGood().getWriteTimeStampOfGood());
+        if (pedido.getBuyerAnswer().getUserId() < 1 || pedido.getBuyerAnswer().getUserId() > 9) {
+            logger.updateServerLogTransferGood(pedido, "The Good Id, Owner Id or New Owner ID is not present in the server!");
+            return AnswerFactory.TransferGoodAnswerFactory("The Good Id, Owner Id or New Owner ID is not present in the server!", pedido.getBuyerAnswer().getNotaryAnswers().get(0).getGood(), ID, USING_CC, privKey);
         }
 
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
@@ -356,11 +351,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
     public String sell(String jsonRequest) throws RemoteException {
         Gson gson = new Gson();
         SellRequest pedido = gson.fromJson(jsonRequest, SellRequest.class);
-
-        if (pedido.getNotaryId()!=0) {
-            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "As a Notary, you cannot invoke this method!");
-            return answerFactory("As a Notary, you cannot invoke this method!", pedido.getGood().getWriteTimeStampOfGood());
-        }
 
         if (!validateSellRequest(pedido)) {
             logger.updateServerLogSell(pedido, "Invalid Authorization To Invoke Method Sell on Server!");
