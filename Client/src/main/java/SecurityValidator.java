@@ -14,7 +14,7 @@ public class SecurityValidator {
                 PublicKey notaryPubKey = iCartaoCidadao.getPublicKeyFromCC();
                 return SignatureGenerator.verifySignatureCartaoCidadao(notaryPubKey, signature, gson.toJson(pedido));
             }else {
-                PublicKey notaryPubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\Notary.pub");
+                PublicKey notaryPubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.NOTARY, pedido.getNotaryId());
                 return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
             }
         }catch (Exception e){
@@ -33,7 +33,7 @@ public class SecurityValidator {
                 PublicKey notaryPubKey = iCartaoCidadao.getPublicKeyFromCC();
                 return SignatureGenerator.verifySignatureCartaoCidadao(notaryPubKey, signature, gson.toJson(pedido));
             }else {
-                PublicKey notaryPubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\Notary.pub");
+                PublicKey notaryPubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.NOTARY, pedido.getNotaryId());
                 return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
             }
         }catch (Exception e){
@@ -52,7 +52,7 @@ public class SecurityValidator {
                 PublicKey notaryPubKey = iCartaoCidadao.getPublicKeyFromCC();
                 return SignatureGenerator.verifySignatureCartaoCidadao(notaryPubKey, signature, gson.toJson(pedido));
             }else {
-                PublicKey notaryPubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\Notary.pub");
+                PublicKey notaryPubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.NOTARY, pedido.getNotaryId());
                 return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
             }
         }catch (Exception e){
