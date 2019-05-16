@@ -27,8 +27,8 @@ public class Client extends UnicastRemoteObject implements iClient {
     private static int UserID;
     private static boolean USING_CC = false;
 
-    private static AtomicInteger writeTimeStamp = new AtomicInteger(0);
-    private static AtomicInteger readTimeStamp = new AtomicInteger(0);
+    private static AtomicInteger writeTimeStamp = new AtomicInteger(0); //This value must be persisted
+    private static AtomicInteger readTimeStamp = new AtomicInteger(0); //This value must be persisted
 
     private static ConcurrentHashMap<Integer, Integer> serverPorts = new ConcurrentHashMap<>();
 
@@ -102,6 +102,7 @@ public class Client extends UnicastRemoteObject implements iClient {
 
                 UserID = Integer.parseInt(ID);
                 Naming.rebind("rmi://localhost:" + port + "/" + UserID, ClientProxy);
+                loadTimestamps();
                 loadKeys();
                 printMenu();
 
@@ -111,12 +112,14 @@ public class Client extends UnicastRemoteObject implements iClient {
                     switch (input) {
                         case "1":
                             writeTimeStampToSend = writeTimeStamp.incrementAndGet();
+                            FileInterface.writeTimestamps(UserID, writeTimeStamp.get(), readTimeStamp.get());
                             String data = promptForGoodId(writeTimeStampToSend);
                             Runnable r = () -> sell(data, writeTimeStampToSend);
                             new Thread(r).start();
                             break;
                         case "2":
                             writeTimeStampToSend = writeTimeStamp.incrementAndGet();
+                            FileInterface.writeTimestamps(UserID, writeTimeStamp.get(), readTimeStamp.get());
                             int seller = promptForSellerId();
                             int good = prompForGoodId();
                             int clientPort = promptForPortNumber();
@@ -125,6 +128,7 @@ public class Client extends UnicastRemoteObject implements iClient {
                             break;
                         case "3":
                             writeTimeStampToSend = writeTimeStamp.incrementAndGet();
+                            FileInterface.writeTimestamps(UserID, writeTimeStamp.get(), readTimeStamp.get());
                             String data3 = promptForGoodId(writeTimeStampToSend);
                             Runnable r3 = () -> getStateOfGood(data3, writeTimeStampToSend);
                             new Thread(r3).start();
@@ -542,6 +546,13 @@ public class Client extends UnicastRemoteObject implements iClient {
             e.printStackTrace();
             System.out.println("Exception Thrown in Body of Method loadKeys! Public and Private keys unable to load!");
         }
+    }
+
+    private static void loadTimestamps() {
+        int[] timestamps = FileInterface.readTimestamps(UserID);
+        Client.writeTimeStamp = new AtomicInteger(timestamps[0]);
+        Client.readTimeStamp = new AtomicInteger(timestamps[1]);
+        System.out.println("Timestamps loaded");
     }
 
     //########################################## Auxiliary Methods ####################################################

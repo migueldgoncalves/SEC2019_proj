@@ -19,6 +19,9 @@ import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
 public class Server extends UnicastRemoteObject implements iProxy {
 
+    private static final int HASHCASH_VERSION = 1;
+    private static final int ZERO_BITS = 20;
+
     //The Hash Table mapping each user ID to their owned Goods
     private Hashtable<Integer, ArrayList<Good>> goods = new Hashtable<>();
     //The Hash Table mapping each user ID to their public keys
