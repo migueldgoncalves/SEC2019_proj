@@ -38,17 +38,4 @@ public class iCartaoCidadao {
             return null;
         }
     }
-
-    public synchronized static void writeCCPublicKeyToFile() {
-        try {
-            CartaoCidadao.setUp();
-            PublicKey key = CartaoCidadao.getPublicKeyFromCertificate();
-            String baseDir = System.getProperty("user.dir").replace("\\Notary", "");
-            RSAKeySaverAsText.SavePublicKeyAsText(key, baseDir + "\\Client\\src\\main\\resources\\Notary_CC");
-            RSAKeySaverAsText.SavePublicKeyAsText(key, baseDir + "\\Notary\\src\\main\\resources\\Notary_CC");
-            CartaoCidadao.exitPteid();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

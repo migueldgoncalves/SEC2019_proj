@@ -6,21 +6,25 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.security.PrivateKey;
 import java.util.Date;
+import java.util.Objects;
 
 public class ServerTransferTest {
 
     private Server servidor;
 
+    private Request state = null;
+
     @Before
     public void setUp() {
         try {
-            servidor = new Server("src\\main\\resources\\GoodsFile1.xml");
-
             //Cleans server backup file
             PrintWriter writer = new PrintWriter(new File(System.getProperty("user.dir") + "\\Backups\\ServerState.old"));
             writer.println("");
             writer.close();
+
+            servidor = new Server("src\\main\\resources\\GoodsFile1.xml");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Something Went Wrong In The System");
@@ -30,106 +34,19 @@ public class ServerTransferTest {
     @Test
     public void methodTransferGoodSuccessful() {
         try {
-            Gson gson = new Gson();
-            Request pedido = new Request();
+            long buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setUserId(1);
-            pedido.setGoodId(1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Request state = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("<1, Not-On-Sale>", state.getAnswer());
+            sellGoodRequestGenerator(1, 1);
 
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            state = gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Item is Now on Sale", state.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good with Good ID 1 Has now Been transfered to the new Owner with Owner ID 2", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setUserId(1);
-            pedido.setSellerId(1);
-            pedido.setBuyerId(2);
-            pedido.setSignature(null);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User2.key"), gson.toJson(pedido)));
-            Request temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good with Good ID 1 Has now Been transfered to the new Owner with Owner ID 2", temp.getAnswer());
-
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Assert.assertEquals("<2, Not-On-Sale>", gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class).getAnswer());
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    @Test
-    public void methodTransferGoodInvalidUser() {
-        try {
-            Gson gson = new Gson();
-            Request pedido = new Request();
-
-            pedido.setUserId(-1);
-            pedido.setGoodId(1);
-            pedido.setSellerId(1);
-            pedido.setBuyerId(2);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User2.key"), gson.toJson(pedido)));
-            Request temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", temp.getAnswer());
-
-            pedido.setUserId(0);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", temp.getAnswer());
-
-            pedido.setUserId(2);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", temp.getAnswer());
-
-            pedido.setUserId(10);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", temp.getAnswer());
-
-            // Ensures server is ok after attack
-
-            pedido.setUserId(1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Request state = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("<1, Not-On-Sale>", state.getAnswer());
-
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            state = gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Item is Now on Sale", state.getAnswer());
-
-            pedido.setSignature(null);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User2.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good with Good ID 1 Has now Been transfered to the new Owner with Owner ID 2", temp.getAnswer());
-
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Assert.assertEquals("<2, Not-On-Sale>", gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class).getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -139,73 +56,61 @@ public class ServerTransferTest {
     @Test
     public void methodTransferGoodInvalidGood() {
         try {
-            Gson gson = new Gson();
-            Request pedido = new Request();
+            long buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(-1, 2, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setUserId(1);
-            pedido.setGoodId(-1);
-            pedido.setSellerId(1);
-            pedido.setBuyerId(2);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User2.key"), gson.toJson(pedido)));
-            Request temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(0, 2, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setGoodId(0);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setGoodId(1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(2, 2, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setGoodId(2);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(9, 2, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setGoodId(10);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(10, 2, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            // Ensures server is ok after attack
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
 
-            pedido.setGoodId(1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Request state = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("<1, Not-On-Sale>", state.getAnswer());
+    @Test
+    public void methodTransferGoodInvalidBuyerUser() {
+        try {
+            long buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, -1, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            state = gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Item is Now on Sale", state.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 0, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setSignature(null);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good with Good ID 1 Has now Been transfered to the new Owner with Owner ID 2", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 1, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Assert.assertEquals("<2, Not-On-Sale>", gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class).getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 9, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 10, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -215,83 +120,27 @@ public class ServerTransferTest {
     @Test
     public void methodTransferGoodInvalidSellerGoodNotAtSale() {
         try {
-            Gson gson = new Gson();
-            Request pedido = new Request();
+            long buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, -1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setUserId(1);
-            pedido.setGoodId(1);
-            pedido.setSellerId(2);
-            pedido.setBuyerId(2);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User2.key"), gson.toJson(pedido)));
-            Request temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 0, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setUserId(2);
-            pedido.setSellerId(1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 2, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setUserId(2);
-            pedido.setSellerId(2);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 9, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setUserId(1);
-            pedido.setSellerId(-1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 10, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setSellerId(0);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
-
-            pedido.setSellerId(10);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
-
-            // Ensures server is ok after attack
-
-            pedido.setSellerId(1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Request state = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("<1, Not-On-Sale>", state.getAnswer());
-
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            state = gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Item is Now on Sale", state.getAnswer());
-
-            pedido.setSignature(null);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good with Good ID 1 Has now Been transfered to the new Owner with Owner ID 2", temp.getAnswer());
-
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Assert.assertEquals("<2, Not-On-Sale>", gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class).getAnswer());
+            ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -301,83 +150,29 @@ public class ServerTransferTest {
     @Test
     public void methodTransferGoodInvalidSellerGoodAtSale() {
         try {
-            Gson gson = new Gson();
-            Request pedido = new Request();
+            sellGoodRequestGenerator(1, 1);
 
-            pedido.setUserId(1);
-            pedido.setGoodId(1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Request state = gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Item is Now on Sale", state.getAnswer());
+            long buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, -1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setSellerId(2);
-            pedido.setBuyerId(2);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User2.key"), gson.toJson(pedido)));
-            Request temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 0, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setUserId(2);
-            pedido.setSellerId(1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 2, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setUserId(2);
-            pedido.setSellerId(2);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 9, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setUserId(1);
-            pedido.setSellerId(-1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 10, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setSellerId(0);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
-
-            pedido.setSellerId(10);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
-
-            // Ensures server is ok after attack
-
-            pedido.setSellerId(1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            state = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("<1, On-Sale>", state.getAnswer());
-
-            pedido.setSignature(null);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good with Good ID 1 Has now Been transfered to the new Owner with Owner ID 2", temp.getAnswer());
-
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Assert.assertEquals("<2, Not-On-Sale>", gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class).getAnswer());
+            ensureServerIsOkAfterAttack(true);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -387,58 +182,27 @@ public class ServerTransferTest {
     @Test
     public void methodTransferGoodInvalidBuyerGoodNotAtSale() {
         try {
-            Gson gson = new Gson();
-            Request pedido = new Request();
+            long buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, -1, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setUserId(1);
-            pedido.setGoodId(1);
-            pedido.setSellerId(1);
-            pedido.setBuyerId(-1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Request temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 0, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setBuyerId(0);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 1, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setBuyerId(10);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 9, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
-            // Ensures server is ok after attack
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 10, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setBuyerId(2);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Request state = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("<1, Not-On-Sale>", state.getAnswer());
-
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            state = gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Item is Now on Sale", state.getAnswer());
-
-            pedido.setSignature(null);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good with Good ID 1 Has now Been transfered to the new Owner with Owner ID 2", temp.getAnswer());
-
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Assert.assertEquals("<2, Not-On-Sale>", gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class).getAnswer());
+            ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -448,58 +212,29 @@ public class ServerTransferTest {
     @Test
     public void methodTransferGoodInvalidBuyerGoodAtSale() {
         try {
-            Gson gson = new Gson();
-            Request pedido = new Request();
+            sellGoodRequestGenerator(1, 1);
 
-            pedido.setUserId(1);
-            pedido.setGoodId(1);
-            pedido.setSellerId(1);
-            pedido.setBuyerId(-1);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Request temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            long buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, -1, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setBuyerId(0);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 0, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setBuyerId(10);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 1, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
-            // Ensures server is ok after attack
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 9, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setBuyerId(2);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Request state = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("<1, Not-On-Sale>", state.getAnswer());
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 10, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            state = gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Item is Now on Sale", state.getAnswer());
-
-            pedido.setSignature(null);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good with Good ID 1 Has now Been transfered to the new Owner with Owner ID 2", temp.getAnswer());
-
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Assert.assertEquals("<2, Not-On-Sale>", gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class).getAnswer());
+            ensureServerIsOkAfterAttack(true);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -507,50 +242,25 @@ public class ServerTransferTest {
     }
 
     @Test
-    public void methodTransferGoodReplayAttack() {
+    public void methodTransferGoodInvalidBuyerNonce() {
         try {
-            Gson gson = new Gson();
-            Request pedido = new Request();
+            long buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setUserId(1);
-            pedido.setGoodId(1);
-            pedido.setSellerId(1);
-            pedido.setBuyerId(2);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User2.key"), gson.toJson(pedido)));
-            Request temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            buyerNonce++;
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
-            // Same request
-            temp = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("This message has already been processed!", temp.getAnswer());
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("This message from Buyer has already been processed", Objects.requireNonNull(state).getAnswer());
 
-            // Ensure server is ok after the attack
+            buyerNonce--;
+            buyerNonce--;
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("This message from Buyer has already been processed", Objects.requireNonNull(state).getAnswer());
 
-            pedido.setBuyerId(2);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Request state = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("<1, Not-On-Sale>", state.getAnswer());
-
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            state = gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Item is Now on Sale", state.getAnswer());
-
-            pedido.setSignature(null);
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good with Good ID 1 Has now Been transfered to the new Owner with Owner ID 2", temp.getAnswer());
-
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Assert.assertEquals("<2, Not-On-Sale>", gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class).getAnswer());
+            ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -558,56 +268,305 @@ public class ServerTransferTest {
     }
 
     @Test
-    public void methodGetStateOfGoodTamperingAttack() {
+    public void methodTransferGoodInvalidBuyerKey() {
+        try {
+            long buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 1, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 3, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodTransferGoodInvalidSellerUser() {
+        try {
+            long buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, -1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good!", Objects.requireNonNull(state).getAnswer());
+
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 0, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good!", Objects.requireNonNull(state).getAnswer());
+
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 2, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good!", Objects.requireNonNull(state).getAnswer());
+
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 9, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good!", Objects.requireNonNull(state).getAnswer());
+
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 10, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good!", Objects.requireNonNull(state).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodTransferGoodInvalidSellerNonce() {
+        try {
+            long buyerNonce = new Date().getTime();
+            long sellerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, sellerNonce, buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+
+            buyerNonce = new Date().getTime();
+            sellerNonce++;
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, sellerNonce, buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, sellerNonce, buyerNonce, 1, 0, null);
+            Assert.assertEquals("This message from Seller has already been processed", Objects.requireNonNull(state).getAnswer());
+
+            buyerNonce = new Date().getTime();
+            sellerNonce--;
+            sellerNonce--;
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, sellerNonce, buyerNonce, 1, 0, null);
+            Assert.assertEquals("This message from Seller has already been processed", Objects.requireNonNull(state).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodTransferGoodBuyerNonceChangedInServer() {
+        try {
+            long buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce + 1, 1, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodTransferGoodInvalidSellerKey() {
+        try {
+            long buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 2, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good!", Objects.requireNonNull(state).getAnswer());
+
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 3, 0, null);
+            Assert.assertEquals("Invalid Authorization to Transfer Good!", Objects.requireNonNull(state).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodTransferGoodNotaryIdInRequest() {
+        try {
+            long buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, -1, null);
+            Assert.assertEquals("As a Notary, you cannot invoke this method!", Objects.requireNonNull(state).getAnswer());
+
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 1, null);
+            Assert.assertEquals("As a Notary, you cannot invoke this method!", Objects.requireNonNull(state).getAnswer());
+
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 2, null);
+            Assert.assertEquals("As a Notary, you cannot invoke this method!", Objects.requireNonNull(state).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodTransferGoodAnswerInRequest() {
+        try {
+            long buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, "answer");
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodTransferGoodReplayAttackBetweenBuyerAndSeller() {
+        try {
+            long buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+
+            //Same request from Buyer
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("This message from Buyer has already been processed", Objects.requireNonNull(state).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodTransferGoodReplayAttackBetweenSellerAndNotary() {
+        try {
+            long buyerNonce = new Date().getTime();
+            long sellerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, sellerNonce, buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+
+            // Same request from Seller
+            buyerNonce = new Date().getTime();
+            state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, sellerNonce, buyerNonce, 1, 0, null);
+            Assert.assertEquals("This message from Seller has already been processed", Objects.requireNonNull(state).getAnswer());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodGetStateOfGoodTamperingAttackBetweenBuyerAndSeller() {
         try {
             Gson gson = new Gson();
             Request pedido = new Request();
+            long buyerNonce = new Date().getTime();
 
-            pedido.setUserId(1);
             pedido.setGoodId(1);
+            pedido.setUserId(2);
             pedido.setSellerId(1);
             pedido.setBuyerId(2);
+            pedido.setNounce(buyerNonce);
+            pedido.setNotaryId(0);
+            pedido.setAnswer(null);
+            pedido.setBuyerSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 2), gson.toJson(pedido)));
+            pedido.setAnswer("answer"); //Tampering
+            pedido.setUserId(1);
             pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User2.key"), gson.toJson(pedido)));
-            Request temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", temp.getAnswer());
+            pedido.setBuyerNounce(buyerNonce);
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
 
-            pedido.setNounce(new Date().getTime());
-            temp = gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("Invalid Authorization To Invoke Method Sell on Server!", temp.getAnswer());
+            pedido = new Request();
 
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            temp = gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("Invalid Authorization To Invoke Method Sell on Server!", temp.getAnswer());
-
-            // Ensure server is ok after the attack
-
+            pedido.setGoodId(1);
+            pedido.setUserId(2);
+            pedido.setSellerId(1);
             pedido.setBuyerId(2);
+            pedido.setNounce(buyerNonce);
+            pedido.setNotaryId(0);
+            pedido.setAnswer(null);
+            pedido.setBuyerSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 2), gson.toJson(pedido)));
+            pedido.setBuyerSignature(null); //Tampering
+            pedido.setUserId(1);
             pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Request state = gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("<1, Not-On-Sale>", state.getAnswer());
+            pedido.setBuyerNounce(buyerNonce);
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
 
-            pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            state = gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Item is Now on Sale", state.getAnswer());
+            pedido = new Request();
 
-            pedido.setSignature(null);
+            pedido.setGoodId(1);
+            pedido.setUserId(2);
+            pedido.setSellerId(1);
+            pedido.setBuyerId(2);
+            pedido.setNounce(buyerNonce);
+            pedido.setNotaryId(0);
+            pedido.setAnswer(null);
+            pedido.setBuyerSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 2), gson.toJson(pedido)));
+            pedido.setNounce(0); //Tampering
+            pedido.setUserId(1);
             pedido.setNounce(new Date().getTime());
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            pedido.setBuyerSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User2.key"), gson.toJson(pedido)));
-            temp = gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
-            Assert.assertEquals("The Good with Good ID 1 Has now Been transfered to the new Owner with Owner ID 2", temp.getAnswer());
+            pedido.setBuyerNounce(0); //The value received in the tampered message
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
+            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
 
+            ensureServerIsOkAfterAttack(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void methodGetStateOfGoodTamperingAttackBetweenSellerAndServer() {
+        try {
+            Gson gson = new Gson();
+            Request pedido = new Request();
+            long buyerNonce = new Date().getTime();
+
+            pedido.setGoodId(1);
+            pedido.setUserId(2);
+            pedido.setSellerId(1);
+            pedido.setBuyerId(2);
+            pedido.setNounce(buyerNonce);
+            pedido.setNotaryId(0);
+            pedido.setAnswer(null);
+            pedido.setBuyerSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 2), gson.toJson(pedido)));
+            pedido.setUserId(1);
             pedido.setNounce(new Date().getTime());
-            pedido.setSignature(null);
-            pedido.setSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(System.getProperty("user.dir").replace("\\Notary", "") + "\\Client\\src\\main\\resources\\User1.key"), gson.toJson(pedido)));
-            Assert.assertEquals("<2, Not-On-Sale>", gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class).getAnswer());
+            pedido.setBuyerNounce(buyerNonce);
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
+            pedido.setAnswer("answer"); // Tampering
+            Assert.assertEquals("Invalid Authorization to Transfer Good!", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
+
+            pedido = new Request();
+
+            pedido.setGoodId(1);
+            pedido.setUserId(2);
+            pedido.setSellerId(1);
+            pedido.setBuyerId(2);
+            pedido.setNounce(buyerNonce);
+            pedido.setNotaryId(0);
+            pedido.setAnswer(null);
+            pedido.setBuyerSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 2), gson.toJson(pedido)));
+            pedido.setUserId(1);
+            pedido.setNounce(new Date().getTime());
+            pedido.setBuyerNounce(buyerNonce);
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
+            pedido.setSignature(null); //Tampering
+            Assert.assertEquals("Invalid Authorization to Transfer Good!", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
+
+            pedido = new Request();
+
+            pedido.setGoodId(1);
+            pedido.setUserId(2);
+            pedido.setSellerId(1);
+            pedido.setBuyerId(2);
+            pedido.setNounce(buyerNonce);
+            pedido.setNotaryId(0);
+            pedido.setAnswer(null);
+            pedido.setBuyerSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 2), gson.toJson(pedido)));
+            pedido.setUserId(1);
+            pedido.setNounce(new Date().getTime());
+            pedido.setBuyerNounce(0); //The value received in the tampered message
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
+            pedido.setNounce(0); //Tampering
+            Assert.assertEquals("Invalid Authorization to Transfer Good!", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
+
+            ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -621,8 +580,89 @@ public class ServerTransferTest {
             PrintWriter writer = new PrintWriter(new File(System.getProperty("user.dir") + "\\Backups\\ServerState.old"));
             writer.println("");
             writer.close();
+
+            KeyStoreInterface.deleteKeystore();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        state = null;
+    }
+
+    private Request getGoodStateRequestGenerator(int userId, int goodId) {
+        try {
+            Gson gson = new Gson();
+            Request pedido = new Request();
+
+            pedido.setUserId(userId);
+            pedido.setGoodId(goodId);
+            pedido.setNounce(new Date().getTime());
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, userId), gson.toJson(pedido)));
+
+            return gson.fromJson(servidor.getStateOfGood(gson.toJson(pedido)), Request.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private Request sellGoodRequestGenerator(int userId, int goodId) {
+        try {
+            Gson gson = new Gson();
+            Request pedido = new Request();
+
+            pedido.setUserId(userId);
+            pedido.setGoodId(goodId);
+            pedido.setNounce(new Date().getTime());
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, userId), gson.toJson(pedido)));
+
+            return gson.fromJson(servidor.sell(gson.toJson(pedido)), Request.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private Request transferGoodRequestGenerator(int goodId, int buyerUserId, int sellerId, int buyerId, long buyerNonce, int buyerKeyId, int sellerUserId, long sellerNonce,
+                                                 long buyerNonceFromSeller, int sellerKeyId, int notaryId, String answer) {
+        try {
+            Gson gson = new Gson();
+            Request pedido = new Request();
+
+            pedido.setGoodId(goodId);
+            pedido.setUserId(buyerUserId);
+            pedido.setSellerId(sellerId);
+            pedido.setBuyerId(buyerId);
+            pedido.setNounce(buyerNonce);
+            pedido.setNotaryId(notaryId);
+            pedido.setAnswer(answer);
+            pedido.setBuyerSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, buyerKeyId), gson.toJson(pedido)));
+            pedido.setUserId(sellerUserId);
+            pedido.setNounce(sellerNonce);
+            pedido.setBuyerNounce(buyerNonceFromSeller);
+            pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, sellerKeyId), gson.toJson(pedido)));
+
+            return gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void ensureServerIsOkAfterAttack(boolean goodOnSale) {
+        try {
+            if(!goodOnSale) {
+                Assert.assertEquals("<1, Not-On-Sale>", Objects.requireNonNull(getGoodStateRequestGenerator(1, 1)).getAnswer());
+                Assert.assertEquals("The Item is Now on Sale", Objects.requireNonNull(sellGoodRequestGenerator(1, 1)).getAnswer());
+            } else {
+                Assert.assertEquals("<1, On-Sale>", Objects.requireNonNull(getGoodStateRequestGenerator(1, 1)).getAnswer());
+            }
+            long buyerNonce = new Date().getTime();
+            Request state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
+            Assert.assertEquals("The Good with Good ID 1 Has now Been transfered to the new Owner with Owner ID 2", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("<2, Not-On-Sale>", Objects.requireNonNull(getGoodStateRequestGenerator(1, 1)).getAnswer());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
         }
     }
 }

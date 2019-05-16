@@ -18,6 +18,9 @@ import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
 public class Server extends UnicastRemoteObject implements iProxy {
 
+    private static final int HASHCASH_VERSION = 1;
+    private static final int ZERO_BITS = 20;
+
     //The Hash Table mapping each user ID to their owned Goods
     private Hashtable<Integer, ArrayList<Good>> goods = new Hashtable<>();
     //The Hash Table mapping each user ID to their public keys
@@ -48,22 +51,20 @@ public class Server extends UnicastRemoteObject implements iProxy {
             FileReader fileReader = new FileReader();
             goods = (Hashtable) fileReader.goodsListConstructor(FilePath);
 
-            //Add public key from Cartao de Cidadao to file
-            PublicKey key = iCartaoCidadao.getPublicKeyFromCC();
-            assert key != null;
-            FileOutputStream out = new FileOutputStream(baseDirGenerator() + "\\src\\main\\resources\\Notary_CC.pub");
-            out.write(key.getEncoded());
-            out.flush();
-            out.close();
+            // TODO Allow create test notaries with different ids
+            ID = 1;
 
+            KeyStoreInterface.createBaseKeyStore(); //Setting up key store and populating it with client keys if first server
+            KeyStoreInterface.addNotaryKeysToKeyStore(ID, USING_CC);
+
+            //Loading client public keys in memory
             for (int i = 1; i <= 9; i++) {
-                publicKeys.put(i, RSAKeyLoader.getPub(baseDirGenerator() + "\\src\\main\\resources\\User" + i + ".pub"));
+                publicKeys.put(i, (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.CLIENT, i));
             }
 
-            privKey = RSAKeyLoader.getPriv(baseDirGenerator() + "\\src\\main\\resources\\Notary.key");
-            pubKey = RSAKeyLoader.getPub(baseDirGenerator() + "\\src\\main\\resources\\Notary.pub");
-
-            ID = 1;
+            //Loading server keys in memory
+            privKey = (PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.NOTARY, ID);
+            pubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.NOTARY, ID);
 
             System.out.println(publicKeys.size() + " Keys Have Been Loaded Into The Notary");
         } catch (Exception e) {
@@ -81,17 +82,21 @@ public class Server extends UnicastRemoteObject implements iProxy {
             FileReader fileReader = new FileReader();
             goods = (Hashtable) fileReader.goodsListConstructor( baseDirGenerator() + "\\src\\main\\resources\\GoodsFile1.xml");
 
+            KeyStoreInterface.createBaseKeyStore(); //Setting up key store and populating it with client keys if first server
+
             Gson gson = new Gson();
             for(Integer uid : goods.keySet()){
                 for(Good i : goods.get(uid)){
                     i.setWriteTimeStampOfGood(0);
-                    i.setClientByzantineSignature(SignatureGenerator.generateSignature(RSAKeyLoader.getPriv(baseDirGenerator().replace("\\Notary", "\\Client") + "\\src\\main\\resources\\User" + uid + ".key"), gson.toJson(i)));
+                    //Initial system state - Goods already have an initial client signature
+                    i.setClientByzantineSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, uid), gson.toJson(i)));
                     usersWriteTimeStamps.put(uid, 0);
                 }
             }
 
+            //Loading client public keys in memory
             for (int i = 1; i <= 9; i++) {
-                publicKeys.put(i, RSAKeyLoader.getPub(baseDirGenerator() + "\\src\\main\\resources\\User" + i + ".pub"));
+                publicKeys.put(i, (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.CLIENT, i));
             }
 
             System.out.println(publicKeys.size() + " Keys Have Been Loaded Into The Notary!");
@@ -108,40 +113,28 @@ public class Server extends UnicastRemoteObject implements iProxy {
                 case "1":
                     USING_CC = true;
                     ID = 1;
-                    pubKey = iCartaoCidadao.getPublicKeyFromCC();
-                    assert pubKey != null;
-
-                    FileOutputStream out = new FileOutputStream(baseDirGenerator() + "\\src\\main\\resources\\Notary_CC.pub");
-                    out.write(pubKey.getEncoded());
-                    out.flush();
-                    out.close();
-
+                    KeyStoreInterface.addNotaryKeysToKeyStore(ID, USING_CC);
                     break;
                 case "2":
+                    USING_CC = false;
                     ID = 1;
-                    privKey = RSAKeyLoader.getPriv( baseDirGenerator() + "\\src\\main\\resources\\Notary.key");
-                    pubKey = RSAKeyLoader.getPub(baseDirGenerator() + "\\src\\main\\resources\\Notary.pub");
+                    KeyStoreInterface.addNotaryKeysToKeyStore(ID, USING_CC);
+                    privKey = (PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.NOTARY, ID);
+                    pubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.NOTARY, ID);
                     break;
                 case "3":
                     USING_CC = true;
-                    pubKey = iCartaoCidadao.getPublicKeyFromCC();
-
-                    FileOutputStream out2 = new FileOutputStream(baseDirGenerator() + "\\src\\main\\resources\\Notary_CC.pub");
-                    assert pubKey != null;
-                    out2.write(pubKey.getEncoded());
-                    out2.flush();
-                    out2.close();
-
                     System.out.println("Is It The First Node? \n 1. Yes \n 2. No");
                     System.out.print("Option Number:");
                     switch (reader.readLine()){
                         case "1":
                             this.PORT = 8086;
                             this.ID = 1;
+                            KeyStoreInterface.addNotaryKeysToKeyStore(ID, USING_CC);
                             serverPorts.put(ID, PORT);
                             break;
                         case "2":
-                            initialSetup();
+                            initialSetup(); //Notary can only create its keys after knowing its ID
                             break;
                     }
                     break;
@@ -153,14 +146,15 @@ public class Server extends UnicastRemoteObject implements iProxy {
                         case "1":
                             this.PORT = 8086;
                             this.ID = 1;
+                            KeyStoreInterface.addNotaryKeysToKeyStore(ID, USING_CC);
                             serverPorts.put(ID, PORT);
                             break;
                         case "2":
-                            initialSetup();
+                            initialSetup(); //Notary can only create its keys after knowing its ID
                             break;
                     }
-                    privKey = RSAKeyLoader.getPriv( baseDirGenerator() + "\\src\\main\\resources\\Notary.key");
-                    pubKey = RSAKeyLoader.getPub(baseDirGenerator() + "\\src\\main\\resources\\Notary.pub");
+                    privKey = (PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.NOTARY, ID);
+                    pubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.NOTARY, ID);
                     break;
                 default:
                     System.out.println("Invalid Option. Exiting...");
@@ -190,6 +184,11 @@ public class Server extends UnicastRemoteObject implements iProxy {
     public String getStateOfGood(String jsonRequest) throws RemoteException {
         Gson gson = new Gson();
         Request pedido = gson.fromJson(jsonRequest, Request.class);
+
+        if (pedido.getNotaryId()!=0) {
+            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "As a Notary, you cannot invoke this method!");
+            return answerFactory("As a Notary, you cannot invoke this method!", pedido.getGood().getWriteTimeStampOfGood());
+        }
 
         if (!NonceVerifier.isNonceValid(pedido)){
             logger.updateServerLog(ServerLogger.OPCODE.GETSTATEOFGOOD, pedido, "This message has already been processed!");
@@ -228,6 +227,14 @@ public class Server extends UnicastRemoteObject implements iProxy {
         Gson gson = new Gson();
         TransferGoodRequest pedido = gson.fromJson(jsonRequest, TransferGoodRequest.class);
 
+        byte[] buyerSig = pedido.getBuyerSignature();
+        byte[] sellerSig = pedido.getSignature();
+
+        if (pedido.getNotaryId()!=0) {
+            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "As a Notary, you cannot invoke this method!");
+            return answerFactory("As a Notary, you cannot invoke this method!", pedido.getGood().getWriteTimeStampOfGood());
+        }
+
         if (!NonceVerifier.isNonceValid(pedido)){
             logger.updateServerLogTransferGood(pedido, "This message has already been processed");
             return AnswerFactory.TransferGoodAnswerFactory("This message has already been processed", pedido.getBuyerAnswer().getNotaryAnswers().get(0).getGood(), ID, USING_CC, privKey);
@@ -243,18 +250,26 @@ public class Server extends UnicastRemoteObject implements iProxy {
             return AnswerFactory.TransferGoodAnswerFactory("Invalid WriteTimeStamp to Transfer Good!", pedido.getBuyerAnswer().getNotaryAnswers().get(0).getGood(), ID, USING_CC, privKey);
         }
 
-        //Alter Request So It Matches The One Sent By The Buyer
-        byte[] buyerSig = pedido.getSignature();
+        pedido.setUserId(pedido.getBuyerId());
+        pedido.setNounce(pedido.getBuyerNounce());
+        pedido.setBuyerNounce(0);
+        pedido.setSignature(null);
+        pedido.setBuyerSignature(null);
         //######################################################
 
-        if(!(SignatureGenerator.verifySignature(publicKeys.get(pedido.getUserId()), buyerSig, gson.toJson(pedido)))){
-            logger.updateServerLogTransferGood(pedido, "Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item");
-            return AnswerFactory.TransferGoodAnswerFactory("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", pedido.getBuyerAnswer().getNotaryAnswers().get(0).getGood(), ID, USING_CC, privKey);
+        if(!(SignatureGenerator.verifySignature(publicKeys.get(pedido.getBuyerId()), buyerSig, gson.toJson(pedido)))){
+            pedido.setSignature(sellerSig);
+            pedido.setBuyerSignature(buyerSig);
+            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item");
+            return answerFactory("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", pedido.getGood().getWriteTimeStampOfGood());
         }
 
-        if (pedido.getUserId() < 1 || pedido.getUserId() > 9) {
-            logger.updateServerLogTransferGood(pedido, "The Good Id, Owner Id or New Owner ID is not present in the server!");
-            return AnswerFactory.TransferGoodAnswerFactory("The Good Id, Owner Id or New Owner ID is not present in the server!", pedido.getBuyerAnswer().getNotaryAnswers().get(0).getGood(), ID, USING_CC, privKey);
+        pedido.setSignature(sellerSig);
+        pedido.setBuyerSignature(buyerSig);
+
+        if (pedido.getBuyerId() < 1 || pedido.getBuyerId() > 9) {
+            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "The Good Id, Owner Id or New Owner ID is not present in the server!");
+            return answerFactory("The Good Id, Owner Id or New Owner ID is not present in the server!", pedido.getGood().getWriteTimeStampOfGood());
         }
 
         for (Enumeration e = goods.elements(); e.hasMoreElements(); ) {
@@ -341,6 +356,11 @@ public class Server extends UnicastRemoteObject implements iProxy {
     public String sell(String jsonRequest) throws RemoteException {
         Gson gson = new Gson();
         SellRequest pedido = gson.fromJson(jsonRequest, SellRequest.class);
+
+        if (pedido.getNotaryId()!=0) {
+            updateServerLog(OPCODE.TRANSFERGOOD, pedido, "As a Notary, you cannot invoke this method!");
+            return answerFactory("As a Notary, you cannot invoke this method!", pedido.getGood().getWriteTimeStampOfGood());
+        }
 
         if (!validateSellRequest(pedido)) {
             logger.updateServerLogSell(pedido, "Invalid Authorization To Invoke Method Sell on Server!");
@@ -631,6 +651,8 @@ public class Server extends UnicastRemoteObject implements iProxy {
                 tempID = reader.readLine();
             }
             this.ID = Integer.parseInt(tempID);
+            // Notary now knows if it is using CC and its ID, therefore it can create its keys
+            KeyStoreInterface.addNotaryKeysToKeyStore(ID, USING_CC);
 
             System.out.println("Please Introduce The Port Of The Well Known Server:");
             String WellKnownServerPort = reader.readLine();
@@ -714,8 +736,10 @@ public class Server extends UnicastRemoteObject implements iProxy {
         Gson gson = new Gson();
         byte[] signature = pedido.getSignature();
         pedido.setSignature(null);
+        boolean result = SignatureGenerator.verifySignature(publicKeys.get(pedido.getUserId()), signature, gson.toJson(pedido));
+        pedido.setSignature(signature);
 
-        return SignatureGenerator.verifySignature(publicKeys.get(pedido.getUserId()), signature, gson.toJson(pedido));
+        return result;
     }
 
     private boolean validateRequest(TransferGoodRequest pedido) {

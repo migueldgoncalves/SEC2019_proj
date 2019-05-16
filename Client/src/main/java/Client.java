@@ -27,8 +27,8 @@ public class Client extends UnicastRemoteObject implements iClient {
     private static int UserID;
     private static boolean USING_CC = false;
 
-    private static AtomicInteger writeTimeStamp = new AtomicInteger(0);
-    private static AtomicInteger readTimeStamp = new AtomicInteger(0);
+    private static AtomicInteger writeTimeStamp = new AtomicInteger(0); //This value must be persisted
+    private static AtomicInteger readTimeStamp = new AtomicInteger(0); //This value must be persisted
 
     private static ConcurrentHashMap<Integer, Integer> serverPorts = new ConcurrentHashMap<>();
 
@@ -102,6 +102,7 @@ public class Client extends UnicastRemoteObject implements iClient {
 
                 UserID = Integer.parseInt(ID);
                 Naming.rebind("rmi://localhost:" + port + "/" + UserID, ClientProxy);
+                loadTimestamps();
                 loadKeys();
                 printMenu();
 
@@ -113,12 +114,14 @@ public class Client extends UnicastRemoteObject implements iClient {
                         case "1":
                             writeTimeStampToSend = writeTimeStamp.incrementAndGet();
                             readIdToSend = readTimeStamp.incrementAndGet();
+                            FileInterface.writeTimestamps(UserID, writeTimeStamp.get(), readTimeStamp.get());
                             String data = promptForGoodId(readIdToSend);
                             Runnable r = () -> sell(data, writeTimeStampToSend, readIdToSend);
                             new Thread(r).start();
                             break;
                         case "2":
                             writeTimeStampToSend = writeTimeStamp.incrementAndGet();
+                            FileInterface.writeTimestamps(UserID, writeTimeStamp.get(), readTimeStamp.get());
                             int seller = promptForSellerId();
                             int good = prompForGoodId();
                             int clientPort = promptForPortNumber();
@@ -127,6 +130,7 @@ public class Client extends UnicastRemoteObject implements iClient {
                             break;
                         case "3":
                             writeTimeStampToSend = writeTimeStamp.incrementAndGet();
+                            FileInterface.writeTimestamps(UserID, writeTimeStamp.get(), readTimeStamp.get());
                             String data3 = promptForGoodId(writeTimeStampToSend);
                             Runnable r3 = () -> getStateOfGood(data3, writeTimeStampToSend);
                             new Thread(r3).start();
@@ -737,13 +741,20 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     private static void loadKeys() {
         try {
-            privKey = RSAKeyLoader.getPriv( Client.baseDirGenerator() + "\\src\\main\\resources\\User" + UserID + ".key");
-            //pubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\User" + UserID + ".pub");
+            privKey = (PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, UserID);
+            //pubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.CLIENT, UserID);
             System.out.println("Public and Private Keys Loaded");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Exception Thrown in Body of Method loadKeys! Public and Private keys unable to load!");
         }
+    }
+
+    private static void loadTimestamps() {
+        int[] timestamps = FileInterface.readTimestamps(UserID);
+        Client.writeTimeStamp = new AtomicInteger(timestamps[0]);
+        Client.readTimeStamp = new AtomicInteger(timestamps[1]);
+        System.out.println("Timestamps loaded");
     }
 
     //########################################## Auxiliary Methods ####################################################
@@ -837,7 +848,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         switch (invoker){
             case BUYER:
                 try{
-                    PublicKey notaryPubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\User" + pedido.getUserId() + ".pub");
+                    PublicKey notaryPubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.CLIENT, pedido.getUserId());
                     return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
                 }catch (Exception e){
                     e.printStackTrace();
@@ -845,13 +856,8 @@ public class Client extends UnicastRemoteObject implements iClient {
                 }
             case NOTARY:
                 try{
-                    if(USING_CC){
-                        PublicKey notaryPubKey = iCartaoCidadao.getPublicKeyFromCC();
-                        return SignatureGenerator.verifySignatureCartaoCidadao(notaryPubKey, signature, gson.toJson(pedido));
-                    }else {
-                        PublicKey notaryPubKey = RSAKeyLoader.getPub(Client.baseDirGenerator() + "\\src\\main\\resources\\Notary.pub");
-                        return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
-                    }
+                    PublicKey notaryPubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.NOTARY, pedido.getNotaryId());
+                    return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
                 }catch (Exception e){
                     e.printStackTrace();
                     return false;
