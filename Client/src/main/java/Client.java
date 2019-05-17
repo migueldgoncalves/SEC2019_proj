@@ -279,7 +279,7 @@ public class Client extends UnicastRemoteObject implements iClient {
 
                             for (String x : qorum.keySet()) {
                                 if (qorum.get(x) > (serverPorts.size() / 2)) {
-                                    System.out.println("Qorum Achieved on AnswerClasses.Good in Method Invoke Seller");
+                                    System.out.println("Qorum Achieved on Good in Method Invoke Seller");
                                     hasQorum = true;
                                     qorumWinner = x;
                                 }
@@ -351,7 +351,7 @@ public class Client extends UnicastRemoteObject implements iClient {
 
                                 for (String x : qorum.keySet()) {
                                     if (qorum.get(x) > (serverPorts.size() / 2)) {
-                                        System.out.println("Qorum Achieved on AnswerClasses.Good in Method Invoke Seller For Transfer AnswerClasses.Good");
+                                        System.out.println("Qorum Achieved on Good in Method Invoke Seller For Transfer Good");
                                         hasQorum = true;
                                         qorumWinner = x;
                                     }
@@ -463,7 +463,7 @@ public class Client extends UnicastRemoteObject implements iClient {
 
                             for (String x : qorum.keySet()) {
                                 if (qorum.get(x) > (serverPorts.size() / 2)) {
-                                    System.out.println("Qorum Achieved on AnswerClasses.Good in Method Sell");
+                                    System.out.println("Qorum Achieved on Good in Method Sell");
                                     hasQorum = true;
                                     qorumWinner = x;
                                 }
@@ -504,7 +504,7 @@ public class Client extends UnicastRemoteObject implements iClient {
         } catch (Exception e) {
             System.out.println("Something Went Wrong During the Transfer");
             e.printStackTrace();
-            System.out.println("The AnswerClasses.Good Transfer Has Failed. Please Try Again.");
+            System.out.println("The Good Transfer Has Failed. Please Try Again.");
         }
 
         return null;
@@ -513,8 +513,6 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     private static void sell(String data, int writeTimeStamp, int readId) {
         try {
-
-            //############################################### THIS BLOCK IS WORKING ######################################################
 
             ArrayList<String> answers = new ArrayList<>();
             PrepareSellRequest proposition = gson.fromJson(data, PrepareSellRequest.class);
@@ -546,8 +544,6 @@ public class Client extends UnicastRemoteObject implements iClient {
                     future.cancel(true); // may or may not desire this
                 }
             }
-
-            //A partir deste momento temos todas as repostas do servidor no melhor caso possivel e podemos fazer qorum delas a ver se realmente temos um concenso
 
             HashMap<String, Integer> qorum = new HashMap<>();
             boolean hasQorum = false;
@@ -581,7 +577,7 @@ public class Client extends UnicastRemoteObject implements iClient {
 
                             for (String x : qorum.keySet()) {
                                 if (qorum.get(x) > (serverPorts.size() / 2)) {
-                                    System.out.println("Qorum Achieved on AnswerClasses.Good in Method Sell");
+                                    System.out.println("Qorum Achieved on Good in Method Sell");
                                     qorumWinner = x;
                                     hasQorum = true;
                                 }
@@ -743,7 +739,7 @@ public class Client extends UnicastRemoteObject implements iClient {
 
                 for (String p : qorum.keySet()) {
                     if (qorum.get(p) > (serverPorts.size() / 2)) {
-                        System.out.println("Qorum Achieved On Security Validator!");
+                        System.out.println("Qorum Achieved On Security Validator of Sell Security Validator!");
                         System.out.println(p);
                         hasQorum = true;
                     }
