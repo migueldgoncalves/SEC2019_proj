@@ -1,3 +1,5 @@
+import AnswerClasses.Good;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 

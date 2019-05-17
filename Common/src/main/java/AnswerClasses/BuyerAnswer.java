@@ -1,3 +1,5 @@
+package AnswerClasses;
+
 import java.util.ArrayList;
 
 public class BuyerAnswer{

@@ -36,17 +36,17 @@ public class ServerTransferTest {
         try {
             long buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             sellGoodRequestGenerator(1, 1);
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good with Good ID 1 Has now Been transfered to the new Owner with Owner ID 2", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good with AnswerClasses.Good ID 1 Has now Been transfered to the new Owner with Owner ID 2", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -58,27 +58,27 @@ public class ServerTransferTest {
         try {
             long buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(-1, 2, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(0, 2, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(2, 2, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(9, 2, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(10, 2, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
@@ -92,23 +92,23 @@ public class ServerTransferTest {
         try {
             long buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, -1, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 0, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 1, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 9, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 10, 1, 2, buyerNonce,2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
@@ -122,23 +122,23 @@ public class ServerTransferTest {
         try {
             long buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, -1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 0, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 2, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 9, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 10, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
@@ -154,23 +154,23 @@ public class ServerTransferTest {
 
             long buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, -1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 0, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 2, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 9, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 10, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             ensureServerIsOkAfterAttack(true);
         } catch (Exception e) {
@@ -184,23 +184,23 @@ public class ServerTransferTest {
         try {
             long buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, -1, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 0, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 1, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 9, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 10, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
@@ -216,23 +216,23 @@ public class ServerTransferTest {
 
             long buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, -1, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 0, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 1, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 9, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 10, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             ensureServerIsOkAfterAttack(true);
         } catch (Exception e) {
@@ -246,11 +246,11 @@ public class ServerTransferTest {
         try {
             long buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce++;
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
             Assert.assertEquals("This message from Buyer has already been processed", Objects.requireNonNull(state).getAnswer());
@@ -272,11 +272,11 @@ public class ServerTransferTest {
         try {
             long buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 1, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 3, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
@@ -290,23 +290,23 @@ public class ServerTransferTest {
         try {
             long buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, -1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 0, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 2, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 9, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 10, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good!", Objects.requireNonNull(state).getAnswer());
 
             ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
@@ -321,12 +321,12 @@ public class ServerTransferTest {
             long buyerNonce = new Date().getTime();
             long sellerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, sellerNonce, buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             sellerNonce++;
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, sellerNonce, buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, sellerNonce, buyerNonce, 1, 0, null);
@@ -350,7 +350,7 @@ public class ServerTransferTest {
         try {
             long buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce + 1, 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", Objects.requireNonNull(state).getAnswer());
 
             ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
@@ -364,11 +364,11 @@ public class ServerTransferTest {
         try {
             long buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 2, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good!", Objects.requireNonNull(state).getAnswer());
 
             buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 3, 0, null);
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good!", Objects.requireNonNull(state).getAnswer());
 
             ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
@@ -404,7 +404,7 @@ public class ServerTransferTest {
         try {
             long buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, "answer");
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -416,7 +416,7 @@ public class ServerTransferTest {
         try {
             long buyerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             //Same request from Buyer
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
@@ -435,7 +435,7 @@ public class ServerTransferTest {
             long buyerNonce = new Date().getTime();
             long sellerNonce = new Date().getTime();
             state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, sellerNonce, buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good Id, Owner Id or New Owner ID is not present in the server!", Objects.requireNonNull(state).getAnswer());
 
             // Same request from Seller
             buyerNonce = new Date().getTime();
@@ -467,7 +467,7 @@ public class ServerTransferTest {
             pedido.setNounce(new Date().getTime());
             pedido.setBuyerNounce(buyerNonce);
             pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
 
             pedido = new Request();
 
@@ -484,7 +484,7 @@ public class ServerTransferTest {
             pedido.setNounce(new Date().getTime());
             pedido.setBuyerNounce(buyerNonce);
             pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
 
             pedido = new Request();
 
@@ -501,7 +501,7 @@ public class ServerTransferTest {
             pedido.setNounce(new Date().getTime());
             pedido.setBuyerNounce(0); //The value received in the tampered message
             pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
-            Assert.assertEquals("Invalid Authorization to Transfer Good! Buyer Did Not Request To Purchase This Item", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good! Buyer Did Not Request To Purchase This Item", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
 
             ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
@@ -530,7 +530,7 @@ public class ServerTransferTest {
             pedido.setBuyerNounce(buyerNonce);
             pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
             pedido.setAnswer("answer"); // Tampering
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good!", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
 
             pedido = new Request();
 
@@ -547,7 +547,7 @@ public class ServerTransferTest {
             pedido.setBuyerNounce(buyerNonce);
             pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
             pedido.setSignature(null); //Tampering
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good!", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
 
             pedido = new Request();
 
@@ -564,7 +564,7 @@ public class ServerTransferTest {
             pedido.setBuyerNounce(0); //The value received in the tampered message
             pedido.setSignature(SignatureGenerator.generateSignature((PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.CLIENT, 1), gson.toJson(pedido)));
             pedido.setNounce(0); //Tampering
-            Assert.assertEquals("Invalid Authorization to Transfer Good!", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Transfer AnswerClasses.Good!", gson.fromJson(servidor.transferGood(gson.toJson(pedido)), Request.class).getAnswer());
 
             ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
@@ -658,7 +658,7 @@ public class ServerTransferTest {
             }
             long buyerNonce = new Date().getTime();
             Request state = transferGoodRequestGenerator(1, 2, 1, 2, buyerNonce, 2, 1, new Date().getTime(), buyerNonce, 1, 0, null);
-            Assert.assertEquals("The Good with Good ID 1 Has now Been transfered to the new Owner with Owner ID 2", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("The AnswerClasses.Good with AnswerClasses.Good ID 1 Has now Been transfered to the new Owner with Owner ID 2", Objects.requireNonNull(state).getAnswer());
             Assert.assertEquals("<2, Not-On-Sale>", Objects.requireNonNull(getGoodStateRequestGenerator(1, 1)).getAnswer());
         } catch (Exception e) {
             e.printStackTrace();

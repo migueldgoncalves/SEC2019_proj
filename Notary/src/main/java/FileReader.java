@@ -1,3 +1,4 @@
+import AnswerClasses.Good;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-public class FileReader {
+class FileReader {
 
     private static final String ELEMENT_TAG_NAME = "good";
     private static final String ID_ATTRIBUTE = "id";
@@ -21,11 +22,11 @@ public class FileReader {
     private Dictionary<Integer, ArrayList<Good>> parsedGoods = new Hashtable<>();
 
 
-    public FileReader() {
+    FileReader() {
 
     }
 
-    public Dictionary<Integer, ArrayList<Good>> goodsListConstructor(String path) {
+    Dictionary<Integer, ArrayList<Good>> goodsListConstructor(String path) {
 
         try {
             File input = new File(path);
@@ -76,11 +77,11 @@ public class FileReader {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Something Went Wrong During Good Adition to Dictionary");
+            System.out.println("Something Went Wrong During AnswerClasses.Good Adition to Dictionary");
         }
     }
 
-    public Dictionary<Integer, ArrayList<Good>> getParsedGoods() {
+    Dictionary<Integer, ArrayList<Good>> getParsedGoods() {
         return parsedGoods;
     }
 

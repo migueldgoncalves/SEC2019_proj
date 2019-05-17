@@ -1,4 +1,6 @@
-public class BuyerRequest extends AbstractRequest{
+package RequestClasses;
+
+public class BuyerRequest extends AbstractRequest {
 
     private int GoodId;
     private int WriteTimeStamp;

@@ -1,3 +1,4 @@
+import AnswerClasses.Good;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -11,8 +12,8 @@ public class FileReaderTest {
     private static final String PATH_XML_FILE_1 = "src\\main\\resources\\GoodsFile1.xml";
     private static final String PATH_XML_FILE_2 = "src\\main\\resources\\GoodsFile2.xml";
 
-    FileReader fileReader = null;
-    Dictionary<Integer, ArrayList<Good>> dictionary = null;
+    private FileReader fileReader = null;
+    private Dictionary<Integer, ArrayList<Good>> dictionary = null;
 
     @Before
     public void setUp() {

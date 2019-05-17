@@ -1,21 +1,23 @@
+import AnswerClasses.AbstractAnswer;
+import RequestClasses.AbstractRequest;
 import com.google.gson.Gson;
 
 import java.security.PublicKey;
 
-public class SecurityValidator {
+class SecurityValidator {
 
-    public static boolean validatePrepareSellAnswer(PrepareSellAnswer pedido, boolean USING_CC) {
+    static boolean validateNotaryAnswer(AbstractAnswer answer, boolean USING_CC){
         Gson gson = new Gson();
-        byte[] signature = pedido.getSignature();
-        pedido.setSignature(null);
+        byte[] signature = answer.getSignature();
+        answer.setSignature(null);
 
         try{
             if(USING_CC){
                 PublicKey notaryPubKey = iCartaoCidadao.getPublicKeyFromCC();
-                return SignatureGenerator.verifySignatureCartaoCidadao(notaryPubKey, signature, gson.toJson(pedido));
+                return SignatureGenerator.verifySignatureCartaoCidadao(notaryPubKey, signature, gson.toJson(answer));
             }else {
-                PublicKey notaryPubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.NOTARY, pedido.getNotaryId());
-                return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
+                PublicKey notaryPubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.NOTARY, answer.getNotaryId());
+                return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(answer));
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -23,38 +25,14 @@ public class SecurityValidator {
         }
     }
 
-    public static boolean validatePrepareTransferAnswer(PrepareTransferAnswer pedido, boolean USING_CC) {
+    static boolean validateClientRequest(AbstractRequest request){
         Gson gson = new Gson();
-        byte[] signature = pedido.getSignature();
-        pedido.setSignature(null);
+        byte[] signature = request.getSignature();
+        request.setSignature(null);
 
         try{
-            if(USING_CC){
-                PublicKey notaryPubKey = iCartaoCidadao.getPublicKeyFromCC();
-                return SignatureGenerator.verifySignatureCartaoCidadao(notaryPubKey, signature, gson.toJson(pedido));
-            }else {
-                PublicKey notaryPubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.NOTARY, pedido.getNotaryId());
-                return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public static boolean validateTransferAnswer(TransferGoodAnswer pedido, boolean USING_CC) {
-        Gson gson = new Gson();
-        byte[] signature = pedido.getSignature();
-        pedido.setSignature(null);
-
-        try{
-            if(USING_CC){
-                PublicKey notaryPubKey = iCartaoCidadao.getPublicKeyFromCC();
-                return SignatureGenerator.verifySignatureCartaoCidadao(notaryPubKey, signature, gson.toJson(pedido));
-            }else {
-                PublicKey notaryPubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.NOTARY, pedido.getNotaryId());
-                return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(pedido));
-            }
+            PublicKey notaryPubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.CLIENT, request.getUserId());
+            return SignatureGenerator.verifySignature(notaryPubKey, signature, gson.toJson(request.getUserId()));
         }catch (Exception e){
             e.printStackTrace();
             return false;

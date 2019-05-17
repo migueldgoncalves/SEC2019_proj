@@ -1,8 +1,9 @@
-public class PrepareTransferAnswer extends AbstractAnswer{
+package AnswerClasses;
+
+public class PrepareSellAnswer extends AbstractAnswer {
 
     private Good good;
     private int ReadId;
-    private PrepareTransferRequest sellerRequest;
 
     public Good getGood() {
         return good;

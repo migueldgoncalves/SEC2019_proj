@@ -1,7 +1,9 @@
+package AnswerClasses;
+
 public class SellAnswer extends AbstractAnswer {
 
-    String Answer;
-    Good good;
+    private String Answer;
+    private Good good;
 
     public String getAnswer() {
         return Answer;

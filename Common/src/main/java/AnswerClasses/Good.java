@@ -1,3 +1,5 @@
+package AnswerClasses;
+
 public class Good {
     private int OwnerId;
     private int GoodId;

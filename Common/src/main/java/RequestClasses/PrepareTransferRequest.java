@@ -1,3 +1,5 @@
+package RequestClasses;
+
 public class PrepareTransferRequest extends AbstractRequest {
 
     private int ReadId;
