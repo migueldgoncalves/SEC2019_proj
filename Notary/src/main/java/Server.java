@@ -53,7 +53,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
             FileReader fileReader = new FileReader();
             goods = (Hashtable) fileReader.goodsListConstructor(FilePath);
 
-            // TODO Allow create test notaries with different ids
             ID = 1;
 
             KeyStoreInterface.createBaseKeyStore(); //Setting up key store and populating it with client keys if first server
@@ -839,21 +838,6 @@ public class Server extends UnicastRemoteObject implements iProxy {
             return true;
         }else if(writeTimeStampToValidate > (currentTimeStamp)){
             return synchronizeServerStatus(userId, writeTimeStampToValidate);
-        }else{
-            return false;
-        }
-    }
-
-    private boolean validateWriteTimeStamp(TransferGoodRequest pedido){
-        int userId = pedido.getUserId();
-        int writeTimeStampToValidate = pedido.getWriteTimeStamp();
-        int currentTimeStamp = usersWriteTimeStamps.get(userId);
-
-        if(writeTimeStampToValidate == (currentTimeStamp + 1)){
-            usersWriteTimeStamps.replace(userId, writeTimeStampToValidate);
-            return true;
-        }else if(writeTimeStampToValidate > (currentTimeStamp)){
-            return synchronizeServerStatus(pedido.getUserId(), writeTimeStampToValidate);
         }else{
             return false;
         }

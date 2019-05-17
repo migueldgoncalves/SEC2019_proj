@@ -1,7 +1,7 @@
 <class>
     <client id="1">
-        <write>5</write>
-        <read>3</read>
+        <write>6</write>
+        <read>6</read>
     </client>
     <client id="2">
         <write>0</write>
