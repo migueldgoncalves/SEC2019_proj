@@ -75,16 +75,16 @@ public class ServerGetStateTest {
     public void methodGetStateOfGoodInvalidUser() {
         try {
             state = getGoodStateRequestGenerator(1, -1, 0, 0, 0, 0, new Date().getTime(), 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of AnswerClasses.Good in Server!", Objects.requireNonNull(state).getAnswer());
 
             state = getGoodStateRequestGenerator(1, 0, 0, 0, 0, 0, new Date().getTime(), 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of AnswerClasses.Good in Server!", Objects.requireNonNull(state).getAnswer());
 
             state = getGoodStateRequestGenerator(1, 2, 0, 0, 0, 0, new Date().getTime(), 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of AnswerClasses.Good in Server!", Objects.requireNonNull(state).getAnswer());
 
             state = getGoodStateRequestGenerator(1, 10, 0, 0, 0, 0, new Date().getTime(), 1, 0, null);
-            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of AnswerClasses.Good in Server!", Objects.requireNonNull(state).getAnswer());
 
             ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {
@@ -187,10 +187,10 @@ public class ServerGetStateTest {
     public void methodGetStateOfGoodInvalidUserKey() {
         try {
             state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, new Date().getTime(), 2, 0, null);
-            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of AnswerClasses.Good in Server!", Objects.requireNonNull(state).getAnswer());
 
             state = getGoodStateRequestGenerator(1, 1, 0, 0, 0, 0, new Date().getTime(), 3, 0, null);
-            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of Good in Server!", Objects.requireNonNull(state).getAnswer());
+            Assert.assertEquals("Invalid Authorization to Invoke Method Get State Of AnswerClasses.Good in Server!", Objects.requireNonNull(state).getAnswer());
 
             ensureServerIsOkAfterAttack(false);
         } catch (Exception e) {

@@ -1,3 +1,6 @@
+import RequestClasses.BuyerRequest;
+import RequestClasses.PrepareSellRequest;
+import RequestClasses.PrepareTransferRequest;
 import com.google.gson.Gson;
 
 import java.security.PublicKey;

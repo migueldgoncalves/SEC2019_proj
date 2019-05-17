@@ -1,13 +1,15 @@
-public class PrepareSellRequest extends AbstractRequest {
+package RequestClasses;
+
+public class GetStateRequest extends AbstractRequest {
 
     private int GoodId;
     private int ReadId;
 
-    PrepareSellRequest(int GoodId, long Nounce, int UserId, int ReadId){
-        this.GoodId = GoodId;
-        this.ReadId = ReadId;
-        this.Nounce = Nounce;
-        this.UserId = UserId;
+    public GetStateRequest(int goodId, long nounce, int userId, int readId){
+        this.Nounce = nounce;
+        this.UserId = userId;
+        this.GoodId = goodId;
+        this.ReadId = readId;
     }
 
     public int getGoodId() {
@@ -25,5 +27,4 @@ public class PrepareSellRequest extends AbstractRequest {
     public void setReadId(int readId) {
         ReadId = readId;
     }
-
 }

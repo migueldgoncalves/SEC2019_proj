@@ -1,4 +1,8 @@
-public class TransferGoodRequest extends AbstractRequest{
+package RequestClasses;
+
+import AnswerClasses.BuyerAnswer;
+
+public class TransferGoodRequest extends AbstractRequest {
 
     private BuyerAnswer buyerAnswer;
     private int WriteTimeStamp;

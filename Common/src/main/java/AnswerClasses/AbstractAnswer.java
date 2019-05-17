@@ -1,9 +1,11 @@
-public abstract class AbstractRequest {
+package AnswerClasses;
+
+public abstract class AbstractAnswer {
 
     long Nounce;
     private byte[] Signature;
-    int UserId;
-    private String answer;
+    int NotaryId;
+    String answer;
 
     public long getNounce() {
         return Nounce;
@@ -21,12 +23,12 @@ public abstract class AbstractRequest {
         Signature = signature;
     }
 
-    public int getUserId() {
-        return UserId;
+    public int getNotaryId() {
+        return NotaryId;
     }
 
-    public void setUserId(int userId) {
-        UserId = userId;
+    public void setNotaryId(int notaryId) {
+        NotaryId = notaryId;
     }
 
     public String getAnswer() {

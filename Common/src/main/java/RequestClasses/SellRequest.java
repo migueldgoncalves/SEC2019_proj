@@ -1,8 +1,12 @@
+package RequestClasses;
+
+import AnswerClasses.PrepareSellAnswer;
+
 import java.util.ArrayList;
 
 public class SellRequest extends AbstractRequest {
 
-    ArrayList<PrepareSellAnswer> requests;
+    private ArrayList<PrepareSellAnswer> requests;
 
     public ArrayList<PrepareSellAnswer> getRequests() {
         return requests;

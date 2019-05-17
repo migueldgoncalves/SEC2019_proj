@@ -1,6 +1,6 @@
 <class>
     <client id="1">
-        <write>3</write>
+        <write>1</write>
         <read>2</read>
     </client>
     <client id="2">
