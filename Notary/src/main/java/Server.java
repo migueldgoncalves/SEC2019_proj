@@ -828,8 +828,8 @@ public class Server extends UnicastRemoteObject implements iProxy {
         String basePath = System.getProperty("user.dir");
         if(!basePath.contains("\\Notary"))
             basePath+="\\Notary";
-        paths[0] = basePath + "\\Backups\\ServerState.old";
-        paths[1] = basePath + "\\Backups\\ServerState.new";
+        paths[0] = basePath + "\\Backups\\ServerState" + ID + ".old";
+        paths[1] = basePath + "\\Backups\\ServerState" + ID + ".new";
         return paths;
     }
 
