@@ -5,6 +5,7 @@ public class iCartaoCidadao {
     public synchronized static byte[] sign(String message) {
         try {
             CartaoCidadao.setUp();
+            System.out.println("Cheguei ao cartao de Cidado");
             byte[] signature = CartaoCidadao.sign(message);
             CartaoCidadao.exitPteid();
             return signature;

@@ -210,6 +210,145 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     //################################ GET STATE OF GOOD WORKING PROPERLY ##############################################
 
+    private static void sell(String data, int writeTimeStamp, int readId) {
+        try {
+
+            ArrayList<String> answers = new ArrayList<>();
+            PrepareSellRequest proposition = gson.fromJson(data, PrepareSellRequest.class);
+
+            for (Integer i : serverPorts.values()) {
+                iProxy proxy = (iProxy) Naming.lookup("rmi://localhost:" + i + "/Notary");
+
+                ExecutorService executor = Executors.newCachedThreadPool();
+                Callable<Boolean> task = () -> {
+                    try{
+                        return answers.add(proxy.prepare_sell(data));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        return null;
+                    }
+                };
+                Future<Boolean> future = executor.submit(task);
+                try {
+                    Object result = future.get(20, TimeUnit.SECONDS);
+                } catch (TimeoutException ex) {
+                    System.out.println("The Server Took Too Long To Answer! TimeOut Exception");
+                } catch (InterruptedException e) {
+                    System.out.println("Interrupted Exception Found.");
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    System.out.println("Execution Exception Found.");
+                    e.printStackTrace();
+                } finally {
+                    future.cancel(true); // may or may not desire this
+                }
+            }
+
+            HashMap<String, Integer> qorum = new HashMap<>();
+            boolean hasQorum = false;
+            String qorumWinner = null;
+
+            //#############################################################################################################################
+
+            //############################################### THE QORUM WORKS #############################################################
+
+            for (String i : answers){
+                if(!hasQorum && i != null) {
+                    PrepareSellAnswer answer = gson.fromJson(i, PrepareSellAnswer.class);
+                    if (!SecurityValidator.validateNotaryAnswer(answer, USING_CC)) {
+                        System.out.println("The Signature of The Message is Invalid. Message Has Been Tampered With");
+                    } else if (!NonceVerifier.isNotaryNonceValid(answer.getNotaryId(), answer.getNounce())) {
+                        System.out.println("The Nounce Returned By The Server is Invalid! You Might Be Suffering From Replay Attack!");
+                    } else if (answer.getReadId() != readId) {
+                        System.out.println("This Is The Answer Read ID: " + answer.getReadId());
+                        System.out.println("This Is The Client Read ID: " + readId);
+                        System.out.println("The Read ID Returned From The Notary Does Not Correspond To The Read ID Expected. Byzantine Notary.");
+                    } else {
+                        Good goodSentFromServer = answer.getGood();
+                        if (goodSentFromServer.getGoodId() == proposition.getGoodId() && goodSentFromServer.isOnSale() && answer.getNotaryId() != 0) {
+
+                            if (qorum.get(gson.toJson(goodSentFromServer)) != null) {
+                                int newValue = qorum.get(gson.toJson(goodSentFromServer)) + 1;
+                                qorum.replace(gson.toJson(goodSentFromServer), newValue);
+                            } else {
+                                qorum.put(gson.toJson(goodSentFromServer), 1);
+                            }
+
+                            for (String x : qorum.keySet()) {
+                                if (qorum.get(x) > (serverPorts.size() / 2)) {
+                                    System.out.println("Qorum Achieved on Good in Method Sell");
+                                    qorumWinner = x;
+                                    hasQorum = true;
+                                }
+                            }
+                        } else {
+                            System.out.println("Invalid Answer Sent From The Server. One of the Expected Parameters (GoodId, isOnSale or Notary ID) has failed verification. Byzantine Attack Detected!");
+                        }
+                    }
+                }
+            }
+
+            //##########################################################################################################################################################################
+
+            if(qorumWinner != null) {
+                ArrayList<PrepareSellAnswer> qorumWinningAnswers = new ArrayList<>();
+                SellRequest pedido = new SellRequest();
+
+                for (String i : answers) {
+                    PrepareSellAnswer answer = gson.fromJson(i, PrepareSellAnswer.class);
+                    if (gson.toJson(answer.getGood()).equals(qorumWinner)) {
+                        Good temp = answer.getGood();
+                        temp.setClientByzantineSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer.getGood())));
+                        answer.setGood(temp);
+                        qorumWinningAnswers.add(answer);
+                    }
+                }
+
+                pedido.setRequests(qorumWinningAnswers);
+                pedido.setUserId(UserID);
+                pedido.setNounce(new Date().getTime());
+                pedido.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(pedido)));
+                answers.clear();
+
+                for (Integer i : serverPorts.values()) {
+                    iProxy proxy = (iProxy) Naming.lookup("rmi://localhost:" + i + "/Notary");
+
+                    ExecutorService executor = Executors.newCachedThreadPool();
+                    Callable<Boolean> task = () -> {
+                        try {
+                            return answers.add(proxy.sell(gson.toJson(pedido)));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+                    };
+                    Future<Boolean> future = executor.submit(task);
+                    try {
+                        Object result = future.get(20, TimeUnit.SECONDS);
+                    } catch (TimeoutException ex) {
+                        System.out.println("The Server Took Too Long To Answer! TimeOut Exception");
+                    } catch (InterruptedException e) {
+                        System.out.println("Interrupted Exception Found.");
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        System.out.println("Execution Exception Found.");
+                        e.printStackTrace();
+                    } finally {
+                        future.cancel(true); // may or may not desire this
+                    }
+                }
+
+                sellSecurityValidator(answers, writeTimeStamp);
+                answers.clear();
+            }
+
+        } catch (ConnectException e) {
+            System.out.println("Could not connect to server");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private static void invokeSeller(int sellerId, int goodId, int portNumber, int writeTimeStamp) {
         try {
             iClient clientProxy = (iClient) Naming.lookup("rmi://localhost:" + portNumber + "/" + sellerId);
@@ -308,6 +447,7 @@ public class Client extends UnicastRemoteObject implements iClient {
                     ExecutorService executor2 = Executors.newCachedThreadPool();
                     Callable<Boolean> task2 = () -> {
                         try{
+                            notaryAnswers.setSpamPrevention(SpamPrevention.xhashcashGenerator(notaryAnswers.getNounce(), i));
                             return answers.add(proxy.transferGood(gson.toJson(notaryAnswers)));
                         }catch (Exception e){
                             e.printStackTrace();
@@ -511,145 +651,6 @@ public class Client extends UnicastRemoteObject implements iClient {
 
     }
 
-    private static void sell(String data, int writeTimeStamp, int readId) {
-        try {
-
-            ArrayList<String> answers = new ArrayList<>();
-            PrepareSellRequest proposition = gson.fromJson(data, PrepareSellRequest.class);
-
-            for (Integer i : serverPorts.values()) {
-                iProxy proxy = (iProxy) Naming.lookup("rmi://localhost:" + i + "/Notary");
-
-                ExecutorService executor = Executors.newCachedThreadPool();
-                Callable<Boolean> task = () -> {
-                    try{
-                        return answers.add(proxy.prepare_sell(data));
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        return null;
-                    }
-                };
-                Future<Boolean> future = executor.submit(task);
-                try {
-                    Object result = future.get(8888, TimeUnit.SECONDS);
-                } catch (TimeoutException ex) {
-                    System.out.println("The Server Took Too Long To Answer! TimeOut Exception");
-                } catch (InterruptedException e) {
-                    System.out.println("Interrupted Exception Found.");
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    System.out.println("Execution Exception Found.");
-                    e.printStackTrace();
-                } finally {
-                    future.cancel(true); // may or may not desire this
-                }
-            }
-
-            HashMap<String, Integer> qorum = new HashMap<>();
-            boolean hasQorum = false;
-            String qorumWinner = null;
-
-            //#############################################################################################################################
-
-            //############################################### THE QORUM WORKS #############################################################
-
-            for (String i : answers){
-                if(!hasQorum && i != null) {
-                    PrepareSellAnswer answer = gson.fromJson(i, PrepareSellAnswer.class);
-                    if (!SecurityValidator.validateNotaryAnswer(answer, USING_CC)) {
-                        System.out.println("The Signature of The Message is Invalid. Message Has Been Tampered With");
-                    } else if (!NonceVerifier.isNotaryNonceValid(answer.getNotaryId(), answer.getNounce())) {
-                        System.out.println("The Nounce Returned By The Server is Invalid! You Might Be Suffering From Replay Attack!");
-                    } else if (answer.getReadId() != readId) {
-                        System.out.println("This Is The Answer Read ID: " + answer.getReadId());
-                        System.out.println("This Is The Client Read ID: " + readId);
-                        System.out.println("The Read ID Returned From The Notary Does Not Correspond To The Read ID Expected. Byzantine Notary.");
-                    } else {
-                        Good goodSentFromServer = answer.getGood();
-                        if (goodSentFromServer.getGoodId() == proposition.getGoodId() && goodSentFromServer.isOnSale() && answer.getNotaryId() != 0) {
-
-                            if (qorum.get(gson.toJson(goodSentFromServer)) != null) {
-                                int newValue = qorum.get(gson.toJson(goodSentFromServer)) + 1;
-                                qorum.replace(gson.toJson(goodSentFromServer), newValue);
-                            } else {
-                                qorum.put(gson.toJson(goodSentFromServer), 1);
-                            }
-
-                            for (String x : qorum.keySet()) {
-                                if (qorum.get(x) > (serverPorts.size() / 2)) {
-                                    System.out.println("Qorum Achieved on Good in Method Sell");
-                                    qorumWinner = x;
-                                    hasQorum = true;
-                                }
-                            }
-                        } else {
-                            System.out.println("Invalid Answer Sent From The Server. One of the Expected Parameters (GoodId, isOnSale or Notary ID) has failed verification. Byzantine Attack Detected!");
-                        }
-                    }
-                }
-            }
-
-            //##########################################################################################################################################################################
-
-            if(qorumWinner != null) {
-                ArrayList<PrepareSellAnswer> qorumWinningAnswers = new ArrayList<>();
-                SellRequest pedido = new SellRequest();
-
-                for (String i : answers) {
-                    PrepareSellAnswer answer = gson.fromJson(i, PrepareSellAnswer.class);
-                    if (gson.toJson(answer.getGood()).equals(qorumWinner)) {
-                        Good temp = answer.getGood();
-                        temp.setClientByzantineSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer.getGood())));
-                        answer.setGood(temp);
-                        qorumWinningAnswers.add(answer);
-                    }
-                }
-
-                pedido.setRequests(qorumWinningAnswers);
-                pedido.setUserId(UserID);
-                pedido.setNounce(new Date().getTime());
-                pedido.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(pedido)));
-                answers.clear();
-
-                for (Integer i : serverPorts.values()) {
-                    iProxy proxy = (iProxy) Naming.lookup("rmi://localhost:" + i + "/Notary");
-
-                    ExecutorService executor = Executors.newCachedThreadPool();
-                    Callable<Boolean> task = () -> {
-                        try {
-                            return answers.add(proxy.sell(gson.toJson(pedido)));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            return null;
-                        }
-                    };
-                    Future<Boolean> future = executor.submit(task);
-                    try {
-                        Object result = future.get(8888, TimeUnit.SECONDS);
-                    } catch (TimeoutException ex) {
-                        System.out.println("The Server Took Too Long To Answer! TimeOut Exception");
-                    } catch (InterruptedException e) {
-                        System.out.println("Interrupted Exception Found.");
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        System.out.println("Execution Exception Found.");
-                        e.printStackTrace();
-                    } finally {
-                        future.cancel(true); // may or may not desire this
-                    }
-                }
-
-                sellSecurityValidator(answers, writeTimeStamp);
-                answers.clear();
-            }
-
-        } catch (ConnectException e) {
-            System.out.println("Could not connect to server");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     //###################################### User Prompts For Input ################################################
 
 
@@ -727,7 +728,7 @@ public class Client extends UnicastRemoteObject implements iClient {
                     System.out.println("The Signature of The Message is Invalid. Message Has Been Tampered With");
                 } else if (!NonceVerifier.isNotaryNonceValid(answer.getNotaryId(), answer.getNounce())) {
                     System.out.println("The Nounce Returned By The Server is Invalid! You Might Be Suffering From Replay Attack!");
-                }else if(answer.getGood() != null && answer.getGood().getWriteTimeStampOfGood() != writeTimeStamp){
+                }else if(answer.getGood() == null || answer.getGood().getWriteTimeStampOfGood() != writeTimeStamp){
                     System.out.println("The WriteTimeStamp Returned From The Notary Does Not Correspond To The WriteTimeStamp Expected. Byzantine Notary.");
                 } else {
                     if (qorum.containsKey(answer.getAnswer())) {

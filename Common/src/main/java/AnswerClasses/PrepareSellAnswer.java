@@ -5,6 +5,14 @@ public class PrepareSellAnswer extends AbstractAnswer {
     private Good good;
     private int ReadId;
 
+    public PrepareSellAnswer(String answer, int NotaryId, long Nounce, int ReadId, Good good){
+        this.answer = answer;
+        this.NotaryId = NotaryId;
+        this.Nounce = Nounce;
+        this.ReadId = ReadId;
+        this.good = good;
+    }
+
     public Good getGood() {
         return good;
     }

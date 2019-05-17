@@ -4,13 +4,13 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Random;
 
-public class SpamPrevention {
+class SpamPrevention {
 
     static final int HASHCASH_VERSION = 1;
     static final int ZERO_BITS = 20;
     static final int BITS_PER_HEXA = 4;
 
-    public static String[] xhashcashGenerator(int nounce, int serverPort) {
+    static String[] xhashcashGenerator(long nounce, int serverPort) {
         try {
             String[] answer = new String[2];
 
@@ -35,7 +35,7 @@ public class SpamPrevention {
         }
     }
 
-    public static boolean xhashcashValidator(String[] spamPrevention, int correctNounce, int serverPort) {
+    static boolean xhashcashValidator(String[] spamPrevention, long correctNounce, int serverPort) {
         try {
             if(spamPrevention.length!=2)
                 return false;
@@ -71,7 +71,7 @@ public class SpamPrevention {
         return zeros.toString();
     }
 
-    static String baseHeaderGenerator(int nounce, int serverPort) {
+    static String baseHeaderGenerator(long nounce, int serverPort) {
         return "X-Hashcash: " +
                 HASHCASH_VERSION + ":" +
                 ZERO_BITS + ":" +
