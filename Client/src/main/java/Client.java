@@ -93,7 +93,7 @@ public class Client extends UnicastRemoteObject implements iClient {
 
             System.out.println("Acquiring Network of Notaries...");
             serverPorts = proxy.getNetworkOfNotaries();
-            //proxy = null;
+            proxy = null;
             System.out.println("Acquired Network of Notaries!");
 
             System.out.println("Please Introduce User ID: ");

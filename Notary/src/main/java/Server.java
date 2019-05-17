@@ -115,12 +115,14 @@ public class Server extends UnicastRemoteObject implements iProxy {
                     USING_CC = true;
                     ID = 1;
                     PORT = 8086;
+                    serverPorts.put(ID, PORT);
                     KeyStoreInterface.addNotaryKeysToKeyStore(ID, USING_CC);
                     break;
                 case "2":
                     USING_CC = false;
                     ID = 1;
                     PORT = 8086;
+                    serverPorts.put(ID, PORT);
                     KeyStoreInterface.addNotaryKeysToKeyStore(ID, USING_CC);
                     privKey = (PrivateKey) KeyStoreInterface.getPrivateKeyFromKeyStore(KeyStoreInterface.NOTARY, ID);
                     pubKey = (PublicKey) KeyStoreInterface.getPublicKeyFromKeyStore(KeyStoreInterface.NOTARY, ID);
@@ -188,11 +190,13 @@ public class Server extends UnicastRemoteObject implements iProxy {
         Gson gson = new Gson();
         GetStateRequest pedido = gson.fromJson(jsonRequest, GetStateRequest.class);
 
+        System.out.println("I'VE ENTERED GET STATE OF GOOD");
+
         if (!NonceVerifier.isClientNonceValid(pedido.getUserId(), pedido.getNounce())){
             logger.LogGetStateOfGood(pedido, "This message has already been processed!");
             GetStateAnswer answer = new GetStateAnswer("This Message Has Already Been Processed", ID, new Date().getTime(), pedido.getReadId());
             if(USING_CC){
-                answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
+                answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
             }else {
                 answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
             }
@@ -203,7 +207,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
             logger.LogGetStateOfGood(pedido, "Invalid Authorization to Invoke Method Get State Of AnswerClasses.Good in Server!");
             GetStateAnswer answer = new GetStateAnswer("Invalid Authorization to Invoke Method Get State Of AnswerClasses.Good in Server!", ID, new Date().getTime(), pedido.getReadId());
             if(USING_CC){
-                answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
+                answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
             }else {
                 answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
             }
@@ -217,7 +221,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
                     logger.LogGetStateOfGood(pedido, "<" + i.getOwnerId() + ", " + (i.isOnSale() ? "On-Sale>" : "Not-On-Sale>"));
                     GetStateAnswer answer = new GetStateAnswer("<" + i.getOwnerId() + ", " + (i.isOnSale() ? "On-Sale>" : "Not-On-Sale>"), ID, new Date().getTime(), pedido.getReadId());
                     if(USING_CC){
-                        answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
+                        answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
                     }else {
                         answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
                     }
@@ -228,7 +232,7 @@ public class Server extends UnicastRemoteObject implements iProxy {
         logger.LogGetStateOfGood(pedido, "The GoodId " + pedido.getGoodId() + " Is Not Present In The Server!");
         GetStateAnswer answer = new GetStateAnswer("The GoodId " + pedido.getGoodId() + " Is Not Present In The Server!", ID, new Date().getTime(), pedido.getReadId());
         if(USING_CC){
-            answer.setSignature(iCartaoCidadao.sign(gson.toJson(answer)));
+            answer.setSignature(CartaoCidadao.sign(gson.toJson(answer)));
         }else {
             answer.setSignature(SignatureGenerator.generateSignature(privKey, gson.toJson(answer)));
         }
