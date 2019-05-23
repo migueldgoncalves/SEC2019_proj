@@ -6,10 +6,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Client" />
-        <module name="Notary" />
-        <module name="Security" />
         <module name="Common" />
+        <module name="Client" />
+        <module name="Security" />
+        <module name="Notary" />
       </profile>
     </annotationProcessing>
   </component>

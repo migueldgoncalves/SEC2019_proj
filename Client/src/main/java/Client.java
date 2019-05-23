@@ -19,17 +19,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client extends UnicastRemoteObject implements iClient {
 
-    protected enum Sender {
-        NOTARY, BUYER
-    }
-
     private static PrivateKey privKey;
     private static Gson gson = new Gson();
     private static int UserID;
     private static boolean USING_CC = false;
 
-    private static AtomicInteger writeTimeStamp = new AtomicInteger(0); //This value must be persisted
-    private static AtomicInteger readTimeStamp = new AtomicInteger(0); //This value must be persisted
+    private static AtomicInteger writeTimeStamp = new AtomicInteger(0);
+    private static AtomicInteger readTimeStamp = new AtomicInteger(0);
 
     private static ConcurrentHashMap<Integer, Integer> serverPorts = new ConcurrentHashMap<>();
 
@@ -77,7 +73,6 @@ public class Client extends UnicastRemoteObject implements iClient {
 
             LocateRegistry.createRegistry(portNumber);
 
-            //End Of Client Registration in RMI
             System.out.println("Please Introduce The Port of a Well Known Server:");
             System.out.print("Port Number:");
             String serverPort = reader.readLine();
@@ -334,7 +329,7 @@ public class Client extends UnicastRemoteObject implements iClient {
                         System.out.println("Execution Exception Found.");
                         e.printStackTrace();
                     } finally {
-                        future.cancel(true); // may or may not desire this
+                        future.cancel(true);
                     }
                 }
 
@@ -369,7 +364,6 @@ public class Client extends UnicastRemoteObject implements iClient {
                     answer[0] = clientProxy.Buy(gson.toJson(pedido));
                     ArrayList<String> answerFromSeller = new ArrayList<>();
                     answerFromSeller.add(answer[0]);
-                    //transferGoodSecurityValidator(answerFromSeller, writeTimeStamp);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -387,7 +381,7 @@ public class Client extends UnicastRemoteObject implements iClient {
                 System.out.println("Execution Exception Found.");
                 e.printStackTrace();
             } finally {
-                future.cancel(true); // may or may not desire this
+                future.cancel(true);
             }
 
             //###################################### Qorum With Answers From Notaries ####################################
@@ -472,7 +466,7 @@ public class Client extends UnicastRemoteObject implements iClient {
                 hasQorum = false;
                 for (String i : answers){
                     if (i != null && !hasQorum){
-                        //Esta resposta esta a vir a null por alguma razao
+
                         TransferGoodAnswer transferGoodAnswer = gson.fromJson(i, TransferGoodAnswer.class);
 
                         if (!SecurityValidator.validateNotaryAnswer(transferGoodAnswer, USING_CC)) {
@@ -695,7 +689,6 @@ public class Client extends UnicastRemoteObject implements iClient {
                     System.out.println("The Signature of The Message is Invalid. Message Has Been Tampered With");
                 } else if (!NonceVerifier.isNotaryNonceValid(answer.getNotaryId(), answer.getNounce())) {
                     System.out.println("The Nounce Returned By The Server is Invalid! You Might Be Suffering From Replay Attack!");
-                    //TODO: Problema aqui porque quando a resposta ao Sell e retornada o Good vem a null o que pode acontecer em varias situacoes
                 }else if(answer.getAnswer() == null || answer.getReadId() != readId){
                     System.out.println("The Read ID Returned From The Notary Does Not Correspond To The Read ID Expected. Byzantine Notary.");
                 } else {
